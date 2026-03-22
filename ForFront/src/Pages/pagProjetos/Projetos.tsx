@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Button, Group, Title } from "@mantine/core";
 import ModalCriarProjeto from "./CriarProjeto";
+import ModalCriarAmbiente from "./CriarAmbiente";
 
 export default function Projetos() {
   const [opened, setOpened] = useState(false);
+  const [openedAmbiente,setOpenedAmbiente] = useState(false)
 //   const [listaProjetos, setListaProjetos] = useState([]);
 //   const carregarProjetos = () => {
 //     const dados = JSON.parse(localStorage.getItem("@Fornovo:projetos") || "[]");
@@ -26,6 +28,9 @@ export default function Projetos() {
             >
             + Novo Projeto
         </Button>
+         <Button color="#34623F" onClick={() => setOpenedAmbiente(true)}>
+            + Novo Ambiente
+          </Button>
       </Group>
 
       <ModalCriarProjeto 
@@ -34,6 +39,10 @@ export default function Projetos() {
           setOpened(false);
         //   carregarProjetos();
         }} 
+      />
+       <ModalCriarAmbiente
+        opened={openedAmbiente}
+        onClose={() => setOpenedAmbiente(false)}
       />
     </div>
   );
