@@ -6,7 +6,7 @@ interface DropdownProps {
     setFiltro: React.Dispatch<React.SetStateAction<string>>
 }
 
-function Dropdown({ filtro, setFiltro }: DropdownProps) {
+function Dropdown({ setFiltro }: DropdownProps) {
     return (
         <div className={styles.dropdown}>
             <button className={styles.btnFiltro}><Filter className={styles.iconePesquisa} /></button>

@@ -1,7 +1,8 @@
 .containerProjetos {
     display: flex;
     flex-wrap: wrap;
-    gap: 40px;
+    column-gap: 25px;
+    row-gap: 40px;
     width: 100%;
     margin-top: 10vh;
 }
