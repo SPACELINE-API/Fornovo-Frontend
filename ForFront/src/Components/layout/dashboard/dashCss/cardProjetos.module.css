@@ -1,38 +1,58 @@
 .cardProjetos {
     display: flex;
     flex-direction: row;
-    gap: 15px;
     border: 1px solid #A4A0A0;
-    width: 31%;
-    margin-top: 50px;
+    width: 22%;
+    font-family: 'Inter-regular';
 }
 
 .cardBarraLateral {
-    width: 10%;
+    width: 6%;
 }
 
 .pendente {
     background-color: #C50205;
 }
 
-.aprovado {
+.concluido {
     background-color: #34623F;
+}
+
+.emandamento {
+    background-color: #D39607;
+}
+
+.emrevisao {
+    background-color: #03668D;
 }
 
 .cardTitulo {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    gap: 10px;
+    height: 40px;
+    width: 100%;
+}
+
+.descricaoProjeto {
+    font-size: 0.7rem;
+    font-weight: 350;
+}
+
+.cardDetalhe {
+    font-size: 0.8rem;
 }
 
 .tituloProjeto {
-    font-size: 1.4rem;
+    font-size: 1rem;
+    max-width: 70%;
+    max-height: 100%;
 }
 
 .cardContainer {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     width: 100%;
     gap: 10px;
     padding: 15px;
@@ -43,7 +63,7 @@
     border: 1px solid #A4A0A0;
     width: fit-content;
     padding: 4px;
-    font-size: 0.8rem;
+    font-size: 0.6rem;
 }
 
 .cardLinha {
@@ -55,7 +75,8 @@
 
 .cardBotoes {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
     gap: 10px;
 }
 
@@ -65,4 +86,5 @@
     text-decoration: underline;
     cursor: pointer;
     text-align: left;
+    font-size: 0.8rem;
 }
