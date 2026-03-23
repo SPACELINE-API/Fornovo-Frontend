@@ -1,0 +1,29 @@
+.barraPesquisa {
+    width: 50%;
+    height: 25px;
+    padding: 13px;
+}
+
+.containerBarraPesquisa {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 4vh;
+}
+
+.btnFiltro {
+    background-color: transparent;
+    border: 1px solid #000;
+    border-radius: 3px;
+    cursor: pointer;
+    width: 32px;
+}
+
+.btnFiltro:hover {
+    background-color: #ebebeb;
+}
+
+.iconePesquisa {
+    width: 16px;
+    height: 16px;
+}
