@@ -13,16 +13,16 @@ function CardProjetos({ nome, descricao, responsavel, status, data }: CardProps)
 
     const navigate = useNavigate();
 
-    const normalizarStatus = (status : string) => {
+    const normalizarStatus = (status: string) => {
         return status
             .toLowerCase()
-            .normalize("NFD")                
-            .replace(/[\u0300-\u036f]/g, "") 
-            .replace(/\s/g, "");             
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/\s/g, "");
     };
 
     return (
-        <div className={styles.cardProjetos}>
+        <div className={styles.cardProjetos} onClick={() => navigate('/detalhe/resumo')}>
             <div className={`${styles.cardBarraLateral} ${styles[normalizarStatus(status)]}`}></div>
             <div className={styles.cardContainer}>
                 <div className={styles.cardTitulo}>
@@ -37,9 +37,27 @@ function CardProjetos({ nome, descricao, responsavel, status, data }: CardProps)
                     <div className={styles.cardLinha}></div>
                 </div>
                 <div className={styles.cardBotoes}>
-                    <button onClick={() => navigate('/detalhe/calculo')} className={styles.cardBotao}>Cálculo</button>
-                    <button onClick={() => navigate('/detalhe/relatorio')} className={styles.cardBotao}>Relatório</button>
-                    <button onClick={() => navigate('/detalhe/resumo')} className={styles.cardBotao}>Resumo</button>
+                    <button
+                        className={styles.cardBotao}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            navigate('/detalhe/calculo');
+                        }}
+                    >Cálculo</button>
+                    <button
+                        className={styles.cardBotao}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            navigate('/detalhe/relatorio');
+                        }}
+                    >Relatório</button>
+                    <button
+                        className={styles.cardBotao}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            navigate('/detalhe/resumo');
+                        }}
+                    >Resumo</button>
                 </div>
             </div>
         </div>
