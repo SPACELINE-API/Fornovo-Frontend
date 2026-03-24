@@ -1,8 +1,9 @@
 import React, { useState} from "react";
-import { Box, Button, TextInput, Group, Stepper, Text, ActionIcon, NumberInput} from "@mantine/core";
+import { Box, Button, TextInput, Group, Stepper, Text, ActionIcon, NumberInput, Table} from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { IconTrash, IconPlus } from "@tabler/icons-react";
 import { z } from "zod";
+
 
 
 export interface Ambiente {
@@ -260,13 +261,14 @@ const handleNextStep = () => {
   );
 
   if (!stepHasErrors) {
-    form.clearErrors(); 
-    setActive((current) => current + 1);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  } else {
-    const firstErrorField = document.querySelector(`[name="${Object.keys(result.errors)[0]}"]`);
-    firstErrorField?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
+  form.clearErrors();
+  setActive((current) => current + 1);
+  const modal = document.querySelector(".mantine-Modal-body");
+  if (modal) modal.scrollTop = 0;
+} else {
+  const firstErrorField = document.querySelector(".mantine-TextInput-error");
+  firstErrorField?.scrollIntoView({ behavior: "smooth", block: "center" });
+}
 };
   const handleSubmit = (values: typeof form.values) => {
     setLoading(true);
@@ -569,89 +571,224 @@ const handleNextStep = () => {
     </Button>
     </Stepper.Step>
     <Stepper.Step label="Confirmação">
-      <Text fw={700}>Confira os dados:</Text>
-      <Text>Nome: {form.values.nome}</Text>
-      <Text>Comprimento do Ambiente: {form.values.comprimentoAmbiente}m²</Text>
-      <Text>Largura do Ambiente: {form.values.larguraAmbiente}m²</Text>
-      <Text>Altura do Ambiente: {form.values.alturaAmbiente}m²</Text>
-      <Text mt="sm" fw={700}> Área: {form.values.comprimentoAmbiente && form.values.larguraAmbiente? Number(form.values.comprimentoAmbiente) * Number(form.values.larguraAmbiente): "-"}m²</Text>
-      <Text fw={700} mt="sm">Pontos Elétricos</Text>
-      <Text>Tomadas: {form.values.tomadas}</Text>
-      <Text>Ponto de Iluminação: {form.values.iluminacao}</Text>
-      <Text>Interruptores: {form.values.interruptores}</Text>
-      <Text fw={700} mt="sm">Cabos</Text>
-        {form.values.cabos.map((cabo, index) => (
-        <Text key={index}>Circuito: {cabo.circuito} — Seção: {cabo.secao} mm²</Text>
-        ))}
-      <Text fw={700} mt="sm">Disjuntores</Text>
-        {form.values.disjuntores.map((disjuntores, index) => (
-        <Text key={index}>Amperagem: {disjuntores.amperagem} — Quantidade: {disjuntores.quantidade}</Text>
-        ))}
-      <Text>Tipo de Tomadas: {form.values.tipoTomada}</Text>
-      <Text>Tipo de Interruptor: {form.values.tipoInterruptor}</Text>
-      <Text>Tipo de Luminária: {form.values.tipoLuminaria}</Text>
-      <Text>Altura da Instalção: {form.values.alturaInstalacao}</Text>
-      <Text fw={700} mt="sm">Ramais</Text>
-      {form.values.ramais.map((ramal, index) => (
-      <Text key={index}>Nome: {ramal.nome} — Diâmetro: {ramal.diametro} — Comprimento: {ramal.comprimento} m</Text>
+      <Text fw={700} mb="md" fz="lg" >Confira os dados do formulário</Text>
+      <Table striped highlightOnHover withTableBorder withColumnBorders style={{flex: 1}} mb="xl">
+        <Table.Tbody>
+          <Table.Tr><Table.Td fw={700} fz="lg" ta="center" colSpan={2}>Ambiente</Table.Td></Table.Tr>
+          <Table.Tr><Table.Td w="50%">Nome</Table.Td><Table.Td>{form.values.nome}</Table.Td></Table.Tr>
+          <Table.Tr><Table.Td>Comprimento</Table.Td><Table.Td>{form.values.comprimentoAmbiente} m</Table.Td></Table.Tr>
+          <Table.Tr><Table.Td>Largura</Table.Td><Table.Td>{form.values.larguraAmbiente} m</Table.Td></Table.Tr>
+          <Table.Tr><Table.Td>Altura</Table.Td><Table.Td>{form.values.alturaAmbiente} m</Table.Td></Table.Tr>
+        </Table.Tbody >
+      </Table>
+      <Table striped highlightOnHover withTableBorder withColumnBorders mt="lg" style={{flex: 1}} mb="xl">
+      <Table.Tbody>
+        <Table.Tr><Table.Td fw={700} ta="center" colSpan={2} fz="lg" >Elétrica</Table.Td></Table.Tr>
+        <Table.Tr><Table.Td fw={700} ta="center" colSpan={2}>Pontos Elétricos</Table.Td></Table.Tr>
+        <Table.Tr><Table.Td w="50%">Tomadas</Table.Td><Table.Td>{form.values.tomadas}</Table.Td></Table.Tr>
+        <Table.Tr><Table.Td>Iluminação</Table.Td><Table.Td>{form.values.iluminacao}</Table.Td></Table.Tr>
+        <Table.Tr><Table.Td>Interruptores</Table.Td><Table.Td>{form.values.interruptores}</Table.Td></Table.Tr>
+        <Table.Tr><Table.Td>Tipo de Tomada</Table.Td><Table.Td>{form.values.tipoTomada}</Table.Td></Table.Tr>
+        <Table.Tr><Table.Td>Tipo de Interruptor</Table.Td><Table.Td>{form.values.tipoInterruptor}</Table.Td></Table.Tr>
+        <Table.Tr><Table.Td>Tipo de Luminária</Table.Td><Table.Td>{form.values.tipoLuminaria}</Table.Td></Table.Tr>
+        <Table.Tr><Table.Td>Altura de Instalação</Table.Td><Table.Td>{form.values.alturaInstalacao} m</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td fw={700} ta="center" colSpan={2}>Cabos por Circuito</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td fw={500}>Circuito</Table.Td><Table.Td fw={500}>Seção (mm²)</Table.Td></Table.Tr>{form.values.cabos.map((cabo, index) => (
+      <Table.Tr key={index}>
+        <Table.Td>{cabo.circuito}</Table.Td>
+        <Table.Td>{cabo.secao}</Table.Td>
+      </Table.Tr>
     ))}
-      <Text fw={700} mt="sm">Quantidades Hidráulica</Text>
-      <Text>Registros: {form.values.registros} — Válvulas: {form.values.valvulas} — Conexões: {form.values.conexoes}</Text>
-      <Text fw={700} mt="sm">Reservatório:</Text>
-      <Text>Tipo: {form.values.reservatorio.tipo} — Capacidade: {form.values.reservatorio.capacidade} L</Text>
-      <Text fw={700} mt="sm">Aterramento e SPDA</Text>
-      <Text>Hastes: {form.values.hastesAterramento} — Caixas de Inspeção: {form.values.caixasInspecao} — Terminais Aéreos: {form.values.terminaisAereos}</Text>
-      <Text fw={700} mt="sm">Telefonia, Rede e CFTV</Text>
-      <Text>Quadros de Rede: {form.values.quadrosRede} — Patch Cords: {form.values.patchCords} — Câmeras: {form.values.cameras}</Text>
-      <Text fw={700} mt="sm">Cabeamentos</Text>
-     {form.values.cabeamentos.map((cab, index) => (
-      <Text key={index}>Circuito: {cab.circuito} — Comprimento: {cab.comprimento} m — Tomadas: {cab.tomadas}</Text>
+      <Table.Tr><Table.Td fw={700} ta="center" colSpan={2}>Disjuntores</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td fw={500}>Amperagem (A)</Table.Td><Table.Td fw={500}>Quantidade</Table.Td></Table.Tr>{form.values.disjuntores.map((d, index) => (
+      <Table.Tr key={index}>
+        <Table.Td>{d.amperagem}</Table.Td>
+        <Table.Td>{d.quantidade}</Table.Td>
+      </Table.Tr>
     ))}
-      <Text fw={700} mt="sm">Extintores</Text>
+      <Table.Tr><Table.Td fw={700} ta="center" colSpan={2}>Aterramento e SPDA</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Hastes de Aterramento</Table.Td><Table.Td>{form.values.hastesAterramento}</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Caixas de Inspeção</Table.Td><Table.Td>{form.values.caixasInspecao}</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Terminais Aéreos</Table.Td><Table.Td>{form.values.terminaisAereos}</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td fw={700}ta="center" colSpan={2}>Telefonia, Rede e CFTV</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Quadros de Rede</Table.Td><Table.Td>{form.values.quadrosRede}</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Patch Cords</Table.Td><Table.Td>{form.values.patchCords}</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Câmeras</Table.Td><Table.Td>{form.values.cameras}</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td fw={700} ta="center" colSpan={2}>Cabeamento por Circuito</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td fw={500}>Circuito</Table.Td><Table.Td fw={500}>Comprimento (m)</Table.Td></Table.Tr>
+      {form.values.cabeamentos.map((cab, index) => (
+        <Table.Tr key={index}>
+          <Table.Td>{cab.circuito}</Table.Td>
+          <Table.Td>{cab.comprimento}</Table.Td>
+        </Table.Tr>
+      ))}
+    </Table.Tbody>
+  </Table>
+  <Table striped highlightOnHover withTableBorder withColumnBorders mt="lg" style={{flex: 1}} mb="xl">
+  <Table.Tbody>
+    <Table.Tr><Table.Td fw={700} ta="center"colSpan={3} fz="lg" >Hidráulica</Table.Td></Table.Tr>
+    <Table.Tr><Table.Td fw={700} ta="center" colSpan={3}>Ramais</Table.Td></Table.Tr>
+    <Table.Tr><Table.Td fw={700}>Nome</Table.Td><Table.Td fw={500}>Diâmetro</Table.Td><Table.Td fw={500}>Comprimento (m)</Table.Td></Table.Tr>
+    {form.values.ramais.map((ramal, index) => (
+      <Table.Tr key={index}>
+        <Table.Td w="20%">{ramal.nome}</Table.Td>
+        <Table.Td w="20%">{ramal.diametro}</Table.Td>
+        <Table.Td w="20%">{ramal.comprimento}</Table.Td>
+      </Table.Tr>
+    ))}
+      <Table.Tr><Table.Td fw={700} ta="center" colSpan={3}>Quantidades</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td >Registros</Table.Td><Table.Td colSpan={2}>{form.values.registros}</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Válvulas</Table.Td><Table.Td colSpan={2}>{form.values.valvulas}</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Conexões</Table.Td><Table.Td colSpan={2}>{form.values.conexoes}</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td fw={700} ta="center" colSpan={3}>Reservatório</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Tipo</Table.Td><Table.Td colSpan={2}>{form.values.reservatorio.tipo}</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Capacidade</Table.Td><Table.Td colSpan={2}>{form.values.reservatorio.capacidade} L</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td fw={700} ta="center" colSpan={3}>Extintores</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td fw={500}>Tipo</Table.Td><Table.Td fw={500}>Peso (kg)</Table.Td><Table.Td fw={500}>Capacidade (L)</Table.Td></Table.Tr>
       {form.values.extintores.map((ext, index) => (
-      <Text key={index}>Tipo: {ext.tipo} — Peso: {ext.peso} kg — Capacidade: {ext.capacidade} L</Text>
-    ))}
-      <Text fw={700} mt="sm">Hidrantes</Text>
+        <Table.Tr key={index}>
+          <Table.Td>{ext.tipo}</Table.Td>
+          <Table.Td>{ext.peso}</Table.Td>
+          <Table.Td>{ext.capacidade}</Table.Td>
+        </Table.Tr>
+      ))}
+      <Table.Tr><Table.Td fw={700} ta="center" colSpan={3}>Hidrantes</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td fw={500}>Localização</Table.Td><Table.Td fw={500}>Diâmetro</Table.Td><Table.Td fw={500}>Conexões</Table.Td></Table.Tr>
       {form.values.hidrantes.map((hid, index) => (
-      <Text key={index}>Localização: {hid.localizacao} — Diâmetro: {hid.diametro} — Conexões: {hid.conexoes}</Text>
-    ))}
-      <Text fw={700} mt="sm">Dutos</Text>
+        <Table.Tr key={index}>
+          <Table.Td>{hid.localizacao}</Table.Td>
+          <Table.Td>{hid.diametro}</Table.Td>
+          <Table.Td>{hid.conexoes}</Table.Td>
+        </Table.Tr>
+      ))}
+      <Table.Tr><Table.Td fw={700} ta="center" colSpan={3}>Dutos</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td fw={500}>Diâmetro</Table.Td><Table.Td fw={500} colSpan={2}>Comprimento (m)</Table.Td></Table.Tr>
       {form.values.dutos.map((duto, index) => (
-      <Text key={index}>Diâmetro: {duto.diametro} — Comprimento: {duto.comprimento} m</Text>
-    ))}
-      <Text fw={700} mt="sm">Cobertura</Text>
-      <Text>Estrutura: {form.values.tipoEstrutura} — Telhamento: {form.values.tipoTelhamento}</Text>
-      <Text>Espessura: {form.values.espessura} cm — Inclinação: {form.values.inclinacao}%</Text>
-      <Text fw={700} mt="sm">Peças</Text>
+        <Table.Tr key={index}>
+          <Table.Td>{duto.diametro}</Table.Td>
+          <Table.Td colSpan={2}>{duto.comprimento}</Table.Td>
+        </Table.Tr>
+      ))}
+      <Table.Tr><Table.Td fw={700} ta="center" colSpan={3}>Cobertura</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Tipo de Estrutura</Table.Td><Table.Td colSpan={2}>{form.values.tipoEstrutura}</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Tipo de Telhamento</Table.Td><Table.Td colSpan={2}>{form.values.tipoTelhamento}</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Espessura</Table.Td><Table.Td colSpan={2}>{form.values.espessura} cm</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Inclinação</Table.Td><Table.Td colSpan={2}>{form.values.inclinacao}%</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td fw={700} ta="center" colSpan={3}>Peças</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td fw={500}>Descrição</Table.Td><Table.Td fw={500} colSpan={2}>Seção</Table.Td></Table.Tr>
       {form.values.pecas.map((peca, index) => (
-      <Text key={index}>Descrição: {peca.descricao} — Seção: {peca.secao}</Text>
+        <Table.Tr key={index}>
+          <Table.Td>{peca.descricao}</Table.Td>
+          <Table.Td colSpan={2}>{peca.secao}</Table.Td>
+        </Table.Tr>
+      ))}
+
+  </Table.Tbody>
+</Table>
+    <Table striped highlightOnHover withTableBorder withColumnBorders mt="lg" style={{flex: 1}} mb="xl">
+    <Table.Tbody>
+      <Table.Tr><Table.Td fw={700} ta="center"colSpan={3} fz="lg" >Serviços Preliminares e Movimento de Solo</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td fw={700} ta="center" colSpan={2}>Canteiro de Obras</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td w="50%">Contêineres</Table.Td><Table.Td>{form.values.conteineres}</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Banheiros Químicos</Table.Td><Table.Td>{form.values.banheirosQuimicos}</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Andaimes</Table.Td><Table.Td>{form.values.andaimes}</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td fw={700} ta="center" colSpan={2}>Resíduos</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Resíduo Comum</Table.Td><Table.Td>{form.values.residuoComum} m³</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Resíduo Contaminado</Table.Td><Table.Td>{form.values.residuoContaminado} m³</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Destinação</Table.Td><Table.Td>{form.values.destinacaoResiduo}</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td fw={700} ta="center" colSpan={2}>Escavação</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Profundidade</Table.Td><Table.Td>{form.values.profundidadeEscavacao} m</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Inclinação do Terreno</Table.Td><Table.Td>{form.values.inclinacaoTerreno}%</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td fw={700} ta="center" colSpan={2}>Volumes</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Terraplanagem</Table.Td><Table.Td>{form.values.volumes.terraplanagem} m³</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Escavação</Table.Td><Table.Td>{form.values.volumes.escavacao} m³</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Aterro</Table.Td><Table.Td>{form.values.volumes.aterro} m³</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Enrocamento</Table.Td><Table.Td>{form.values.volumes.enrocamento} m³</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Contenção</Table.Td><Table.Td>{form.values.volumes.contencao} m³</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Taludamento</Table.Td><Table.Td>{form.values.volumes.taludamento} m³</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Nivelamento</Table.Td><Table.Td>{form.values.volumes.nivelamento} m³</Table.Td></Table.Tr>
+      <Table.Tr><Table.Td>Compactação</Table.Td><Table.Td>{form.values.volumes.compactacao} m³</Table.Td></Table.Tr>
+  </Table.Tbody>
+</Table>
+    <Table striped highlightOnHover withTableBorder withColumnBorders mt="lg" ta="center" mb="xl">
+    <Table.Tbody>
+    <Table.Tr><Table.Td fw={700} ta="center"colSpan={7} fz="lg">Estrutura</Table.Td></Table.Tr>
+    <Table.Tr><Table.Td fw={700} ta="center" colSpan={7}>Fundações</Table.Td></Table.Tr>
+    <Table.Tr>
+      <Table.Td fw={500}>Tipo</Table.Td>
+      <Table.Td fw={500}>Profundidade (m)</Table.Td>
+      <Table.Td fw={500}>Vol. Lastro (m³)</Table.Td>
+      <Table.Td fw={500}>Vol. Concreto (m³)</Table.Td>
+      <Table.Td fw={500}>Ferragem (KgF)</Table.Td>
+      <Table.Td fw={500}>Estribo (KgF)</Table.Td>
+      <Table.Td fw={500}>Forma (m²)</Table.Td>
+    </Table.Tr>
+    {form.values.fundacoes.map((fund, index) => (
+      <Table.Tr key={index}>
+        <Table.Td>{fund.tipo}</Table.Td>
+        <Table.Td>{fund.profundidade}</Table.Td>
+        <Table.Td>{fund.volumeLastro}</Table.Td>
+        <Table.Td>{fund.volumeConcreto}</Table.Td>
+        <Table.Td>{fund.pesoFerragem}</Table.Td>
+        <Table.Td>{fund.pesoEstribo}</Table.Td>
+        <Table.Td>{fund.areaForma}</Table.Td>
+      </Table.Tr>
     ))}
-      <Text fw={700} mt="sm">Canteiro de Obras</Text>
-      <Text>Contêineres: {form.values.conteineres} — Banheiros: {form.values.banheirosQuimicos} — Andaimes: {form.values.andaimes}</Text>
-      <Text fw={700} mt="sm">Resíduos</Text>
-      <Text>Comum: {form.values.residuoComum} m³ — Contaminado: {form.values.residuoContaminado} m³</Text>
-      <Text>Destinação: {form.values.destinacaoResiduo}</Text>
-      <Text fw={700} mt="sm">Escavação</Text>
-      <Text>Profundidade: {form.values.profundidadeEscavacao} m — Inclinação: {form.values.inclinacaoTerreno}%</Text>
-      <Text fw={700} mt="sm">Volumes</Text>
-      <Text>Terraplanagem: {form.values.volumes.terraplanagem} m³ — Escavação: {form.values.volumes.escavacao} m³ — Aterro: {form.values.volumes.aterro} m³ — Enrocamento: {form.values.volumes.enrocamento} m³</Text>
-      <Text>Contenção: {form.values.volumes.contencao} m³ — Taludamento: {form.values.volumes.taludamento} m³ — Nivelamento: {form.values.volumes.nivelamento} m³ — Compactação: {form.values.volumes.compactacao} m³</Text>
-      <Text fw={700} mt="sm">Fundações</Text>
-      {form.values.fundacoes.map((fund, index) => (
-      <Text key={index}>Tipo: {fund.tipo} — Profundidade: {fund.profundidade} m — Vol. Lastro: {fund.volumeLastro} m³ — Vol. Concreto: {fund.volumeConcreto} m³ — Ferragem: {fund.pesoFerragem} KgF — Estribo: {fund.pesoEstribo} KgF — Forma: {fund.areaForma} m²</Text>
+    <Table.Tr><Table.Td fw={700} ta="center" colSpan={7}>Superestrutura em Concreto</Table.Td></Table.Tr>
+    <Table.Tr>
+      <Table.Td fw={500}>Tipo</Table.Td>
+      <Table.Td fw={500}>Largura (m)</Table.Td>
+      <Table.Td fw={500}>Altura (m)</Table.Td>
+      <Table.Td fw={500}>Vol. Concreto (m³)</Table.Td>
+      <Table.Td fw={500}>Ferragem (KgF)</Table.Td>
+      <Table.Td fw={500}>Estribo (KgF)</Table.Td>
+      <Table.Td fw={500}>Forma (m²)</Table.Td>
+    </Table.Tr>
+    {form.values.superestrutura.map((sup, index) => (
+      <Table.Tr key={index}>
+        <Table.Td>{sup.tipo}</Table.Td>
+        <Table.Td>{sup.largura}</Table.Td>
+        <Table.Td>{sup.altura}</Table.Td>
+        <Table.Td>{sup.volumeConcreto}</Table.Td>
+        <Table.Td>{sup.pesoFerragem}</Table.Td>
+        <Table.Td>{sup.pesoEstribo}</Table.Td>
+        <Table.Td>{sup.areaForma}</Table.Td>
+      </Table.Tr>
     ))}
-      <Text fw={700} mt="sm">Superestrutura</Text>
-      {form.values.superestrutura.map((sup, index) => (
-      <Text key={index}>Tipo: {sup.tipo} — Largura: {sup.largura} m — Altura: {sup.altura} m — Vol. Concreto: {sup.volumeConcreto} m³ — Ferragem: {sup.pesoFerragem} KgF — Estribo: {sup.pesoEstribo} KgF — Forma: {sup.areaForma} m²</Text>
+    <Table.Tr><Table.Td fw={700} ta="center" colSpan={7}>Estruturas Metálicas</Table.Td></Table.Tr>
+    <Table.Tr>
+      <Table.Td fw={500}>Tipo</Table.Td>
+      <Table.Td fw={500}>Perfil</Table.Td>
+      <Table.Td fw={500}>Seção</Table.Td>
+      <Table.Td fw={500}>Peso (KgF)</Table.Td>
+      <Table.Td fw={500} colSpan={3}>Elastômero</Table.Td>
+    </Table.Tr>
+    {form.values.metalicas.map((met, index) => (
+      <Table.Tr key={index}>
+        <Table.Td>{met.tipo}</Table.Td>
+        <Table.Td>{met.tipoPerfil}</Table.Td>
+        <Table.Td>{met.secao}</Table.Td>
+        <Table.Td>{met.peso}</Table.Td>
+        <Table.Td colSpan={3}>{met.elastomero}</Table.Td>
+      </Table.Tr>
     ))}
-      <Text fw={700} mt="sm">Estruturas Metálicas</Text>
-      {form.values.metalicas.map((met, index) => (
-      <Text key={index}>Tipo: {met.tipo} — Perfil: {met.tipoPerfil} — Seção: {met.secao} — Peso: {met.peso} KgF — Elastômero: {met.elastomero}</Text>
+    <Table.Tr><Table.Td fw={700} ta="center" colSpan={7}>Estruturas em Madeira</Table.Td></Table.Tr>
+    <Table.Tr>
+      <Table.Td fw={500}>Tipo de Peça</Table.Td>
+      <Table.Td fw={500}>Seção</Table.Td>
+      <Table.Td fw={500}>Peso Total (KgF)</Table.Td>
+      <Table.Td fw={500} colSpan={4}>Tipo de Telhamento</Table.Td>
+    </Table.Tr>
+    {form.values.madeira.map((mad, index) => (
+      <Table.Tr key={index}>
+        <Table.Td>{mad.tipoPeca}</Table.Td>
+        <Table.Td>{mad.secao}</Table.Td>
+        <Table.Td>{mad.pesoTotal}</Table.Td>
+        <Table.Td colSpan={4}>{mad.tipoTelhamento}</Table.Td>
+      </Table.Tr>
     ))}
-      <Text fw={700} mt="sm">Estruturas em Madeira</Text>
-      {form.values.madeira.map((mad, index) => (
-      <Text key={index}>Peça: {mad.tipoPeca} — Seção: {mad.secao} — Peso: {mad.pesoTotal} KgF — Telhamento: {mad.tipoTelhamento}</Text>
-    ))}
+  </Table.Tbody>
+</Table>
     </Stepper.Step>
     </Stepper>
   <Group justify="flex-end" mt="xl">
