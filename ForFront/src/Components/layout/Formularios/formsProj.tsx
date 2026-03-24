@@ -130,6 +130,9 @@
           data_inicio: values.data_inicio instanceof Date 
             ? values.data_inicio.toISOString().split("T")[0] 
             : null,
+          data_fim: values.data_fim instanceof Date
+            ? values.data_fim.toISOString().split("T")[0]
+            : null,
         };
 
         const response = await api.post('projetos/cadastrarProjeto', payload);
