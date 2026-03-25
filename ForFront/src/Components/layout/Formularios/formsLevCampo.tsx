@@ -3,15 +3,17 @@ import { Box, Button, TextInput, Group, Stepper, Text, ActionIcon, NumberInput, 
 import { useForm, zodResolver } from "@mantine/form";
 import { IconTrash, IconPlus } from "@tabler/icons-react";
 import { z } from "zod";
+import { notifications } from "@mantine/notifications";
+import api from "../../../Services/apiService";
 
 
 
 export interface Ambiente {
   id: number;
   nome: string;
-  comprimentoAmbiente: number;
-  larguraAmbiente: number;
-  alturaAmbiente: number;
+  comprimento: number;
+  largura: number;
+  altura: number;
   area: number;
   tomadas:number;
   iluminacao:number;
@@ -63,9 +65,9 @@ const int = (msg = "Obrigatório") => z.number({ invalid_type_error: msg }).int(
 
 const ambienteSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
-  comprimentoAmbiente: num("Comprimento é obrigatório"),
-  larguraAmbiente: num("Largura é obrigatória"),
-  alturaAmbiente: num("Altura é obrigatória"),
+  comprimento: num("Comprimento é obrigatório"),
+  largura: num("Largura é obrigatória"),
+  altura: num("Altura é obrigatória"),
   tomadas: int("Tomadas é obrigatório"),
   iluminacao: int("Iluminação é obrigatória"),
   interruptores: int("Interruptores é obrigatório"),
@@ -183,16 +185,17 @@ interface FormularioAmbienteProps {
   onSubmitSuccess?: (msg: string) => void;
   onCancel?: () => void;
 }
-const FormularioLevCampo: React.FC<FormularioAmbienteProps> = ({ initialData }) => {
+const FormularioLevCampo: React.FC<FormularioAmbienteProps> =  ({ initialData, onSubmitSuccess, onCancel }) => {
   const [active, setActive] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [sucesso, setSucesso] = useState(false);
 
   const form = useForm({
     initialValues: {
     nome: initialData?.nome || "", 
-    comprimentoAmbiente: initialData?.comprimentoAmbiente ?? "",
-    larguraAmbiente: initialData?.larguraAmbiente ?? "",
-    alturaAmbiente: initialData?.alturaAmbiente ?? "",
+    comprimento: initialData?.comprimento ?? "",
+    largura: initialData?.largura ?? "",
+    altura: initialData?.altura ?? "",
     tomadas: initialData?.tomadas ?? "",
     iluminacao: initialData?.iluminacao ?? "",
     interruptores: initialData?.interruptores ?? "",
@@ -270,27 +273,50 @@ const handleNextStep = () => {
   firstErrorField?.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 };
-  const handleSubmit = (values: typeof form.values) => {
-    setLoading(true);
-    const novoAmbiente = {
-      id: Date.now(),
-      ...values,
-    };
-
-    console.log("Ambiente salvo:", novoAmbiente);
-    setLoading(false);
-    setActive(0); 
-    form.reset();
-  };     
+  const handleSubmit = async (values: typeof form.values) => {
+  setLoading(true);
+  try {
+    const response = await api.post('calculos/form-levantamento', values);    
+    if (response.status === 201 || response.status === 200) {
+             setSucesso(true);
+             notifications.show({
+               title: 'Sucesso!',
+               message: 'Formulário salvo',
+               color: 'green',
+               position: 'bottom-left',
+             });
+             if (onSubmitSuccess) {
+               setTimeout(() => {
+                 onSubmitSuccess("OK");
+               }, 1000);
+             }
+           }
+         } catch (error: any) {
+           notifications.show({
+             title: 'Erro ao salvar',
+             message: error.response?.data?.erro || 'Verifique os dados e tente novamente.',
+             color: 'red',
+             position: 'bottom-left',
+             autoClose: 3000,
+           });
+   
+           setTimeout(() => {
+             if (onCancel) onCancel(); 
+           }, 1000);
+   
+         } finally {
+           setLoading(false);
+         }
+      };
   return (
     <Box component="form" onSubmit={form.onSubmit(handleSubmit)}>
     <Stepper active={active} allowNextStepsSelect={false} color="#478d57" iconSize={30}>
     <Stepper.Step label="Ambiente">
     <Group mt="sm" grow maw={900}>
         <TextInput label="Nome do Ambiente" placeholder="Ex: Cantina, Laboratório, Sala" {...form.getInputProps("nome")}/>
-        <NumberInput label="Comprimento"  placeholder="Ex: 10.5" rightSection="m"{...form.getInputProps("comprimentoAmbiente")}/>
-        <NumberInput label="Largura" placeholder="Ex: 8.0" rightSection="m"{...form.getInputProps("larguraAmbiente")}/>
-        <NumberInput label="Altura" placeholder="Ex: 3.0" rightSection="m" {...form.getInputProps("alturaAmbiente")}/>
+        <NumberInput label="Comprimento"  placeholder="Ex: 10.5" rightSection="m"{...form.getInputProps("comprimento")}/>
+        <NumberInput label="Largura" placeholder="Ex: 8.0" rightSection="m"{...form.getInputProps("largura")}/>
+        <NumberInput label="Altura" placeholder="Ex: 3.0" rightSection="m" {...form.getInputProps("altura")}/>
     </Group>
     </Stepper.Step>
     <Stepper.Step label="Elétrica">
@@ -576,9 +602,9 @@ const handleNextStep = () => {
         <Table.Tbody>
           <Table.Tr><Table.Td fw={700} fz="lg" ta="center" colSpan={2}>Ambiente</Table.Td></Table.Tr>
           <Table.Tr><Table.Td w="50%">Nome</Table.Td><Table.Td>{form.values.nome}</Table.Td></Table.Tr>
-          <Table.Tr><Table.Td>Comprimento</Table.Td><Table.Td>{form.values.comprimentoAmbiente} m</Table.Td></Table.Tr>
-          <Table.Tr><Table.Td>Largura</Table.Td><Table.Td>{form.values.larguraAmbiente} m</Table.Td></Table.Tr>
-          <Table.Tr><Table.Td>Altura</Table.Td><Table.Td>{form.values.alturaAmbiente} m</Table.Td></Table.Tr>
+          <Table.Tr><Table.Td>Comprimento</Table.Td><Table.Td>{form.values.comprimento} m</Table.Td></Table.Tr>
+          <Table.Tr><Table.Td>Largura</Table.Td><Table.Td>{form.values.largura} m</Table.Td></Table.Tr>
+          <Table.Tr><Table.Td>Altura</Table.Td><Table.Td>{form.values.altura} m</Table.Td></Table.Tr>
         </Table.Tbody >
       </Table>
       <Table striped highlightOnHover withTableBorder withColumnBorders mt="lg" style={{flex: 1}} mb="xl">
@@ -803,8 +829,8 @@ const handleNextStep = () => {
         </Button>
         )}
         {active === 5 && (
-        <Button type="submit" loading={loading} color="#34623F">
-            Salvar
+        <Button type="submit" color="#34623F" loading={loading} disabled={sucesso}>
+          {sucesso ? "Concluído" : "Salvar Formulário"}
         </Button>
         )}
     </Group>
