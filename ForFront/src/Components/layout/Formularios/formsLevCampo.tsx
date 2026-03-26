@@ -3,15 +3,17 @@ import { Box, Button, TextInput, Group, Stepper, Text, ActionIcon, NumberInput, 
 import { useForm, zodResolver } from "@mantine/form";
 import { IconTrash, IconPlus } from "@tabler/icons-react";
 import { z } from "zod";
+import { notifications } from "@mantine/notifications";
+import api from "../../../Services/apiService";
 
 
 
 export interface Ambiente {
   id: number;
   nome: string;
-  comprimentoAmbiente: number;
-  larguraAmbiente: number;
-  alturaAmbiente: number;
+  comprimento: number;
+  largura: number;
+  altura: number;
   area: number;
   tomadas:number;
   iluminacao:number;
@@ -63,9 +65,9 @@ const int = (msg = "Obrigatório") => z.number({ invalid_type_error: msg }).int(
 
 const ambienteSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
-  comprimentoAmbiente: num("Comprimento é obrigatório"),
-  larguraAmbiente: num("Largura é obrigatória"),
-  alturaAmbiente: num("Altura é obrigatória"),
+  comprimento: num("Comprimento é obrigatório"),
+  largura: num("Largura é obrigatória"),
+  altura: num("Altura é obrigatória"),
   tomadas: int("Tomadas é obrigatório"),
   iluminacao: int("Iluminação é obrigatória"),
   interruptores: int("Interruptores é obrigatório"),
@@ -80,7 +82,7 @@ const ambienteSchema = z.object({
   tipoTomada: z.string().optional(),
   tipoInterruptor: z.string().optional(),
   tipoLuminaria: z.string().optional(),
-  alturaInstalacao: z.number().optional(),
+  alturaInstalacao: num("Altura é obrigatória"),
   hastesAterramento: int("Hastes é obrigatório"),
   caixasInspecao: int("Caixa é obrigatório"),
   terminaisAereos: int("Terminais é obrigatório"),
@@ -183,16 +185,17 @@ interface FormularioAmbienteProps {
   onSubmitSuccess?: (msg: string) => void;
   onCancel?: () => void;
 }
-const FormularioLevCampo: React.FC<FormularioAmbienteProps> = ({ initialData }) => {
+const FormularioLevCampo: React.FC<FormularioAmbienteProps> =  ({ initialData, onSubmitSuccess, onCancel }) => {
   const [active, setActive] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [sucesso, setSucesso] = useState(false);
 
   const form = useForm({
     initialValues: {
     nome: initialData?.nome || "", 
-    comprimentoAmbiente: initialData?.comprimentoAmbiente ?? "",
-    larguraAmbiente: initialData?.larguraAmbiente ?? "",
-    alturaAmbiente: initialData?.alturaAmbiente ?? "",
+    comprimento: initialData?.comprimento ?? "",
+    largura: initialData?.largura ?? "",
+    altura: initialData?.altura ?? "",
     tomadas: initialData?.tomadas ?? "",
     iluminacao: initialData?.iluminacao ?? "",
     interruptores: initialData?.interruptores ?? "",
@@ -270,35 +273,58 @@ const handleNextStep = () => {
   firstErrorField?.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 };
-  const handleSubmit = (values: typeof form.values) => {
-    setLoading(true);
-    const novoAmbiente = {
-      id: Date.now(),
-      ...values,
-    };
-
-    console.log("Ambiente salvo:", novoAmbiente);
-    setLoading(false);
-    setActive(0); 
-    form.reset();
-  };     
+  const handleSubmit = async (values: typeof form.values) => {
+  setLoading(true);
+  try {
+    const response = await api.post('calculos/form-levantamento', values);    
+    if (response.status === 201 || response.status === 200) {
+             setSucesso(true);
+             notifications.show({
+               title: 'Sucesso!',
+               message: 'Formulário salvo',
+               color: 'green',
+               position: 'bottom-left',
+             });
+             if (onSubmitSuccess) {
+               setTimeout(() => {
+                 onSubmitSuccess("OK");
+               }, 1000);
+             }
+           }
+         } catch (error: any) {
+           notifications.show({
+             title: 'Erro ao salvar',
+             message: error.response?.data?.erro || 'Verifique os dados e tente novamente.',
+             color: 'red',
+             position: 'bottom-left',
+             autoClose: 3000,
+           });
+   
+           setTimeout(() => {
+             if (onCancel) onCancel(); 
+           }, 1000);
+   
+         } finally {
+           setLoading(false);
+         }
+      };
   return (
     <Box component="form" onSubmit={form.onSubmit(handleSubmit)}>
     <Stepper active={active} allowNextStepsSelect={false} color="#478d57" iconSize={30}>
     <Stepper.Step label="Ambiente">
     <Group mt="sm" grow maw={900}>
-        <TextInput label="Nome do Ambiente" placeholder="Ex: Cantina, Laboratório, Sala" {...form.getInputProps("nome")}/>
-        <NumberInput label="Comprimento"  placeholder="Ex: 10.5" rightSection="m"{...form.getInputProps("comprimentoAmbiente")}/>
-        <NumberInput label="Largura" placeholder="Ex: 8.0" rightSection="m"{...form.getInputProps("larguraAmbiente")}/>
-        <NumberInput label="Altura" placeholder="Ex: 3.0" rightSection="m" {...form.getInputProps("alturaAmbiente")}/>
+        <TextInput label="Nome do Ambiente" withAsterisk placeholder="Ex: Cantina, Laboratório, Sala" {...form.getInputProps("nome")}/>
+        <NumberInput label="Comprimento" withAsterisk placeholder="Ex: 10.5" rightSection="m"{...form.getInputProps("comprimento")}/>
+        <NumberInput label="Largura" withAsterisk placeholder="Ex: 8.0" rightSection="m"{...form.getInputProps("largura")}/>
+        <NumberInput label="Altura" withAsterisk placeholder="Ex: 3.0" rightSection="m" {...form.getInputProps("altura")}/>
     </Group>
     </Stepper.Step>
     <Stepper.Step label="Elétrica">
     <Text fw={700} mt="md">Pontos Elétricos</Text>
     <Group grow mt="sm" maw={700}>
-        <NumberInput label="Tomadas (TUG)" placeholder="Qtd. de tomadas" {...form.getInputProps("tomadas")}/>
-        <NumberInput label="Pontos de Iluminação" placeholder="Qtd. de pontos" {...form.getInputProps("iluminacao")}/>
-        <NumberInput label="Interruptores" placeholder="Qtd. de interruptores" {...form.getInputProps("interruptores")}/>
+        <NumberInput label="Tomadas (TUG)" withAsterisk placeholder="Qtd. de tomadas" {...form.getInputProps("tomadas")}/>
+        <NumberInput label="Pontos de Iluminação" withAsterisk placeholder="Qtd. de pontos" {...form.getInputProps("iluminacao")}/>
+        <NumberInput label="Interruptores" withAsterisk placeholder="Qtd. de interruptores" {...form.getInputProps("interruptores")}/>
     </Group>
     <Group align="flex-start" mt="md">
     <Box style={{ flex: 1 }}>
@@ -306,8 +332,8 @@ const handleNextStep = () => {
     {form.values.cabos.map((_, index) => (
       <Box key={index} mt="sm">
         <Group align="flex-end">
-          <TextInput style={{ flex: 1 }} placeholder="Ex: C1" label="Circuito" {...form.getInputProps(`cabos.${index}.circuito`)} />
-          <NumberInput style={{ flex: 1 }} placeholder="Ex: 1.5" label="Seção (mm²)" {...form.getInputProps(`cabos.${index}.secao`)} />
+          <TextInput style={{ flex: 1 }} withAsterisk placeholder="Ex: C1" label="Circuito" {...form.getInputProps(`cabos.${index}.circuito`)} />
+          <NumberInput style={{ flex: 1 }} withAsterisk placeholder="Ex: 1.5" label="Seção (mm²)" {...form.getInputProps(`cabos.${index}.secao`)} />
           <ActionIcon color="red" variant="subtle" mb={4} onClick={() => form.removeListItem("cabos", index)}>
             <IconTrash size={16} />
           </ActionIcon>
@@ -324,8 +350,8 @@ const handleNextStep = () => {
     {form.values.disjuntores.map((_, index) => (
       <Box key={index} mt="sm">
         <Group align="flex-end">
-          <NumberInput style={{ flex: 1 }} placeholder="Ex: 20" label="Amperagem (A)" {...form.getInputProps(`disjuntores.${index}.amperagem`)} />
-          <NumberInput style={{ flex: 1 }} label="Quantidade" placeholder="Qtd. de disjuntores"  {...form.getInputProps(`disjuntores.${index}.quantidade`)} />
+          <NumberInput style={{ flex: 1 }} withAsterisk placeholder="Ex: 20" label="Amperagem (A)" {...form.getInputProps(`disjuntores.${index}.amperagem`)} />
+          <NumberInput style={{ flex: 1 }} label="Quantidade" withAsterisk placeholder="Qtd. de disjuntores"  {...form.getInputProps(`disjuntores.${index}.quantidade`)} />
           <ActionIcon color="red" variant="subtle" mb={4} onClick={() => form.removeListItem("disjuntores", index)}>
             <IconTrash size={16} />
           </ActionIcon>
@@ -343,17 +369,17 @@ const handleNextStep = () => {
         <TextInput placeholder="Ex: Tramontina 10A" label="Tipo de Tomada" {...form.getInputProps("tipoTomada")} />
         <TextInput placeholder="Ex: Tramontina Simples" label="Tipo de Interruptor"  {...form.getInputProps("tipoInterruptor")} />
         <TextInput placeholder="Ex: LED 12W Embutir" label="Tipo de Luminária" {...form.getInputProps("tipoLuminaria")} />
-        <NumberInput placeholder="Ex: 1.10" label="Altura de Instalação" rightSection="m" {...form.getInputProps("alturaInstalacao")} /> 
+        <NumberInput placeholder="Ex: 1.10" withAsterisk  label="Altura de Instalação" rightSection="m" {...form.getInputProps("alturaInstalacao")} /> 
     </Group>
     <Text fw={700} mt="md">Aterramento e SPDA</Text>
     <Group grow mt="sm" maw={700}>
-        <NumberInput placeholder="Qtd. de hastes" label="Hastes de Aterramento" {...form.getInputProps("hastesAterramento")} />
-        <NumberInput placeholder="Qtd. de caixas de inspeção" label="Caixas de Inspeção"{...form.getInputProps("caixasInspecao")} />
-        <NumberInput placeholder="Qtd. de terminais aéreos"  label="Terminais Aéreos" {...form.getInputProps("terminaisAereos")}/>
+        <NumberInput placeholder="Qtd. de hastes" withAsterisk  label="Hastes de Aterramento" {...form.getInputProps("hastesAterramento")} />
+        <NumberInput placeholder="Qtd. de caixas de inspeção" withAsterisk  label="Caixas de Inspeção"{...form.getInputProps("caixasInspecao")} />
+        <NumberInput placeholder="Qtd. de terminais aéreos" withAsterisk label="Terminais Aéreos" {...form.getInputProps("terminaisAereos")}/>
     </Group>
     <Text fw={700} mt="md">Telefonia, Rede e CFTV</Text>
     <Group grow mt="sm" maw={700}>
-        <NumberInput placeholder="Qtd. de quadros de redes"  label="Quadros de Rede"{...form.getInputProps("quadrosRede")}/>
+        <NumberInput placeholder="Qtd. de quadros de redes" label="Quadros de Rede"{...form.getInputProps("quadrosRede")}/>
         <NumberInput placeholder="Qtd. de patch"  label="Patch Cords"  {...form.getInputProps("patchCords")} />
         <NumberInput placeholder="Qtd. de câmeras"  label="Câmeras" {...form.getInputProps("cameras")} />
     </Group>
@@ -361,9 +387,9 @@ const handleNextStep = () => {
         {form.values.cabeamentos.map((_, index) => (
         <Box key={index} mt="sm">
     <Group align="flex-end" maw={700}>
-        <TextInput label="Circuito" placeholder="Ex: CP1" {...form.getInputProps(`cabeamentos.${index}.circuito`)} />
-        <NumberInput label="Comprimento"placeholder="Ex: 15.0" rightSection="m" {...form.getInputProps(`cabeamentos.${index}.comprimento`)} />
-        <NumberInput placeholder="Qtd. de tomadas" style={{ flex: 1 }} label="Tomadas/ Keystone" {...form.getInputProps(`cabeamentos.${index}.tomadas`)} />
+        <TextInput label="Circuito" placeholder="Ex: CP1" withAsterisk  {...form.getInputProps(`cabeamentos.${index}.circuito`)} />
+        <NumberInput label="Comprimento"placeholder="Ex: 15.0" withAsterisk  rightSection="m" {...form.getInputProps(`cabeamentos.${index}.comprimento`)} />
+        <NumberInput placeholder="Qtd. de tomadas" style={{ flex: 1 }}withAsterisk  label="Tomadas/ Keystone" {...form.getInputProps(`cabeamentos.${index}.tomadas`)} />
         <ActionIcon color="red" variant="subtle" mb={4} onClick={() => form.removeListItem("cabeamentos", index)}><IconTrash size={16} /></ActionIcon>
     </Group>
     </Box>
@@ -375,9 +401,9 @@ const handleNextStep = () => {
     {form.values.ramais.map((_, index) => (
         <Box key={index} mt="sm">
         <Group align="flex-end" maw={700}>
-        <TextInput label="Nome" placeholder="Ex: Ramal 1.1" {...form.getInputProps(`ramais.${index}.nome`)} />
-        <TextInput style={{ flex: 1 }} placeholder="Ex: DN20" label="Diâmetro" {...form.getInputProps(`ramais.${index}.diametro`)} />
-        <NumberInput style={{ flex: 1 }} placeholder="Ex: 5.0" label="Comprimento" rightSection="m"{...form.getInputProps(`ramais.${index}.comprimento`)} />
+        <TextInput label="Nome" placeholder="Ex: Ramal 1.1" withAsterisk  {...form.getInputProps(`ramais.${index}.nome`)} />
+        <TextInput style={{ flex: 1 }} placeholder="Ex: DN20"withAsterisk  label="Diâmetro" {...form.getInputProps(`ramais.${index}.diametro`)} />
+        <NumberInput style={{ flex: 1 }} placeholder="Ex: 5.0"withAsterisk  label="Comprimento" rightSection="m"{...form.getInputProps(`ramais.${index}.comprimento`)} />
         <ActionIcon color="red" variant="subtle" onClick={() => form.removeListItem("ramais", index)}><IconTrash size={16} /></ActionIcon>
         </Group>
         </Box>
@@ -385,22 +411,22 @@ const handleNextStep = () => {
     <Button mt="xs" variant="light" color="#34623F" leftSection={<IconPlus size={14} />} onClick={() => form.insertListItem("ramais", { nome: "", diametro: "", comprimento: "" })}>Adicionar ramal</Button>
     <Text fw={700} mt="md">Quantidades</Text>
     <Group grow mt="sm" maw={700}>
-        <NumberInput placeholder="Qtd. de registros" label="Registros" {...form.getInputProps("registros")} />
-        <NumberInput placeholder="Qtd. de válvulas" label="Válvulas" {...form.getInputProps("valvulas")} />
-        <NumberInput placeholder="Qtd. de conexões" label="Conexões" {...form.getInputProps("conexoes")} />
+        <NumberInput placeholder="Qtd. de registros" withAsterisk label="Registros" {...form.getInputProps("registros")} />
+        <NumberInput placeholder="Qtd. de válvulas" withAsterisk label="Válvulas" {...form.getInputProps("valvulas")} />
+        <NumberInput placeholder="Qtd. de conexões"withAsterisk  label="Conexões" {...form.getInputProps("conexoes")} />
     </Group>
     <Text fw={700} mt="md">Reservatório</Text>
     <Group grow mt="sm" maw={700}>
         <TextInput label="Tipo" placeholder="Ex: Caixa d'água, Cisterna" {...form.getInputProps("reservatorio.tipo")} />
-        <NumberInput label="Capacidade" placeholder="Ex: 10"  rightSection="L" {...form.getInputProps("reservatorio.capacidade")} />
+        <NumberInput label="Capacidade" placeholder="Ex: 10" withAsterisk   rightSection="L" {...form.getInputProps("reservatorio.capacidade")} />
     </Group>
     <Text fw={700} mt="md">Extintores</Text>
     {form.values.extintores.map((_, index) => (
     <Box key={index} mt="sm">
     <Group align="flex-end" maw={700}>
-        <TextInput style={{ flex: 1 }} label="Tipo" placeholder="Ex: ABC, CO2" {...form.getInputProps(`extintores.${index}.tipo`)} />
-        <NumberInput style={{ flex: 1 }} label="Peso (kg)" placeholder="Ex: 6" {...form.getInputProps(`extintores.${index}.peso`)} />
-        <NumberInput style={{ flex: 1 }} label="Capacidade (L)" placeholder="Ex: 6" {...form.getInputProps(`extintores.${index}.capacidade`)} />
+        <TextInput style={{ flex: 1 }} withAsterisk  label="Tipo" placeholder="Ex: ABC, CO2" {...form.getInputProps(`extintores.${index}.tipo`)} />
+        <NumberInput style={{ flex: 1 }}  label="Peso (kg)"withAsterisk  placeholder="Ex: 6" {...form.getInputProps(`extintores.${index}.peso`)} />
+        <NumberInput style={{ flex: 1 }} label="Capacidade (L)" withAsterisk placeholder="Ex: 6" {...form.getInputProps(`extintores.${index}.capacidade`)} />
       <ActionIcon color="red" variant="subtle" mb={4} onClick={() => form.removeListItem("extintores", index)}><IconTrash size={16} /></ActionIcon>
     </Group>
     </Box>
@@ -410,9 +436,9 @@ const handleNextStep = () => {
     {form.values.hidrantes.map((_, index) => (
     <Box key={index} mt="sm">
     <Group align="flex-end" maw={700}>
-        <TextInput style={{ flex: 1 }} label="Localização" placeholder="Ex: Corredor principal" {...form.getInputProps(`hidrantes.${index}.localizacao`)} />
-        <TextInput style={{ flex: 1 }} label="Diâmetro" placeholder="Ex: DN65" {...form.getInputProps(`hidrantes.${index}.diametro`)} />
-        <NumberInput style={{ flex: 1 }} label="Conexões" placeholder="Qtd. de conexões" {...form.getInputProps(`hidrantes.${index}.conexoes`)} />
+        <TextInput style={{ flex: 1 }}  label="Localização"  placeholder="Ex: Corredor principal" {...form.getInputProps(`hidrantes.${index}.localizacao`)} />
+        <TextInput style={{ flex: 1 }} withAsterisk label="Diâmetro" placeholder="Ex: DN65" {...form.getInputProps(`hidrantes.${index}.diametro`)} />
+        <NumberInput style={{ flex: 1 }} withAsterisk label="Conexões" placeholder="Qtd. de conexões" {...form.getInputProps(`hidrantes.${index}.conexoes`)} />
         <ActionIcon color="red" variant="subtle" mb={4} onClick={() => form.removeListItem("hidrantes", index)}><IconTrash size={16} /></ActionIcon>
     </Group>
   </Box>
@@ -422,8 +448,8 @@ const handleNextStep = () => {
     {form.values.dutos.map((_, index) => (
     <Box key={index} mt="sm">
     <Group align="flex-end" maw={700}>
-        <TextInput style={{ flex: 1 }} label="Diâmetro" placeholder="Ex: DN100" {...form.getInputProps(`dutos.${index}.diametro`)} />
-        <NumberInput style={{ flex: 1 }} label="Comprimento"placeholder="Ex: 10.0" rightSection="m" {...form.getInputProps(`dutos.${index}.comprimento`)} />
+        <TextInput style={{ flex: 1 }} withAsterisk label="Diâmetro" placeholder="Ex: DN100" {...form.getInputProps(`dutos.${index}.diametro`)} />
+        <NumberInput style={{ flex: 1 }} withAsterisk  label="Comprimento"placeholder="Ex: 10.0" rightSection="m" {...form.getInputProps(`dutos.${index}.comprimento`)} />
         <ActionIcon color="red" variant="subtle" mb={4} onClick={() => form.removeListItem("dutos", index)}><IconTrash size={16} /></ActionIcon>
     </Group>
   </Box>
@@ -431,19 +457,19 @@ const handleNextStep = () => {
 <Button mt="xs" variant="light" color="#34623F" leftSection={<IconPlus size={14} />}onClick={() => form.insertListItem("dutos", { diametro: "", comprimento: "" })}>Adicionar duto</Button>
     <Text fw={700} mt="md">Cobertura</Text>
     <Group grow mt="sm" maw={700}>
-        <TextInput label="Tipo de Estrutura" placeholder="Ex: Madeira, Metálica" {...form.getInputProps("tipoEstrutura")}/>
-        <TextInput label="Tipo de Telhamento" placeholder="Ex: Cerâmica, Metálica" {...form.getInputProps("tipoTelhamento")} />
+        <TextInput label="Tipo de Estrutura"withAsterisk  placeholder="Ex: Madeira, Metálica" {...form.getInputProps("tipoEstrutura")}/>
+        <TextInput label="Tipo de Telhamento" withAsterisk placeholder="Ex: Cerâmica, Metálica" {...form.getInputProps("tipoTelhamento")} />
     </Group>
     <Group grow mt="sm" maw={700}>
-        <NumberInput label="Espessura" placeholder="Ex: 6" rightSection="cm" {...form.getInputProps("espessura")} />
-        <NumberInput label="Inclinação" placeholder="Ex: 30" rightSection="%" {...form.getInputProps("inclinacao")} />
+        <NumberInput label="Espessura" placeholder="Ex: 6" withAsterisk rightSection="cm" {...form.getInputProps("espessura")} />
+        <NumberInput label="Inclinação" placeholder="Ex: 30"withAsterisk  rightSection="%" {...form.getInputProps("inclinacao")} />
     </Group>
     <Text fw={700} mt="md">Peças</Text>
     {form.values.pecas.map((_, index) => (
     <Box key={index} mt="sm">
     <Group align="flex-end" maw={700}>
-        <TextInput style={{ flex: 1 }} label="Descrição" placeholder="Ex: Caibro, Terça" {...form.getInputProps(`pecas.${index}.descricao`)} />
-        <TextInput style={{ flex: 1 }} label="Seção" placeholder="Ex: 5x5cm, W150" {...form.getInputProps(`pecas.${index}.secao`)} />
+        <TextInput style={{ flex: 1 }} label="Descrição" withAsterisk placeholder="Ex: Caibro, Terça" {...form.getInputProps(`pecas.${index}.descricao`)} />
+        <TextInput style={{ flex: 1 }} label="Seção" withAsterisk placeholder="Ex: 5x5cm, W150" {...form.getInputProps(`pecas.${index}.secao`)} />
     <ActionIcon color="red" variant="subtle" mb={4} onClick={() => form.removeListItem("pecas", index)}><IconTrash size={16} /></ActionIcon>
     </Group>
   </Box>
@@ -467,21 +493,21 @@ const handleNextStep = () => {
     <Text fw={700} mt="md">Movimento de Solo</Text>
     <Text fw={700} mt="md">Escavação</Text>
     <Group grow mt="sm" maw={700}>
-        <NumberInput label="Profundidade" placeholder="Ex: 1.5" rightSection="m" {...form.getInputProps("profundidadeEscavacao")} />
-        <NumberInput label="Inclinação do Terreno" placeholder="Ex: 10"  rightSection="%" {...form.getInputProps("inclinacaoTerreno")} />
+        <NumberInput label="Profundidade" withAsterisk placeholder="Ex: 1.5" rightSection="m" {...form.getInputProps("profundidadeEscavacao")} />
+        <NumberInput label="Inclinação do Terreno" withAsterisk placeholder="Ex: 10"  rightSection="%" {...form.getInputProps("inclinacaoTerreno")} />
     </Group>
     <Text fw={700} mt="md">Volumes</Text>
     <Group grow mt="sm">
-        <NumberInput placeholder="Ex: 50.0" label="Terraplanagem" rightSection="m³" {...form.getInputProps("volumes.terraplanagem")} />
-        <NumberInput placeholder="Ex: 30.0" label="Escavação"  rightSection="m³" {...form.getInputProps("volumes.escavacao")} />
-        <NumberInput placeholder="Ex: 20.0" label="Aterro" rightSection="m³" {...form.getInputProps("volumes.aterro")} />
-        <NumberInput placeholder="Ex: 5.0" label="Enrocamento"  rightSection="m³" {...form.getInputProps("volumes.enrocamento")} />
+        <NumberInput placeholder="Ex: 50.0"withAsterisk  label="Terraplanagem" rightSection="m³" {...form.getInputProps("volumes.terraplanagem")} />
+        <NumberInput placeholder="Ex: 30.0" withAsterisk label="Escavação"  rightSection="m³" {...form.getInputProps("volumes.escavacao")} />
+        <NumberInput placeholder="Ex: 20.0" withAsterisk label="Aterro" rightSection="m³" {...form.getInputProps("volumes.aterro")} />
+        <NumberInput placeholder="Ex: 5.0"withAsterisk  label="Enrocamento"  rightSection="m³" {...form.getInputProps("volumes.enrocamento")} />
     </Group>
     <Group grow mt="sm">
-        <NumberInput placeholder="Ex: 8.0" label="Contenção"  rightSection="m³" {...form.getInputProps("volumes.contencao")} />
-        <NumberInput placeholder="Ex: 12.0" label="Taludamento"  rightSection="m³" {...form.getInputProps("volumes.taludamento")} />
-        <NumberInput placeholder="Ex: 25.0" label="Nivelamento"  rightSection="m³" {...form.getInputProps("volumes.nivelamento")} />
-        <NumberInput placeholder="Ex: 40.0" label="Compactação"  rightSection="m³" {...form.getInputProps("volumes.compactacao")} />
+        <NumberInput placeholder="Ex: 8.0" withAsterisk label="Contenção"  rightSection="m³" {...form.getInputProps("volumes.contencao")} />
+        <NumberInput placeholder="Ex: 12.0" withAsterisk  label="Taludamento"  rightSection="m³" {...form.getInputProps("volumes.taludamento")} />
+        <NumberInput placeholder="Ex: 25.0"withAsterisk  label="Nivelamento"  rightSection="m³" {...form.getInputProps("volumes.nivelamento")} />
+        <NumberInput placeholder="Ex: 40.0"withAsterisk  label="Compactação"  rightSection="m³" {...form.getInputProps("volumes.compactacao")} />
     </Group>
     </Stepper.Step>
     <Stepper.Step label="Estruturas">
@@ -489,15 +515,15 @@ const handleNextStep = () => {
     {form.values.fundacoes.map((_, index) => (
     <Box key={index} mt="sm">
     <Group align="flex-end" maw={800}>
-        <TextInput style={{ flex: 1 }} placeholder="Ex: Viga Baldrame" label="Tipo" {...form.getInputProps(`fundacoes.${index}.tipo`)} />
-        <NumberInput style={{ flex: 1 }} placeholder="Ex: 1.5" label="Profundidade" rightSection="m" {...form.getInputProps(`fundacoes.${index}.profundidade`)} />
-        <NumberInput style={{ flex: 1 }} placeholder="Ex: 0.05" label="Vol. Lastro" rightSection="m³" {...form.getInputProps(`fundacoes.${index}.volumeLastro`)} />
-        <NumberInput style={{ flex: 1 }} placeholder="Ex: 0.3" label="Vol. Concreto"  rightSection="m³" {...form.getInputProps(`fundacoes.${index}.volumeConcreto`)} />
+        <TextInput style={{ flex: 1 }} withAsterisk placeholder="Ex: Viga Baldrame" label="Tipo" {...form.getInputProps(`fundacoes.${index}.tipo`)} />
+        <NumberInput style={{ flex: 1 }}withAsterisk  placeholder="Ex: 1.5" label="Profundidade" rightSection="m" {...form.getInputProps(`fundacoes.${index}.profundidade`)} />
+        <NumberInput style={{ flex: 1 }}withAsterisk  placeholder="Ex: 0.05" label="Vol. Lastro" rightSection="m³" {...form.getInputProps(`fundacoes.${index}.volumeLastro`)} />
+        <NumberInput style={{ flex: 1 }} withAsterisk placeholder="Ex: 0.3" label="Vol. Concreto"  rightSection="m³" {...form.getInputProps(`fundacoes.${index}.volumeConcreto`)} />
     </Group>
     <Group align="flex-end" maw={700} mt="xs">   
-        <NumberInput style={{ flex: 1 }} placeholder="Ex: 15.0" label="Ferragem"  rightSection="KgF" {...form.getInputProps(`fundacoes.${index}.pesoFerragem`)} />
-        <NumberInput style={{ flex: 1 }} placeholder="Ex: 5.0" label="Estribo"  rightSection="KgF" {...form.getInputProps(`fundacoes.${index}.pesoEstribo`)} />
-        <NumberInput style={{ flex: 1 }} placeholder="Ex: 2.5" label="Forma"  rightSection="m²" {...form.getInputProps(`fundacoes.${index}.areaForma`)} />
+        <NumberInput style={{ flex: 1 }} withAsterisk placeholder="Ex: 15.0" label="Ferragem"  rightSection="KgF" {...form.getInputProps(`fundacoes.${index}.pesoFerragem`)} />
+        <NumberInput style={{ flex: 1 }} withAsterisk placeholder="Ex: 5.0" label="Estribo"  rightSection="KgF" {...form.getInputProps(`fundacoes.${index}.pesoEstribo`)} />
+        <NumberInput style={{ flex: 1 }} withAsterisk placeholder="Ex: 2.5" label="Forma"  rightSection="m²" {...form.getInputProps(`fundacoes.${index}.areaForma`)} />
     <ActionIcon color="red" variant="subtle" mb={4} onClick={() => form.removeListItem("fundacoes", index)}>
         <IconTrash size={16} />
     </ActionIcon>
@@ -512,15 +538,15 @@ const handleNextStep = () => {
     {form.values.superestrutura.map((_, index) => (
     <Box key={index} mt="sm">
     <Group align="flex-end" maw={800}>
-        <TextInput style={{ flex: 1 }} placeholder="Ex: Pilar, Viga, Laje" label="Tipo" {...form.getInputProps(`superestrutura.${index}.tipo`)} />
-        <NumberInput style={{ flex: 1 }} placeholder="Ex: 0.20" label="Largura"  rightSection="m" {...form.getInputProps(`superestrutura.${index}.largura`)} />
-        <NumberInput style={{ flex: 1 }} placeholder="Ex: 0.40" label="Altura" rightSection="m" {...form.getInputProps(`superestrutura.${index}.altura`)} />
-        <NumberInput style={{ flex: 1 }} placeholder="Ex: 0.5" label="Vol. Concreto" rightSection="m³" {...form.getInputProps(`superestrutura.${index}.volumeConcreto`)} />
+        <TextInput style={{ flex: 1 }} withAsterisk placeholder="Ex: Pilar, Viga, Laje" label="Tipo" {...form.getInputProps(`superestrutura.${index}.tipo`)} />
+        <NumberInput style={{ flex: 1 }} withAsterisk placeholder="Ex: 0.20" label="Largura"  rightSection="m" {...form.getInputProps(`superestrutura.${index}.largura`)} />
+        <NumberInput style={{ flex: 1 }}withAsterisk  placeholder="Ex: 0.40" label="Altura" rightSection="m" {...form.getInputProps(`superestrutura.${index}.altura`)} />
+        <NumberInput style={{ flex: 1 }} withAsterisk placeholder="Ex: 0.5" label="Vol. Concreto" rightSection="m³" {...form.getInputProps(`superestrutura.${index}.volumeConcreto`)} />
     </Group>
     <Group align="flex-end" maw={800} mt="xs">
-        <NumberInput style={{ flex: 1 }} placeholder="Ex: 20.0" label="Ferragem" rightSection="KgF" {...form.getInputProps(`superestrutura.${index}.pesoFerragem`)} />
-        <NumberInput style={{ flex: 1 }} placeholder="Ex: 8.0" label="Estribo" rightSection="KgF" {...form.getInputProps(`superestrutura.${index}.pesoEstribo`)} />
-        <NumberInput style={{ flex: 1 }} placeholder="Ex: 3.0" label="Forma" rightSection="m²" {...form.getInputProps(`superestrutura.${index}.areaForma`)} />
+        <NumberInput style={{ flex: 1 }}withAsterisk  placeholder="Ex: 20.0" label="Ferragem" rightSection="KgF" {...form.getInputProps(`superestrutura.${index}.pesoFerragem`)} />
+        <NumberInput style={{ flex: 1 }}withAsterisk  placeholder="Ex: 8.0" label="Estribo" rightSection="KgF" {...form.getInputProps(`superestrutura.${index}.pesoEstribo`)} />
+        <NumberInput style={{ flex: 1 }}withAsterisk  placeholder="Ex: 3.0" label="Forma" rightSection="m²" {...form.getInputProps(`superestrutura.${index}.areaForma`)} />
         <TextInput style={{ flex: 1 }} placeholder="Ex: 0.40x0.40" label="Janela Lançamento" {...form.getInputProps(`superestrutura.${index}.janelaLancamento`)} />
     <ActionIcon color="red" variant="subtle" mb={4} onClick={() => form.removeListItem("superestrutura", index)}>
         <IconTrash size={16} />
@@ -536,11 +562,11 @@ const handleNextStep = () => {
     {form.values.metalicas.map((_, index) => (
     <Box key={index} mt="sm">
     <Group align="flex-end">
-        <TextInput style={{ flex: 1 }} label="Tipo" placeholder="Ex: Pilar, Viga" {...form.getInputProps(`metalicas.${index}.tipo`)} />
-        <TextInput style={{ flex: 1 }} label="Perfil" placeholder="Ex: I, H, U" {...form.getInputProps(`metalicas.${index}.tipoPerfil`)} />
-        <TextInput style={{ flex: 1 }} label="Seção" placeholder="Ex: W150x24" {...form.getInputProps(`metalicas.${index}.secao`)} />
-        <NumberInput style={{ flex: 1 }} label="Peso"  rightSection="KgF" {...form.getInputProps(`metalicas.${index}.peso`)} />
-        <TextInput style={{ flex: 1 }} label="Elastômero" {...form.getInputProps(`metalicas.${index}.elastomero`)} />
+        <TextInput style={{ flex: 1 }} withAsterisk label="Tipo" placeholder="Ex: Pilar, Viga" {...form.getInputProps(`metalicas.${index}.tipo`)} />
+        <TextInput style={{ flex: 1 }}withAsterisk  label="Perfil" placeholder="Ex: I, H, U" {...form.getInputProps(`metalicas.${index}.tipoPerfil`)} />
+        <TextInput style={{ flex: 1 }}withAsterisk  label="Seção" placeholder="Ex: W150x24" {...form.getInputProps(`metalicas.${index}.secao`)} />
+        <NumberInput style={{ flex: 1 }} withAsterisk label="Peso"  rightSection="KgF" {...form.getInputProps(`metalicas.${index}.peso`)} />
+        <TextInput style={{ flex: 1 }}  label="Elastômero" placeholder="Ex: Neoprene 10mm" {...form.getInputProps(`metalicas.${index}.elastomero`)} />
     <ActionIcon color="red" variant="subtle" mb={4} onClick={() => form.removeListItem("metalicas", index)}>
         <IconTrash size={16} />
     </ActionIcon>
@@ -555,10 +581,10 @@ const handleNextStep = () => {
     {form.values.madeira.map((_, index) => (
     <Box key={index} mt="sm">
     <Group align="flex-end">
-        <TextInput style={{ flex: 1 }} label="Tipo de Peça" placeholder="Ex: Tesoura, Terça" {...form.getInputProps(`madeira.${index}.tipoPeca`)} />
-        <TextInput style={{ flex: 1 }} label="Seção" placeholder="Ex: 5x10cm" {...form.getInputProps(`madeira.${index}.secao`)} />
-        <NumberInput style={{ flex: 1 }} label="Peso Total" placeholder="Ex: 80.0" rightSection="KgF" {...form.getInputProps(`madeira.${index}.pesoTotal`)} />
-        <TextInput style={{ flex: 1 }} label="Tipo de Telhamento" placeholder="Ex: Cerâmica, Metálica" {...form.getInputProps(`madeira.${index}.tipoTelhamento`)} />
+        <TextInput style={{ flex: 1 }} withAsterisk label="Tipo de Peça" placeholder="Ex: Tesoura, Terça" {...form.getInputProps(`madeira.${index}.tipoPeca`)} />
+        <TextInput style={{ flex: 1 }}withAsterisk  label="Seção" placeholder="Ex: 5x10cm" {...form.getInputProps(`madeira.${index}.secao`)} />
+        <NumberInput style={{ flex: 1 }}withAsterisk  label="Peso Total" placeholder="Ex: 80.0" rightSection="KgF" {...form.getInputProps(`madeira.${index}.pesoTotal`)} />
+        <TextInput style={{ flex: 1 }}withAsterisk  label="Tipo de Telhamento" placeholder="Ex: Cerâmica, Metálica" {...form.getInputProps(`madeira.${index}.tipoTelhamento`)} />
     <ActionIcon color="red" variant="subtle" mb={4} onClick={() => form.removeListItem("madeira", index)}>
         <IconTrash size={16} />
     </ActionIcon>
@@ -576,9 +602,9 @@ const handleNextStep = () => {
         <Table.Tbody>
           <Table.Tr><Table.Td fw={700} fz="lg" ta="center" colSpan={2}>Ambiente</Table.Td></Table.Tr>
           <Table.Tr><Table.Td w="50%">Nome</Table.Td><Table.Td>{form.values.nome}</Table.Td></Table.Tr>
-          <Table.Tr><Table.Td>Comprimento</Table.Td><Table.Td>{form.values.comprimentoAmbiente} m</Table.Td></Table.Tr>
-          <Table.Tr><Table.Td>Largura</Table.Td><Table.Td>{form.values.larguraAmbiente} m</Table.Td></Table.Tr>
-          <Table.Tr><Table.Td>Altura</Table.Td><Table.Td>{form.values.alturaAmbiente} m</Table.Td></Table.Tr>
+          <Table.Tr><Table.Td>Comprimento</Table.Td><Table.Td>{form.values.comprimento} m</Table.Td></Table.Tr>
+          <Table.Tr><Table.Td>Largura</Table.Td><Table.Td>{form.values.largura} m</Table.Td></Table.Tr>
+          <Table.Tr><Table.Td>Altura</Table.Td><Table.Td>{form.values.altura} m</Table.Td></Table.Tr>
         </Table.Tbody >
       </Table>
       <Table striped highlightOnHover withTableBorder withColumnBorders mt="lg" style={{flex: 1}} mb="xl">
@@ -803,8 +829,8 @@ const handleNextStep = () => {
         </Button>
         )}
         {active === 5 && (
-        <Button type="submit" loading={loading} color="#34623F">
-            Salvar
+        <Button type="submit" color="#34623F" loading={loading} disabled={sucesso}>
+          {sucesso ? "Concluído" : "Salvar Formulário"}
         </Button>
         )}
     </Group>
