@@ -1,0 +1,45 @@
+.containerDetalhes {
+    padding: 25px;
+}
+
+.containerSuperior {
+    display: flex;
+    flex-direction: row;
+    margin-top: 3%;
+}
+
+.containerInferior {
+    display: flex;
+    height: 20%;
+    margin-top: 3%;
+}
+
+.containerInfosGerais {
+    display: flex;
+    flex-direction: column;
+    gap: 5%;
+    width: 60vw;
+}
+
+.containerLevantamento {
+    border: 1px solid #dfdfdf;
+    border-radius: 3px;
+    padding: 20px;
+}
+
+.bloco {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.status {
+    color: #34623F;
+}
+
+.titulo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+}
