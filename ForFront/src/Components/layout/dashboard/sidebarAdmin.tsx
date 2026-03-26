@@ -33,6 +33,7 @@ function SidebarAdmin() {
 
       <nav className={styles.sidebarNav} style={{ cursor: "pointer" }}>
         <button
+          title="Home"
           className={`${styles.sidebarItem} ${activeItem === "home" ? styles.active : ""}`}
           onClick={() => navigate("/")}
         >
@@ -41,6 +42,7 @@ function SidebarAdmin() {
         </button>
 
         <button
+          title="Recentes"
           className={`${styles.sidebarItem} ${activeItem === "recentes" ? styles.active : ""}`}
           onClick={() => navigate("/recentes")}
         >
@@ -49,6 +51,7 @@ function SidebarAdmin() {
         </button>
 
         <button
+          title="Projetos"
           className={`${styles.sidebarItem} ${activeItem === "projetos" ? styles.active : ""}`}
           onClick={() => navigate("/projetos")}
         >
@@ -57,6 +60,7 @@ function SidebarAdmin() {
         </button>
   
         <button
+          title="Normas"
           className={`${styles.sidebarItem} ${activeItem === "normas" ? styles.active : ""}`}
           onClick={() => navigate("/normas")}>
 
@@ -66,6 +70,7 @@ function SidebarAdmin() {
         </button>
 
         <button
+          title="Funcionários"
           className={`${styles.sidebarItem} ${activeItem === "funcionarios" ? styles.active : ""}`}
           onClick={() => navigate("/funcionarios")}>
 
