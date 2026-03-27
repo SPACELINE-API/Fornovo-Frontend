@@ -2,23 +2,27 @@
     padding: 25px;
 }
 
-.containerSuperior {
+.containerConteudo {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
     margin-top: 3%;
 }
 
-.containerInferior {
-    display: flex;
-    height: 20%;
-    margin-top: 3%;
-}
-
-.containerInfosGerais {
+.containerEsquerdo {
     display: flex;
     flex-direction: column;
-    gap: 5%;
-    width: 60vw;
+    width: 65%;
+    gap: 8%;
+}
+
+.containerDireito {
+    display: flex;
+    flex-direction: column;
+    width: 25%;
+    gap: 8%;
 }
 
 .containerLevantamento {

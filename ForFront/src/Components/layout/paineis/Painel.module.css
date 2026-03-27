@@ -1,90 +1,81 @@
-/* painel de informações gerais */
+/* painel projeto */
 
-.painelInfos {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+.painelProjeto {
     border: 1px solid #dfdfdf;
     border-radius: 3px;
     padding: 20px;
-    width: 95%;
-    height: auto;
-    gap: 40px;
 }
 
-.dadoContainer {
+.containerGeral {
     display: flex;
     flex-direction: row;
-    gap: 50px;
-    margin-top: 10px;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.dadoTitulo {
+    display: flex;
+    flex-direction: row;
+    margin-top: 25px;
+    gap: 6px;
 }
 
 .dadoContainerProjeto {
     display: flex;
     flex-direction: column;
-    flex-wrap: wrap;
 }
 
 .dado {
     text-align: center;
 }
 
-.dadoTitulo {
+/* painel responsaveis */
+
+.painelResponsaveis {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 5px;
-    margin-top: 20px;
+    flex-direction: column;
+    border: 1px solid #dfdfdf;
+    border-radius: 3px;
+    padding: 20px;
 }
 
-.coluna {
+.dadoContainer {
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
-    gap: 65px;
+    gap: 6%;
     flex-wrap: wrap;
-    max-width: 99%;
-    margin-top: 10px;
 }
 
-/* painel de arquivos */
+/* painel arquivos */
 
 .painelArquivos {
     display: flex;
     flex-direction: column;
-    gap: 15px;
     border: 1px solid #dfdfdf;
     border-radius: 3px;
     padding: 20px;
-    width: auto;
+    gap: 15px;
 }
 
 .tituloArquivo {
     display: flex;
     flex-direction: row;
-    gap: 8px;
-    margin-top: 10px;
+    gap: 6px;
+    font-size: 1rem;
 }
 
 .botoesArquivo {
     display: flex;
     flex-direction: row;
     gap: 15px;
-    font-size: 0.8rem;
+    margin-top: 15px;
 }
 
 .btnArquivo {
     background-color: #34623f;
     color: #fff;
-    padding: 6px;
+    padding: 5px;
     border: none;
     border-radius: 3px;
-}
-
-/* painel com informações do levantamento de campo */
-
-.tabela {
-    display: flex;
-    flex-direction: row;
-    background-color: aqua;
+    font-size: 0.8rem;
 }

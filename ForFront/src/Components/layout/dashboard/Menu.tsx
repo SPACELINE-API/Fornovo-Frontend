@@ -58,6 +58,7 @@ function Menu() {
                 </button>
 
                 <div className={styles.btnContainer}>
+                     <button className={styles.btnLevantamento}>+ Arquivos</button>
                      <button className={styles.btnLevantamento} onClick={() => setOpenedAmbiente(true)}>+ Levantamento de Campo</button>
                 </div>
 

@@ -13,10 +13,9 @@ interface PainelProjetoProps {
 
 function PainelProjeto({cliente, localizacao, dataInicio, prazo} : PainelProjetoProps) {
     return (
-        <div className={styles.painelInfos}>
-            <div>
+        <div className={styles.painelProjeto}>
                 <h4>DADOS PROJETO</h4>
-                <div className={styles.coluna}>
+                <div className={styles.containerGeral}>
                     <div className={styles.dadoContainerProjeto}>
                         <div className={styles.dadoTitulo}>
                             <User size={'20px'} />
@@ -47,7 +46,6 @@ function PainelProjeto({cliente, localizacao, dataInicio, prazo} : PainelProjeto
                     </div>
                 </div>
             </div>
-        </div>
     )
 }
 

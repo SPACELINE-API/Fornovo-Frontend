@@ -46,5 +46,7 @@
 
 .btnContainer {
     display: flex;
+    flex-direction: row;
+    gap: 25px;
     margin-left: auto;
 }

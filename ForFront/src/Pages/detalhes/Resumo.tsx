@@ -1,145 +1,144 @@
 import styles from '../../Styles/paginas/Resumo.module.css';
 import PainelProjeto from '../../Components/layout/paineis/painelProjeto';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal, Button } from '@mantine/core';
 import PainelArquivos from '../../Components/layout/paineis/painelArquivos';
 import PainelResponsaveis from '../../Components/layout/paineis/painelResponsaveis';
 import type { LevantamentoDados } from '../../types/resumo';
 import TabelaLevantamento from '../../Components/layout/paineis/tabelaLevantamento';
 import { FileText } from 'lucide-react';
+import api from '../../Services/apiService';
+import { useParams } from 'react-router-dom';
+import { capitalizar, formatarData, capitalizarNome } from '../../utils/formatos';
 
-const dadosProjeto = [
-    { cliente: "Cliente x", localizacao: "Cliente", dataInicio: "22/01/2021", prazo: "22/02/2026" }
-]
-
-const dadosResponsaveis = [
-    { nome: "Ana Lopes", funcao: "Projetista" },
-    { nome: "Everton Gomes", funcao: "Projetista" },
-    { nome: "Yuri Menezes", funcao: "Projetista" },
-    { nome: "João Lima", funcao: "Projetista" },
-]
-
-const dadosLevantamento: LevantamentoDados = {
-    nome: "Sala Comercial",
-    comprimentoAmbiente: 5,
-    larguraAmbiente: 4,
-    alturaAmbiente: 2.8,
-    areaAmbiente: 12,
-
-    tomadas: 10,
-    iluminacao: 6,
-    interruptores: 3,
-    tipoTomada: "2P+T",
-    tipoInterruptor: "Simples",
-    tipoLuminaria: "LED",
-    alturaInstalacao: 1.2,
-
-    cabos: [
-        { circuito: "C1", secao: 2.5 },
-        { circuito: "C2", secao: 4 }
-    ],
-
-    disjuntores: [
-        { amperagem: 20, quantidade: 2 }
-    ],
-
-    hastesAterramento: 2,
-    caixasInspecao: 1,
-    terminaisAereos: 4,
-
-    quadrosRede: 1,
-    patchCords: 10,
-    cameras: 3,
-
-    cabeamentos: [
-        { circuito: "C1", comprimento: 15 }
-    ],
-
-    ramais: [
-        { nome: "R1", diametro: 25, comprimento: 10 }
-    ],
-
-    reservatorio: {
-        tipo: "Caixa d'água",
-        capacidade: 1000
-    },
-
-    conteineres: 2,
-    banheirosQuimicos: 1,
-
-    fundacoes: [
-        {
-            tipo: "Sapata",
-            profundidade: 2,
-            volumeLastro: 3,
-            volumeConcreto: 5,
-            pesoFerragem: 200,
-            pesoEstribo: 50,
-            areaForma: 10
-        }
-    ]
-};
+interface Projeto {
+    id_projeto: string,
+    nome_projeto: string,
+    status: string,
+    engenheiro_nome: string,
+    data_inicio: string,
+    data_fim: string,
+    cliente: string,
+    localizacao: string
+}
 
 function Resumo() {
 
-    const [aberto, setAberto] = useState(false)
+    const [aberto, setAberto] = useState(false);
+    const [carregando, setCarregando] = useState(true);
+    const [projeto, setProjeto] = useState<Projeto | null>(null);
+    const [levantamento, setLevantamento] = useState<LevantamentoDados | null>(null);
+    const [vazio, setVazio] = useState(true);
 
-    return (
-        <div className={styles.containerDetalhes}>
-            <h1>Nome do projeto</h1>
-            <h3>Status: <span className={styles.status}>Ativo</span></h3>
+    const { id } = useParams();
 
-            <div className={styles.containerSuperior}>
-                <div className={styles.containerInfosGerais}>
-                    <div className={styles.bloco}>
+    useEffect(() => {
+        async function buscarProjeto() {
+            try {
+                const response = await api.get(`projetos/buscarProjeto/${id}`);
+                setProjeto(response.data);
+            }
+            catch (error) {
+                console.log(error);
+            }
+            finally {
+                setCarregando(false);
+            }
+        }
+        if (id) {
+            buscarProjeto();
+        }
+    }, [id])
+
+    useEffect(() => {
+        async function dadosLevantamento() {
+            try {
+                const response = await api.get(`calculos/form-levantamento/1`);
+                setLevantamento(response.data);
+                setVazio(false);
+            }
+            catch (error) {
+                console.log(error);
+                setVazio(true);
+            }
+            finally {
+                setCarregando(false);
+            }
+        }
+        if (id) {
+            dadosLevantamento();
+        }
+    }, [id])
+
+    if (carregando || !projeto) {
+        return (
+            <div>
+                <p>Carregando informações do projeto...</p>
+            </div>
+        )
+    }
+    else {
+        return (
+            <div className={styles.containerDetalhes}>
+                <h1>{capitalizar(projeto.nome_projeto)}</h1>
+                <h3>Status: <span className={styles.status}>{capitalizar(projeto.status)}</span></h3>
+
+                <div className={styles.containerConteudo}>
+                    <div className={styles.containerEsquerdo}>
                         <h3>Informações gerais</h3>
-                        {dadosProjeto.map((dado, index) => (
+                        {projeto && (
                             <PainelProjeto
-                                key={index}
-                                cliente={dado.cliente}
-                                localizacao={dado.localizacao}
-                                dataInicio={dado.dataInicio}
-                                prazo={dado.prazo}
+                                cliente={capitalizar(projeto.cliente)}
+                                localizacao={capitalizar(projeto.localizacao)}
+                                dataInicio={formatarData(projeto.data_inicio)}
+                                prazo={formatarData(projeto.data_fim)}
                             />
-                        ))}
+                        )}
+                        <PainelResponsaveis dados={[{ nome: capitalizarNome(projeto.engenheiro_nome), funcao: "Engenheiro" }]} />
                     </div>
-                    <div>
-                        <PainelResponsaveis dados={dadosResponsaveis} />
-                    </div>
-                </div>
-                <div className={styles.bloco}>
-                    <h3>Arquivos associados</h3>
-                    <PainelArquivos />
-                    <div className={styles.containerLevantamento}>
-                        <div className={styles.titulo}>
-                            <FileText />
-                            <p>Levantamento de campo</p>
-                        </div>
-                        <Button style={{
-                            backgroundColor: '#34623f',
-                            color: '#fff',
-                            padding: '6px',
-                            border: 'none',
-                            borderRadius: '3px',
-                            marginTop: '20px',
-                        }}
-                            onClick={() => setAberto(true)}>
-                            Visualizar
-                        </Button>
+                    <div className={styles.containerDireito}>
+                        <h3>Arquivos associados</h3>
+                        <PainelArquivos />
+                        <div className={styles.containerLevantamento}>
+                            <div className={styles.titulo}>
+                                <FileText size={'20px'} />
+                                <p>Levantamento de campo</p>
+                            </div>
+                            <Button style={{
+                                backgroundColor: '#34623f',
+                                color: '#fff',
+                                padding: '8px',
+                                border: 'none',
+                                borderRadius: '3px',
+                                marginTop: '20px',
+                                fontSize: '0.8rem',
+                                fontWeight: '450',
+                                height: 'auto'
+                            }}
+                                onClick={() => setAberto(true)}>
+                                Visualizar
+                            </Button>
 
-                        <Modal
-                            opened={aberto}
-                            onClose={() => setAberto(false)}
-                            size="60%"
-                            centered
-                        >
-                            <TabelaLevantamento dados={dadosLevantamento} />
-                        </Modal>
+                            <Modal
+                                opened={aberto}
+                                onClose={() => setAberto(false)}
+                                size="60%"
+                                centered
+                            >
+                                {vazio ? (
+                                    <p>Levantamento ainda não cadastrado.</p>
+                                ) : levantamento ? (
+                                    <TabelaLevantamento dados={levantamento} />
+                                ) : (
+                                    <p>Carregando levantamento...</p>
+                                )}
+                            </Modal>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    )
+        )
+    }
 }
 
 export default Resumo;

@@ -34,12 +34,40 @@ export type Reservatorio = {
   capacidade: number;
 };
 
+export type Extintores = {
+  tipo : string,
+  peso : number,
+  capacidade : number
+}
+
+export type Hidrante = {
+  localizacao : string,
+  diametro : number,
+  conexoes : number
+}
+
+export type Dutos = {
+  diametro : number,
+  comprimento : number
+}
+
+export type Pecas = {
+  descricao : string,
+  secao : string
+}
+
+export type Volumes = {
+  terraplanagem : number,
+  escavacao : number,
+  aterro : number,
+}
+
 export type LevantamentoDados = {
   nome: string;
-  comprimentoAmbiente: number;
-  larguraAmbiente: number;
-  alturaAmbiente: number;
-  areaAmbiente: number,
+  comprimento: number;
+  largura: number;
+  altura: number;
+  area: number,
 
   tomadas: number;
   iluminacao: number;
@@ -62,11 +90,39 @@ export type LevantamentoDados = {
 
   cabeamentos: Cabeamento[];
   ramais: Ramal[];
+  registros : number;
+  valvulas : number;
+  conexoes : number;
+  extintores : Extintores[];
+  hidrantes : Hidrante[];
+  dutos : Dutos[];
 
   reservatorio: Reservatorio;
 
-  conteineres: number;
+  containeres: number;
   banheirosQuimicos: number;
+  andaimes : number;
+
+  residuoComum : number,
+  residuoContaminado : number,
+  destinacaoResiduo : string
+
+  profundidadeEscavacao : number,
+  inclinacaoTerreno : number
+  escavacao : number
+
+  volumes : Volumes;
+  enrocamento : number;
+  contencao : number;
+  taludamento : number;
+  nivelamento : number;
+  compactacao : number;
+
+  tipoEstrutura : string,
+  tipoTelhamento : string,
+  espessura : number,
+  inclinacao : number,
+  pecas : Pecas;
 
   fundacoes: Fundacao[];
 };

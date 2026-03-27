@@ -4,21 +4,24 @@ import { Paperclip } from 'lucide-react';
 function PainelArquivos() {
     return (
         <div className={styles.painelArquivos}>
-            <div className={styles.tituloArquivo}>
-                <Paperclip />
-                <p>Arquivo CAD</p>
+            <div className={styles.bloco}>
+                <div className={styles.tituloArquivo}>
+                    <Paperclip size={'20px'} />
+                    <p>Arquivo CAD</p>
+                </div>
+                <div className={styles.botoesArquivo}>
+                    <button className={styles.btnArquivo}>Visualizar</button>
+                </div>
             </div>
-            <div className={styles.botoesArquivo}>
-                <button className={styles.btnArquivo}>Visualizar</button>
-                <button className={styles.btnArquivo}>Download</button>
-            </div>
-            <div className={styles.tituloArquivo}>
-                <Paperclip />
-                <p>Memorial de cálculo </p>
-            </div>
-            <div className={styles.botoesArquivo}>
-                <button className={styles.btnArquivo}>Visualizar</button>
-                <button className={styles.btnArquivo}>Download</button>
+            <div className={styles.bloco}>
+                <div className={styles.tituloArquivo}>
+                    <Paperclip size={'20px'} />
+                    <p>Memorial de cálculo </p>
+                </div>
+                <div className={styles.botoesArquivo}>
+                    <button className={styles.btnArquivo}>Visualizar</button>
+                    <button className={styles.btnArquivo}>Download</button>
+                </div>
             </div>
         </div>
     )
