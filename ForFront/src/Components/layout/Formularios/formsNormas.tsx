@@ -11,13 +11,14 @@ import {
   Stack,
   ActionIcon,
   rem,
+  NumberInput,
 } from '@mantine/core';
 import { Dropzone, PDF_MIME_TYPE } from '@mantine/dropzone';
 import { useForm, zodResolver } from '@mantine/form';
 import { z } from 'zod';
 import { notifications } from '@mantine/notifications';
 import { CloudUpload, FileText, Trash2, Check } from 'lucide-react';
-import Styles from './formsCss/norms.module.css'
+import Styles from './formsCss/norms.module.css';
 
 export interface Norma {
   id: number;
@@ -42,7 +43,11 @@ interface FormularioNormaProps {
   initialData?: Norma;
 }
 
-const FormularioNorma: React.FC<FormularioNormaProps> = ({ onSubmitSuccess, onCancel, initialData }) => {
+const FormularioNorma: React.FC<FormularioNormaProps> = ({
+  onSubmitSuccess,
+  onCancel,
+  initialData,
+}) => {
   const [loading, setLoading] = useState(false);
 
   const form = useForm({
@@ -51,7 +56,7 @@ const FormularioNorma: React.FC<FormularioNormaProps> = ({ onSubmitSuccess, onCa
       data_publicacao: initialData?.data_publicacao || '',
       serie: initialData?.serie || '',
       descricao: initialData?.descricao || '',
-      arquivo: initialData?.arquivo || null as File | null,
+      arquivo: initialData?.arquivo || (null as File | null),
     },
     validate: zodResolver(normaSchema),
   });
@@ -92,9 +97,18 @@ const FormularioNorma: React.FC<FormularioNormaProps> = ({ onSubmitSuccess, onCa
 
         <Box style={{ maxWidth: rem(250) }}>
           <Text size="sm" fw={500} mb={4}>
-            Data de Publicação <span style={{ color: 'red' }}>*</span>
+            Ano de Publicação <span style={{ color: 'red' }}>*</span>
           </Text>
-          <TextInput type="date" size="md" {...form.getInputProps('data_publicacao')} />
+
+          <NumberInput
+            size="md"
+            min={1900}
+            max={2100}
+            allowDecimal={false}
+            hideControls
+            placeholder="Ex: 2024"
+            {...form.getInputProps('ano_publicacao')}
+          />
         </Box>
 
         <Textarea
@@ -128,9 +142,9 @@ const FormularioNorma: React.FC<FormularioNormaProps> = ({ onSubmitSuccess, onCa
                 <CloudUpload size={30} strokeWidth={2.5} />
               </div>
               <Text size="md" fw={600} c="dark.4">
-                Browse Files to upload
+                Pesquise ou arraste seu arquivo PDF aqui
               </Text>
-              <Text size="xs" c="dimmed">
+              <Text size="xs" c="dimmed" ta="center">
                 Clique ou arraste seu arquivo aqui
               </Text>
             </Dropzone>
@@ -139,7 +153,7 @@ const FormularioNorma: React.FC<FormularioNormaProps> = ({ onSubmitSuccess, onCa
               <Group gap="sm">
                 <FileText size={20} color={form.values.arquivo ? '#228be6' : '#adb5bd'} />
                 <Text size="sm" fw={500} c={form.values.arquivo ? 'dark.7' : 'dimmed'}>
-                  {form.values.arquivo ? form.values.arquivo.name : 'No selected File -'}
+                  {form.values.arquivo ? form.values.arquivo.name : 'Nenhum arquivo selecionado'}
                 </Text>
                 {form.values.arquivo && (
                   <Text size="xs" c="dimmed">
