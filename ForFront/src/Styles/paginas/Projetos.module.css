@@ -4,12 +4,16 @@
     column-gap: 25px;
     row-gap: 40px;
     width: 100%;
-    margin-top: 10vh;
+    margin-top: 6vh;
 }
 
 .containerBarraPesquisa {
     display: flex;
     flex-direction: row;
-    gap: 10px;
-    margin-top: 4vh;
+}
+
+.Titulo {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
 }

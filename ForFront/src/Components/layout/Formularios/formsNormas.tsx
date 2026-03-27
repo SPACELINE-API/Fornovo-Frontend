@@ -127,8 +127,8 @@ const FormularioNorma: React.FC<FormularioNormaProps> = ({ onSubmitSuccess, onCa
               <div className={Styles.uploadIconCircle}>
                 <CloudUpload size={30} strokeWidth={2.5} />
               </div>
-              <Text size="md" fw={600} c="dark.4">
-                Browse Files to upload
+              <Text size="md" fw={600} c="dark.4" ta="center">
+                Arquivos PDF apenas
               </Text>
               <Text size="xs" c="dimmed">
                 Clique ou arraste seu arquivo aqui
@@ -137,9 +137,9 @@ const FormularioNorma: React.FC<FormularioNormaProps> = ({ onSubmitSuccess, onCa
 
             <div className={Styles.fileListContainer}>
               <Group gap="sm">
-                <FileText size={20} color={form.values.arquivo ? '#228be6' : '#adb5bd'} />
+                <FileText size={20} color={form.values.arquivo ? '#34623F' : '#adb5bd'} />
                 <Text size="sm" fw={500} c={form.values.arquivo ? 'dark.7' : 'dimmed'}>
-                  {form.values.arquivo ? form.values.arquivo.name : 'No selected File -'}
+                  {form.values.arquivo ? form.values.arquivo.name : 'Nenhum arquivo selecionado'}
                 </Text>
                 {form.values.arquivo && (
                   <Text size="xs" c="dimmed">
@@ -154,7 +154,7 @@ const FormularioNorma: React.FC<FormularioNormaProps> = ({ onSubmitSuccess, onCa
                   color="gray"
                   onClick={() => form.setFieldValue('arquivo', null)}
                 >
-                  <Trash2 size={18} />
+                  <Trash2 size={18} color="#ff00009f" />
                 </ActionIcon>
               )}
             </div>

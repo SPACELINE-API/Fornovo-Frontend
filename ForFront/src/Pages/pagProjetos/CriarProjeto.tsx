@@ -5,9 +5,10 @@ import styles from "./projCss/criarProj.module.css";
 interface ModalCriarProjetoProps {
   opened: boolean;
   onClose: () => void;
+  atualizarProjetos: () => void;
 }
 
-export default function ModalCriarProjeto({ opened, onClose }: ModalCriarProjetoProps) {
+export default function ModalCriarProjeto({ opened, onClose, atualizarProjetos }: ModalCriarProjetoProps) {
   return (
     <Modal 
       radius="8px"
@@ -26,6 +27,7 @@ export default function ModalCriarProjeto({ opened, onClose }: ModalCriarProjeto
     >
       <FormularioProjeto 
         onSubmitSuccess={() => {
+          atualizarProjetos();
           onClose();
         }} 
         onCancel={onClose} 

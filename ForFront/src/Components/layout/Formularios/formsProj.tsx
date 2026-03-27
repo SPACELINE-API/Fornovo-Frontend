@@ -29,7 +29,7 @@ export interface Projeto {
   responsavel: string[];
   data_inicio: string | null;
   data_fim?: string | null;
-  status: 'Pendente' | 'Em Andamento' | 'Em Revisão' | 'Concluído';
+  status: 'Pendente' | 'Em andamento' | 'Em Revisão' | 'Concluído';
 }
 
 const projetoSchema = z
@@ -47,7 +47,7 @@ const projetoSchema = z
       z.date({ message: 'Data inválida' }).min(new Date('2000-01-01'), 'Mínimo ano 2000'),
     ),
     data_fim: z.date().nullable().optional(),
-    status: z.enum(['Pendente', 'Em Andamento', 'Em Revisão', 'Concluído']).default('Pendente'),
+    status: z.enum(['Pendente', 'Em andamento', 'Em Revisão', 'Concluído']).default('Pendente'),
   })
   .refine(
     (data) => {
@@ -328,7 +328,7 @@ const FormularioProjeto: React.FC<FormularioProjetoProps> = ({
                 }}
               >
                 <option value="Pendente">Pendente</option>
-                <option value="Em Andamento">Em Andamento</option>
+                <option value="Em andamento">Em Andamento</option>
                 <option value="Em Revisão">Em Revisão</option>
                 <option value="Concluído">Concluído</option>
               </select>
