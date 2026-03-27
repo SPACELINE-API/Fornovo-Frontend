@@ -113,8 +113,8 @@ function CardProjetos({
           Para confirmar a exclusão, digite a palavra abaixo:
         </Text>
 
-        <Group mb="sm">
-          <span className={styles.textoConfirmacao}>excluir</span>
+        <Group mb="sm" justify='center'>
+          <span className={styles.textoConfirmacao}>'Excluir'</span>
         </Group>
 
         <TextInput
