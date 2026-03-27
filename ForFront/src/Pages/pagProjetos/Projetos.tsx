@@ -153,9 +153,10 @@ export default function Projetos() {
           <Dropdown filtro={filtro} setFiltro={setFiltro} />
         </div>
         <div className={styles.containerProjetos}>
-          {projetosFiltrados.map((projeto, id_projeto) => (
+          {projetosFiltrados.map((projeto) => (
             <CardProjetos
-              key={id_projeto}
+              key={projeto.id_projeto}
+              id={projeto.id_projeto}
               nome={capitalizar(projeto.nome_projeto)}
               descricao={capitalizar(projeto.descricao)}
               status={maiusculas(projeto.status)}
