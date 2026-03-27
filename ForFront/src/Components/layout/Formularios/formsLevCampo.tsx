@@ -5,6 +5,7 @@ import { IconTrash, IconPlus } from "@tabler/icons-react";
 import { z } from "zod";
 import { notifications } from "@mantine/notifications";
 import api from "../../../Services/apiService";
+import { useParams } from "react-router-dom";
 
 
 
@@ -86,9 +87,9 @@ const ambienteSchema = z.object({
   hastesAterramento: int("Hastes é obrigatório"),
   caixasInspecao: int("Caixa é obrigatório"),
   terminaisAereos: int("Terminais é obrigatório"),
-  quadrosRede: z.number().optional(),
-  patchCords: z.number().optional(),
-  cameras: z.number().optional(),
+  quadrosRede: int("Quadros de rede é obrigatório"),
+  patchCords: int("Patch é obrigatório"),
+  cameras: int("Cameras é obrigatório"),
   cabeamentos: z.array(z.object({
     circuito: z.string().min(1, "Circuito é obrigatório"),
     comprimento: num("Comprimento é obrigatório"),
@@ -128,11 +129,11 @@ const ambienteSchema = z.object({
     descricao: z.string().min(1, "Descrição é obrigatória"),
     secao: z.string().min(1, "Seção é obrigatória"),
   })),
-  conteineres: z.number().optional(),
-  banheirosQuimicos: z.number().optional(),
-  andaimes: z.number().optional(),
-  residuoComum: z.number().optional(),
-  residuoContaminado: z.number().optional(),
+  conteineres: num("Conteineres é obrigatório"),
+  banheirosQuimicos: num("Banheiros é obrigatório"),
+  andaimes: num("Andaimes é obrigatório"),
+  residuoComum: num("Residuo Comum é obrigatório"),
+  residuoContaminado: num("Residuo Contaminado é obrigatório"),
   destinacaoResiduo: z.string().optional(),
   profundidadeEscavacao: num("Obrigatória"),
   inclinacaoTerreno: num("Obrigatória"),
@@ -170,7 +171,7 @@ const ambienteSchema = z.object({
     tipoPerfil: z.string().min(1, "Obrigatório"),
     secao: z.string().min(1, "Obrigatório"),
     peso: num("Obrigatório"),
-    elastomero: z.string().optional(),
+    elastomero: z.number().optional(),
   })),
   madeira: z.array(z.object({
     tipoPeca: z.string().min(1, "Obrigatório"),
@@ -186,6 +187,7 @@ interface FormularioAmbienteProps {
   onCancel?: () => void;
 }
 const FormularioLevCampo: React.FC<FormularioAmbienteProps> =  ({ initialData, onSubmitSuccess, onCancel }) => {
+  const { id } = useParams()
   const [active, setActive] = useState(0);
   const [loading, setLoading] = useState(false);
   const [sucesso, setSucesso] = useState(false);
@@ -244,7 +246,7 @@ const FormularioLevCampo: React.FC<FormularioAmbienteProps> =  ({ initialData, o
   });
 
  const fieldsByStep: Record<number, string[]> = {
-  0: ["nome", "comprimentoAmbiente", "larguraAmbiente", "alturaAmbiente"],
+  0: ["nome", "comprimento", "largura", "altura"],
   1: ["tomadas", "iluminacao", "interruptores", "cabos", "disjuntores", "tipoTomada", "tipoInterruptor", "tipoLuminaria", "alturaInstalacao", "hastesAterramento", "caixasInspecao", "terminaisAereos", "quadrosRede", "patchCords", "cameras", "cabeamentos"],
   2: ["ramais", "registros", "valvulas", "conexoes", "reservatorio", "extintores", "hidrantes", "dutos", "tipoTelhamento", "tipoEstrutura", "espessura", "inclinacao", "pecas"],
   3: ["conteineres", "banheirosQuimicos", "andaimes", "residuoComum", "residuoContaminado", "destinacaoResiduo", "profundidadeEscavacao", "inclinacaoTerreno", "volumes"],
@@ -276,7 +278,7 @@ const handleNextStep = () => {
   const handleSubmit = async (values: typeof form.values) => {
   setLoading(true);
   try {
-    const response = await api.post('calculos/form-levantamento', values);    
+   const response = await api.post('calculos/form-levantamento', {...values, projeto_id: id });    
     if (response.status === 201 || response.status === 200) {
              setSucesso(true);
              notifications.show({
@@ -379,9 +381,9 @@ const handleNextStep = () => {
     </Group>
     <Text fw={700} mt="md">Telefonia, Rede e CFTV</Text>
     <Group grow mt="sm" maw={700}>
-        <NumberInput placeholder="Qtd. de quadros de redes" label="Quadros de Rede"{...form.getInputProps("quadrosRede")}/>
-        <NumberInput placeholder="Qtd. de patch"  label="Patch Cords"  {...form.getInputProps("patchCords")} />
-        <NumberInput placeholder="Qtd. de câmeras"  label="Câmeras" {...form.getInputProps("cameras")} />
+        <NumberInput placeholder="Qtd. de quadros de redes" withAsterisk label="Quadros de Rede"{...form.getInputProps("quadrosRede")}/>
+        <NumberInput placeholder="Qtd. de patch" withAsterisk label="Patch Cords"  {...form.getInputProps("patchCords")} />
+        <NumberInput placeholder="Qtd. de câmeras" withAsterisk label="Câmeras" {...form.getInputProps("cameras")} />
     </Group>
     <Text fw={700} mt="md">Cabeamento por Circuito</Text>
         {form.values.cabeamentos.map((_, index) => (
@@ -480,15 +482,15 @@ const handleNextStep = () => {
     <Text fw={700} mt="md">Serviços Preliminares</Text>
     <Text fw={700} mt="md">Canteiro de Obras</Text>
     <Group grow mt="sm" maw={700}>
-        <NumberInput label="Contêineres"placeholder="Qtd. de contêineres" {...form.getInputProps("conteineres")} />
-        <NumberInput  label="Banheiros Químicos" placeholder="Qtd. de banheiros" {...form.getInputProps("banheirosQuimicos")} />
-        <NumberInput label="Andaimes" placeholder="Qtd. de andaimes" {...form.getInputProps("andaimes")} />
+        <NumberInput withAsterisk label="Contêineres"placeholder="Qtd. de contêineres" {...form.getInputProps("conteineres")} />
+        <NumberInput  withAsterisk label="Banheiros Químicos" placeholder="Qtd. de banheiros" {...form.getInputProps("banheirosQuimicos")} />
+        <NumberInput withAsterisk label="Andaimes" placeholder="Qtd. de andaimes" {...form.getInputProps("andaimes")} />
     </Group>
     <Text fw={700} mt="md">Resíduos</Text>
     <Group grow mt="sm" maw={700}>
-        <NumberInput label="Resíduo Comum" placeholder="Ex: 10.0"  rightSection="m³" {...form.getInputProps("residuoComum")} />
-        <NumberInput label="Resíduo Contaminado" placeholder="Ex: 2.0" rightSection="m³" {...form.getInputProps("residuoContaminado")} />
-        <TextInput label="Destinação e Transporte (CTR)" placeholder="Ex: Aterro sanitário" {...form.getInputProps("destinacaoResiduo")} />
+        <NumberInput withAsterisk label="Resíduo Comum" placeholder="Ex: 10.0"  rightSection="m³" {...form.getInputProps("residuoComum")} />
+        <NumberInput withAsterisk label="Resíduo Contaminado" placeholder="Ex: 2.0" rightSection="m³" {...form.getInputProps("residuoContaminado")} />
+        <TextInput withAsterisk label="Destinação e Transporte (CTR)" placeholder="Ex: Aterro sanitário" {...form.getInputProps("destinacaoResiduo")} />
     </Group>
     <Text fw={700} mt="md">Movimento de Solo</Text>
     <Text fw={700} mt="md">Escavação</Text>
@@ -566,7 +568,7 @@ const handleNextStep = () => {
         <TextInput style={{ flex: 1 }}withAsterisk  label="Perfil" placeholder="Ex: I, H, U" {...form.getInputProps(`metalicas.${index}.tipoPerfil`)} />
         <TextInput style={{ flex: 1 }}withAsterisk  label="Seção" placeholder="Ex: W150x24" {...form.getInputProps(`metalicas.${index}.secao`)} />
         <NumberInput style={{ flex: 1 }} withAsterisk label="Peso"  rightSection="KgF" {...form.getInputProps(`metalicas.${index}.peso`)} />
-        <TextInput style={{ flex: 1 }}  label="Elastômero" placeholder="Ex: Neoprene 10mm" {...form.getInputProps(`metalicas.${index}.elastomero`)} />
+        <NumberInput style={{ flex: 1 }}  label="Elastômero" {...form.getInputProps(`metalicas.${index}.elastomero`)} />
     <ActionIcon color="red" variant="subtle" mb={4} onClick={() => form.removeListItem("metalicas", index)}>
         <IconTrash size={16} />
     </ActionIcon>

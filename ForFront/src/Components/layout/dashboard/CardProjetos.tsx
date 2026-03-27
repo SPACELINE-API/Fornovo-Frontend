@@ -3,13 +3,14 @@ import { useNavigate } from 'react-router-dom';
 
 interface CardProps {
     nome: string,
+    id: string
     descricao: string,
     responsavel: string,
     status: string,
     data: string
 }
 
-function CardProjetos({ nome, descricao, responsavel, status, data }: CardProps) {
+function CardProjetos({ id, nome, descricao, responsavel, status, data }: CardProps) {
 
     const navigate = useNavigate();
 
@@ -22,7 +23,7 @@ function CardProjetos({ nome, descricao, responsavel, status, data }: CardProps)
     };
 
     return (
-        <div className={styles.cardProjetos} onClick={() => navigate('/detalhe/resumo')}>
+        <div className={styles.cardProjetos} onClick={() => navigate(`/detalhe/resumo/${id}`)}>
             <div className={`${styles.cardBarraLateral} ${styles[normalizarStatus(status)]}`}></div>
             <div className={styles.cardContainer}>
                 <div className={styles.cardTitulo}>
