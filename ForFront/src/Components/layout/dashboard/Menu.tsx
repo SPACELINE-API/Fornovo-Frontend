@@ -2,13 +2,15 @@ import styles from './dashCss/Menu.module.css';
 import { Globe, Pen, File, TableCellsSplit } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
-import { MoveLeft } from 'lucide-react';
+import { useState } from 'react';
+import ModalLevCampo from "../../../Pages/pagProjetos/CriarLevCampo";
 
 function Menu() {
 
     const navigate = useNavigate();
     const location = useLocation();
     const path = location.pathname;
+    const [openedAmbiente, setOpenedAmbiente] = useState(false);
 
     const selecionado = () => {
         if (path.includes("/resumo")) return "resumo";
@@ -21,6 +23,10 @@ function Menu() {
 
     return (
         <div className={styles.containerMenu}>
+             <ModalLevCampo
+                openedAmbiente={openedAmbiente}
+                onClose={() => setOpenedAmbiente(false)}
+            />
             <div className={styles.menu}>
                 <button
                     onClick={() => navigate('resumo')}
@@ -52,11 +58,12 @@ function Menu() {
                 </button>
 
                 <div className={styles.btnContainer}>
-                    <button onClick={() => navigate('/projetos')} className={styles.btnVoltar}><MoveLeft size={'18px'} />Voltar</button>
+                     <button className={styles.btnLevantamento} onClick={() => setOpenedAmbiente(true)}>+ Levantamento de Campo</button>
                 </div>
+
             </div>
         </div>
     )
+    
 }
-
 export default Menu;
