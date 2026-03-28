@@ -6,7 +6,7 @@ function PainelArquivos() {
         <div className={styles.painelArquivos}>
             <div className={styles.bloco}>
                 <div className={styles.tituloArquivo}>
-                    <Paperclip size={'20px'} />
+                    <Paperclip size={'17px'} />
                     <p>Arquivo CAD</p>
                 </div>
                 <div className={styles.botoesArquivo}>
@@ -15,7 +15,7 @@ function PainelArquivos() {
             </div>
             <div className={styles.bloco}>
                 <div className={styles.tituloArquivo}>
-                    <Paperclip size={'20px'} />
+                    <Paperclip size={'17px'} />
                     <p>Memorial de cálculo </p>
                 </div>
                 <div className={styles.botoesArquivo}>

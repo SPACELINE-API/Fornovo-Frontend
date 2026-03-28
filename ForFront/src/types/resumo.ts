@@ -11,6 +11,7 @@ export type Disjuntor = {
 export type Cabeamento = {
   circuito: string;
   comprimento: number;
+  tomadas : number
 };
 
 export type Ramal = {
@@ -29,45 +30,80 @@ export type Fundacao = {
   areaForma: number;
 };
 
+export type SuperEstrutura = {
+  tipo: string,
+  largura: number,
+  altura: number,
+  volumeConcreto: number,
+  pesoFerragem: number,
+  pesoEstribo: number,
+  areaForma: number
+}
+
+export type Metalicas = {
+  tipo: string,
+  tipoPerfil: string,
+  secao: string,
+  peso: number,
+  elastomero: number
+}
+
+export type Madeira = {
+  tipoPeca: string,
+  secao: string,
+  pesoTotal: number,
+  tipoTelhamento: number
+}
+
 export type Reservatorio = {
   tipo: string;
   capacidade: number;
 };
 
 export type Extintores = {
-  tipo : string,
-  peso : number,
-  capacidade : number
+  tipo: string,
+  peso: number,
+  capacidade: number
 }
 
 export type Hidrante = {
-  localizacao : string,
-  diametro : number,
-  conexoes : number
+  localizacao: string,
+  diametro: number,
+  conexoes: number
 }
 
 export type Dutos = {
-  diametro : number,
-  comprimento : number
+  diametro: string,
+  comprimento: number
 }
 
 export type Pecas = {
-  descricao : string,
-  secao : string
+  descricao: string,
+  secao: string
 }
 
 export type Volumes = {
   terraplanagem : number,
   escavacao : number,
   aterro : number,
+  enrocamento : number,
+  contencao : number,
+  taludamento : number,
+  nivelamento : number,
+  compactacao : number
 }
 
 export type LevantamentoDados = {
+
+  /*AMBIENTE*/
+
   nome: string;
   comprimento: number;
   largura: number;
   altura: number;
   area: number,
+
+  /*ELÉTRICA*/
 
   tomadas: number;
   iluminacao: number;
@@ -89,40 +125,45 @@ export type LevantamentoDados = {
   cameras: number;
 
   cabeamentos: Cabeamento[];
+
+  /* HIDRÁULICA */
+
   ramais: Ramal[];
-  registros : number;
-  valvulas : number;
-  conexoes : number;
-  extintores : Extintores[];
-  hidrantes : Hidrante[];
-  dutos : Dutos[];
-
+  registros: number;
+  valvulas: number;
+  conexoes: number;
   reservatorio: Reservatorio;
+  extintores: Extintores[];
+  hidrantes: Hidrante[];
+  dutos: Dutos[];
+  pecas: Pecas[];
 
-  containeres: number;
+  /* SERVIÇOS */
+
+  conteineres: number;
   banheirosQuimicos: number;
-  andaimes : number;
+  andaimes: number;
 
-  residuoComum : number,
-  residuoContaminado : number,
-  destinacaoResiduo : string
+  residuoComum: number,
+  residuoContaminado: number,
+  destinacaoResiduo: string
 
-  profundidadeEscavacao : number,
-  inclinacaoTerreno : number
-  escavacao : number
+  profundidadeEscavacao: number,
+  inclinacaoTerreno: number
+  escavacao: number
 
   volumes : Volumes;
-  enrocamento : number;
-  contencao : number;
-  taludamento : number;
-  nivelamento : number;
-  compactacao : number;
 
-  tipoEstrutura : string,
-  tipoTelhamento : string,
-  espessura : number,
-  inclinacao : number,
-  pecas : Pecas;
+  tipoEstrutura: string,
+  tipoTelhamento: string,
+  espessura: number,
+  inclinacao: number,
+
+  /* ESTRUTURA */
 
   fundacoes: Fundacao[];
+  superestrutura: SuperEstrutura[];
+  metalicas: Metalicas[];
+  madeira: Madeira[];
+
 };

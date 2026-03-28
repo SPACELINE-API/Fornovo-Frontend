@@ -6,7 +6,7 @@ import PainelArquivos from '../../Components/layout/paineis/painelArquivos';
 import PainelResponsaveis from '../../Components/layout/paineis/painelResponsaveis';
 import type { LevantamentoDados } from '../../types/resumo';
 import TabelaLevantamento from '../../Components/layout/paineis/tabelaLevantamento';
-import { FileText } from 'lucide-react';
+import { FileCog, FileText } from 'lucide-react';
 import api from '../../Services/apiService';
 import { useParams } from 'react-router-dom';
 import { capitalizar, formatarData, capitalizarNome } from '../../utils/formatos';
@@ -53,7 +53,7 @@ function Resumo() {
     useEffect(() => {
         async function dadosLevantamento() {
             try {
-                const response = await api.get(`calculos/form-levantamento/1`);
+                const response = await api.get(`calculos/form-levantamento/${id}`);
                 setLevantamento(response.data);
                 setVazio(false);
             }
@@ -72,7 +72,7 @@ function Resumo() {
 
     if (carregando || !projeto) {
         return (
-            <div>
+            <div style={{ marginTop: '50px' }}>
                 <p>Carregando informações do projeto...</p>
             </div>
         )
@@ -101,18 +101,18 @@ function Resumo() {
                         <PainelArquivos />
                         <div className={styles.containerLevantamento}>
                             <div className={styles.titulo}>
-                                <FileText size={'20px'} />
+                                <FileText size={'17px'} />
                                 <p>Levantamento de campo</p>
                             </div>
                             <Button style={{
-                                backgroundColor: '#34623f',
-                                color: '#fff',
+                                backgroundColor: '#ececec',
+                                color: '#34623f',
                                 padding: '8px',
                                 border: 'none',
                                 borderRadius: '3px',
                                 marginTop: '20px',
-                                fontSize: '0.8rem',
-                                fontWeight: '450',
+                                fontSize: '0.7rem',
+                                fontWeight: '550',
                                 height: 'auto'
                             }}
                                 onClick={() => setAberto(true)}>
@@ -126,7 +126,7 @@ function Resumo() {
                                 centered
                             >
                                 {vazio ? (
-                                    <p>Levantamento ainda não cadastrado.</p>
+                                    <p>Levantamento de campo ainda não cadastrado.</p>
                                 ) : levantamento ? (
                                     <TabelaLevantamento dados={levantamento} />
                                 ) : (
@@ -134,6 +134,9 @@ function Resumo() {
                                 )}
                             </Modal>
                         </div>
+                    </div>
+                    <div className={styles.containerBtnIA}>
+                        <button className={styles.btnIA}><FileCog size={'25px'}/></button>
                     </div>
                 </div>
             </div>

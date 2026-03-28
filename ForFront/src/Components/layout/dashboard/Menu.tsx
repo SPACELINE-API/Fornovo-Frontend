@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import ModalLevCampo from "../../../Pages/pagProjetos/CriarLevCampo";
+import ModalArquivos from '../../../Pages/pagProjetos/UploadArquivo';
 
 function Menu() {
 
@@ -11,6 +12,7 @@ function Menu() {
     const location = useLocation();
     const path = location.pathname;
     const [openedAmbiente, setOpenedAmbiente] = useState(false);
+    const [openedArquivo, setOpenedArquivo] = useState(false);
 
     const selecionado = () => {
         if (path.includes("/resumo")) return "resumo";
@@ -26,6 +28,10 @@ function Menu() {
              <ModalLevCampo
                 openedAmbiente={openedAmbiente}
                 onClose={() => setOpenedAmbiente(false)}
+            />
+            <ModalArquivos
+                openedArquivo={openedArquivo}
+                onClose={() => setOpenedArquivo(false)}
             />
             <div className={styles.menu}>
                 <button
@@ -58,7 +64,7 @@ function Menu() {
                 </button>
 
                 <div className={styles.btnContainer}>
-                     <button className={styles.btnLevantamento}>+ Arquivos</button>
+                     <button className={styles.btnLevantamento} onClick={() => setOpenedArquivo(true)}>+ Arquivos</button>
                      <button className={styles.btnLevantamento} onClick={() => setOpenedAmbiente(true)}>+ Levantamento de Campo</button>
                 </div>
 

@@ -18,7 +18,7 @@ function PainelResponsaveis({ dados }: PainelResponsaveisProps) {
                 {dados.map((pessoa, index) => (
                     <div key={index}>
                         <div className={styles.dadoTitulo}>
-                            <SquareUser size={'20px'} />
+                            <SquareUser size={'17px'} />
                             <p><strong>{pessoa.nome}</strong></p>
                         </div>
                         <p className={styles.dado}>{pessoa.funcao}</p>

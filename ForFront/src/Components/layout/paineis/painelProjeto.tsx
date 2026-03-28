@@ -18,28 +18,28 @@ function PainelProjeto({cliente, localizacao, dataInicio, prazo} : PainelProjeto
                 <div className={styles.containerGeral}>
                     <div className={styles.dadoContainerProjeto}>
                         <div className={styles.dadoTitulo}>
-                            <User size={'20px'} />
+                            <User size={'17px'} />
                             <p><strong>Cliente</strong></p>
                         </div>
                         <p className={styles.dado}>{cliente}</p>
                     </div>
                     <div className={styles.dadoContainerProjeto}>
                         <div className={styles.dadoTitulo}>
-                            <MapPin size={'20px'} />
+                            <MapPin size={'17px'} />
                             <p><strong>Localização</strong></p>
                         </div>
                         <p className={styles.dado}>{localizacao}</p>
                     </div>
                     <div className={styles.dadoContainerProjeto}>
                         <div className={styles.dadoTitulo}>
-                            <Calendar size={'20px'} />
+                            <Calendar size={'17px'} />
                             <p><strong>Data de início</strong></p>
                         </div>
                         <p className={styles.dado}>{dataInicio}</p>
                     </div>
                     <div className={styles.dadoContainerProjeto}>
                         <div className={styles.dadoTitulo}>
-                            <Calendar size={'20px'} />
+                            <Calendar size={'17px'} />
                             <p><strong>Prazo</strong></p>
                         </div>
                         <p className={styles.dado}>{prazo}</p>
