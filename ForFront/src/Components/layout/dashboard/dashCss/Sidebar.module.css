@@ -3,6 +3,11 @@
     src: url(../../../../assets/fontes/Kodchasan/Kodchasan-Regular.ttf) format('truetype');
 }
 
+@font-face {
+    font-family: 'Inter';
+    src: url(../../../../assets/fontes/Inter/Inter-Regular.ttf) format('truetype');
+}
+
 .sidebar {
     background-color: #ffffff;
     border-right: 1px solid #ababab;
@@ -55,7 +60,7 @@
 
 .navEscrito {
     font-size: 16px;
-    font-family: 'Kodchasan', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 500;
 }
 

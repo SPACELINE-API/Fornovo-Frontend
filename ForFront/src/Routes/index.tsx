@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import DashboardLayout from "../Components/layout/dashboard/dashboardLayout";
 import Home from "../Pages/Home.tsx";
-import Normas from "../Pages/Normas.tsx";
+import Normas from "../Pages/pagNormas/Normas.tsx";
 import ProjetoDetalhe from '../Pages/ProjetoDetalhe.tsx';
 import Resumo from '../Pages/detalhes/Resumo.tsx';
 import Calculo from '../Pages/detalhes/Calculo.tsx';
