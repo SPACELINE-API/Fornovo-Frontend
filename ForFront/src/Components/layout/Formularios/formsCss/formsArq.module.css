@@ -52,3 +52,7 @@
     align-items: center;
     gap: 5px;
 }
+
+.iconeExcluir {
+    cursor: pointer;
+}

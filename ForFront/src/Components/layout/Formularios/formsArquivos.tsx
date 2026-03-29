@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Group, Button, Text, Paper, Stack, Title, ActionIcon } from '@mantine/core';
+import { Box, Group, Button, Text, Paper, Stack, Title } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { notifications } from '@mantine/notifications';
 import { CloudUpload, FileText, Trash } from 'lucide-react';
@@ -131,9 +131,9 @@ const FormularioArquivos: React.FC<FormularioArquivosProps> = ({ onSubmitSuccess
                                         <FileText size={20} />
                                         <Text fw="500" size="sm">{arquivo.name}</Text>
                                     </div>
-                                    <ActionIcon color='none' size="xs" onClick={handleRemove}>
+                                    <div className={styles.iconeExcluir} onClick={handleRemove}>
                                         <Trash size={18} color="#ff00009f" />
-                                    </ActionIcon>
+                                    </div>
                                 </div>
                             </Paper>
                         ) : (
