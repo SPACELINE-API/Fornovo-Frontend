@@ -69,11 +69,6 @@
   font-weight: 500 !important;
   transition: 0.2s;
 }
-.btnConfirm:hover {
-  background-color: #017c1e !important;
-  border-color: #017c1e !important;
-  color: white !important;
-}
 
 .btnCancel {
   background-color: #f6f8fa !important;

@@ -163,11 +163,12 @@ const FormularioProjeto: React.FC<FormularioProjetoProps> = ({
           message: 'Projeto salvo no banco de dados.',
           color: 'green',
           position: 'bottom-left',
+          autoClose: 3500,
         });
         if (onSubmitSuccess) {
           setTimeout(() => {
             onSubmitSuccess('OK');
-          }, 1000);
+          }, 2000);
         }
       }
     } catch (error: any) {
@@ -176,12 +177,12 @@ const FormularioProjeto: React.FC<FormularioProjetoProps> = ({
         message: error.response?.data?.erro || 'Verifique os dados e tente novamente.',
         color: 'red',
         position: 'bottom-left',
-        autoClose: 3000,
+        autoClose: 3500,
       });
 
       setTimeout(() => {
         if (onCancel) onCancel();
-      }, 1000);
+      }, 500);
     } finally {
       setLoading(false);
     }
