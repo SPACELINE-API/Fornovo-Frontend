@@ -1,0 +1,87 @@
+.uploadButton {
+  background-color: #34623F !important;
+}
+
+.uploadButton:hover {
+  background-color: #2a4e32 !important;
+}
+
+.tabsTitulo {
+  transition: all 0.2s ease;
+}
+
+.tabsTitulo[data-active] {
+  font-weight: 600;
+  color: #0a4b18 !important;
+  border-bottom-color: #0a4b18;
+}
+
+.tableContainer {
+  height: auto;
+  border: 1px solid #e9ecef;
+  border-radius: 5px;
+}
+
+.stickyHeader thead {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 2;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.modalRoot {
+  border-radius: 6px !important;
+  box-shadow: 0 8px 24px rgba(149, 157, 165, 0.2) !important;
+  border: 1px solid #d0d7de !important;
+}
+
+.modalHeader {
+  padding: 16px 20px !important;
+  border-bottom: 1px solid #d0d7de !important;
+  margin-bottom: 0 !important;
+  background-color: #f6f8fa;
+}
+
+.modalTitle {
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  color: #1f2328 !important;
+}
+
+.modalBody {
+  padding: 24px 20px !important;
+  line-height: 1.5 !important;
+  color: #444 !important;
+}
+
+.modalFooter {
+  padding: 12px 20px !important;
+  border-top: 1px solid #d0d7de !important;
+  background-color: #f6f8fa;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.btnConfirm {
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+  transition: 0.2s;
+}
+.btnConfirm:hover {
+  background-color: #017c1e !important;
+  border-color: #017c1e !important;
+  color: white !important;
+}
+
+.btnCancel {
+  background-color: #f6f8fa !important;
+  border: 1px solid #d0d7de !important;
+  color: #1f2328 !important;
+  border-radius: 6px !important;
+}
+
+.btnCancel:hover {
+  background-color: #ebeff2 !important;
+}
