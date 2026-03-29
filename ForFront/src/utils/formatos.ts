@@ -14,7 +14,10 @@ export const maiusculas = (texto: string) => {
     return texto.toUpperCase();
 };
 
-export const formatarData = (data: string) => {
-    const [ano, mes, dia] = data.split('-');
-    return `${dia}/${mes}/${ano}`;
+export const formatarData = (data: string | null) => {
+    if (data) {
+        const [ano, mes, dia] = data.split('-');
+        return `${dia}/${mes}/${ano}`;
+    }
+    return ""
 };

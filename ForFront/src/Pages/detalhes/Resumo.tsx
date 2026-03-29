@@ -30,6 +30,8 @@ function Resumo() {
     const [levantamento, setLevantamento] = useState<LevantamentoDados | null>(null);
     const [vazio, setVazio] = useState(true);
 
+    console.log(levantamento);
+
     const { id } = useParams();
 
     useEffect(() => {
@@ -98,7 +100,7 @@ function Resumo() {
                     </div>
                     <div className={styles.containerDireito}>
                         <h3>Arquivos associados</h3>
-                        <PainelArquivos />
+                        <PainelArquivos projeto_id={(id)} />
                         <div className={styles.containerLevantamento}>
                             <div className={styles.titulo}>
                                 <FileText size={'17px'} />

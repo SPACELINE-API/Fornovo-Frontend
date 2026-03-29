@@ -3,33 +3,33 @@ import styles from "./projCss/criarProj.module.css";
 import FormularioArquivos from "../../Components/layout/Formularios/formsArquivos";
 
 interface ModalArquivos {
-  openedArquivo: boolean;
-  onClose: () => void;
+    openedArquivo: boolean;
+    onClose: () => void;
 }
 
-export default function ModalArquivos ({ openedArquivo, onClose }: ModalArquivos ) {
-  return (
-    <Modal 
-      radius="8px"
-      opened={openedArquivo} 
-      onClose={onClose} 
-      title="Upload arquivos" 
-      size="600px" 
-      padding="lg"
-      centered
-      zIndex={5000} 
-      overlayProps={{
-        backgroundOpacity: 0.55,
-        blur: 3,
-      }}
-      classNames={{ title: styles.modalLabel }}
-    >
-      <FormularioArquivos
-        onSubmitSuccess={() => {
-          onClose();
-        }} 
-        onCancel={onClose} 
-      />
-    </Modal>
-  );
+export default function ModalArquivos({ openedArquivo, onClose }: ModalArquivos) {
+    return (
+        <Modal
+            radius="8px"
+            opened={openedArquivo}
+            onClose={onClose}
+            title="Upload arquivo"
+            size="600px"
+            padding="lg"
+            centered
+            zIndex={5000}
+            overlayProps={{
+                backgroundOpacity: 0.55,
+                blur: 3,
+            }}
+            classNames={{ title: styles.modalLabel }}
+        >
+            <FormularioArquivos
+                onSubmitSuccess={() => {
+                    onClose();
+                }}
+                onCancel={onClose}
+            />
+        </Modal>
+    );
 }

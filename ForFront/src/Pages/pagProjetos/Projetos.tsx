@@ -14,7 +14,7 @@ interface Projeto {
   descricao: string,
   status: string,
   engenheiro_nome: string,
-  data_fim: string
+  data_fim: string | null
 }
 
 export default function Projetos() {

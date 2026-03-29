@@ -1,7 +1,11 @@
 import styles from './Painel.module.css';
 import { Paperclip } from 'lucide-react';
 
-function PainelArquivos() {
+interface ArquivoProps {
+    projeto_id: string | undefined
+}
+
+function PainelArquivos({ projeto_id }: ArquivoProps) {
     return (
         <div className={styles.painelArquivos}>
             <div className={styles.bloco}>
@@ -10,7 +14,10 @@ function PainelArquivos() {
                     <p>Arquivo CAD</p>
                 </div>
                 <div className={styles.botoesArquivo}>
-                    <button className={styles.btnArquivo}>Visualizar</button>
+                    <button className={styles.btnArquivo}
+                        onClick={() => {
+                            window.open(`http://localhost:8000/api/projetos/buscarArquivo/${projeto_id}`);
+                        }}>Download</button>
                 </div>
             </div>
             <div className={styles.bloco}>

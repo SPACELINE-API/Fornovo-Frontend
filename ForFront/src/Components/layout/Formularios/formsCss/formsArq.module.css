@@ -35,3 +35,20 @@
     align-items: center;
     align-self: center;
 }
+
+.arquivoSelecionado {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: #f1fff6;
+    padding: 18px 16px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.listaArquivo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}

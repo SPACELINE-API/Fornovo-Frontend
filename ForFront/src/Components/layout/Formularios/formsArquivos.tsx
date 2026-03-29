@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
-import { Box, Group, Button, Text, Paper, Stack, ActionIcon, Badge, Title } from '@mantine/core';
+import { Box, Group, Button, Text, Paper, Stack, Title, ActionIcon } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { notifications } from '@mantine/notifications';
-import { CloudUpload } from 'lucide-react';
+import { CloudUpload, FileText, Trash } from 'lucide-react';
 import styles from './formsCss/formsArq.module.css';
+import api from '../../../Services/apiService';
+import { useParams } from 'react-router-dom';
 
 export interface Arquivo {
     nome: string;
     caminho: string;
     tipo: string;
     hash: string;
+    projeto_id: string;
 }
 
 interface FormularioArquivosProps {
-    onSubmitSuccess: (dados: Arquivo[]) => void;
+    onSubmitSuccess: (arquivo: Arquivo) => void;
     onCancel: () => void;
 }
 
@@ -27,62 +30,67 @@ const MIME_DXF_DWG = {
     'application/dwg': ['.dwg'],
 };
 
-async function calcularHash(arquivo: File): Promise<string> {
-    const buffer = await arquivo.arrayBuffer();
-    const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
-}
-
-function extensaoValida(file: File): boolean {
-    const extensao = file.name.split('.').pop()?.toLowerCase();
+function extensaoValida(arquivo: File): boolean {
+    const extensao = arquivo.name.split('.').pop()?.toLowerCase();
     return extensao === 'dxf' || extensao === 'dwg';
 }
 
 const FormularioArquivos: React.FC<FormularioArquivosProps> = ({ onSubmitSuccess, onCancel }) => {
-    const [arquivos, setArquivos] = useState<File[]>([]);
+    const [arquivo, setArquivo] = useState<File | null>(null);
     const [erroArquivo, setErroArquivo] = useState<string | null>(null);
     const [carregando, setCarregando] = useState(false);
 
-    const handleDrop = (files: File[]) => {
+    const { id } = useParams();
+
+    const handleDrop = (arquivo: File[]) => {
         setErroArquivo(null);
 
-        const validos = files.filter(extensaoValida);
+        const arquivoSelecionado = arquivo[0];
 
-        setArquivos(prev => [...prev, ...validos]);
+        if (extensaoValida(arquivoSelecionado)) {
+            setArquivo(arquivoSelecionado);
+            return;
+        }
+
+        setErroArquivo("Arquivo inválido. Apenas arquivos no formato DXF e DWG são aceitos.")
     };
 
-    const handleRemover = (index: number) => {
-        setArquivos(prev => prev.filter((_, i) => i !== index));
+    const handleRemove = () => {
+        setArquivo(null);
         setErroArquivo(null);
     };
 
     const handleSubmit = async () => {
-        if (arquivos.length === 0) {
+        if (!arquivo) {
             setErroArquivo('Selecione ao menos um arquivo DXF ou DWG antes de continuar.');
+            return;
+        }
+
+        if (!id) {
+            setErroArquivo('Projeto não cadastrado.');
             return;
         }
 
         setCarregando(true);
         try {
-            const resultados: Arquivo[] = await Promise.all(
-                arquivos.map(async (arquivo) => {
-                    const hash = await calcularHash(arquivo);
-                    return {
-                        nome: arquivo.name,
-                        caminho: arquivo.webkitRelativePath || arquivo.name,
-                        tipo: arquivo.type || `.${arquivo.name.split('.').pop()}`,
-                        hash,
-                    };
-                })
-            );
+            const formData = new FormData();
 
-            notifications.show({
-                title: 'Arquivos enviados!',
-                message: `${resultados.length} arquivo(s) enviado(s) com sucesso.`,
+            formData.append('arquivo', arquivo as File);
+            formData.append('projeto_id', id);
+
+            const response = await api.post('projetos/upload-arquivo', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                transformRequest: (data) => data
             });
 
-            onSubmitSuccess(resultados);
+            notifications.show({
+                title: 'Arquivo enviado!',
+                message: 'Arquivo enviado com sucesso.',
+            });
+
+            onSubmitSuccess(response.data);
         } catch (err) {
             notifications.show({
                 title: 'Erro ao processar arquivo',
@@ -96,33 +104,68 @@ const FormularioArquivos: React.FC<FormularioArquivosProps> = ({ onSubmitSuccess
 
     return (
         <Box>
-            <Title style={{ fontSize: '0.9rem' }}>
+            <Title fz="md">
                 Arquivo CAD (DXF / DWG)
-                <span style={{ color: 'red' }}>*</span>
+                <span color='red'>*</span>
             </Title>
             <Stack>
                 <Dropzone
                     onDrop={handleDrop}
-                    onReject={() => setErroArquivo('Arquivo não aceito. Use .dxf ou .dwg.')}
+                    onReject={() => setErroArquivo('Arquivo inválido. Apenas arquivos no formato DXF e DWG são aceitos.')}
                     accept={MIME_DXF_DWG}
-                    multiple={true}
+                    multiple={false}
                     loading={carregando}
                     className={styles.dropContainer}
                 >
                     <div className={styles.arquivoContainer}>
                         <CloudUpload className={styles.icone} size={20} strokeWidth={2.5} />
-                        <Text ta="center" style={{ marginTop: '5px', fontWeight: '500', fontSize: '1rem' }}>Pesquise ou arraste seus arquivos DXF/DWG aqui</Text>
-                        <Text ta="center" style={{ fontWeight: '200', fontSize: '0.8rem' }}>Clique ou arraste seu arquivo aqui</Text>
+                        <Text ta="center" fw="500" fz="md" mt="5px">Pesquise ou arraste seu arquivo DXF/DWG aqui</Text>
+                        <Text ta="center" fw="200" fz="sm">Clique ou arraste seu arquivo aqui</Text>
                     </div>
+
+                    <Group grow>
+                        {arquivo ? (
+                            <Paper p="sm">
+                                <div className={styles.arquivoSelecionado}>
+                                    <div className={styles.listaArquivo}>
+                                        <FileText size={20} />
+                                        <Text fw="500" size="sm">{arquivo.name}</Text>
+                                    </div>
+                                    <ActionIcon color='none' size="xs" onClick={handleRemove}>
+                                        <Trash size={18} color="#ff00009f" />
+                                    </ActionIcon>
+                                </div>
+                            </Paper>
+                        ) : (
+                            <Paper p="sm">
+                                <div className={styles.arquivoSelecionado}>
+                                    <Group justify="space-between">
+                                        <div className={styles.listaArquivo}>
+                                            <FileText color="#adb5bd" size={20} />
+                                            <Text fw="500" color="#adb5bd" size="sm" >Nenhum arquivo selecionado</Text>
+                                        </div>
+                                    </Group>
+                                </div>
+                            </Paper>
+                        )}
+                    </Group>
+                    {erroArquivo && (
+                        <Text color="red" size="sm" mt={5} ta="center">
+                            {erroArquivo}
+                        </Text>
+                    )}
                 </Dropzone>
 
-                <Group justify="flex-end" style={ { marginTop: '20px'} }>
+                <Group justify="flex-end" style={{ marginTop: '20px' }}>
                     <Button variant="default" onClick={onCancel}>
                         Cancelar
                     </Button>
                     <Button
+                        style={{
+                            backgroundColor: "#34623f"
+                        }}
                         onClick={handleSubmit}
-                        disabled={arquivos.length === 0}
+                        disabled={!arquivo}
                         loading={carregando}
                     >
                         Salvar
