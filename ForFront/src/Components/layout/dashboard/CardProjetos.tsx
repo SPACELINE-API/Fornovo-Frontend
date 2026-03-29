@@ -2,9 +2,10 @@ import styles from './dashCss/cardProjetos.module.css';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { Menu, ActionIcon, Modal, TextInput, Button, Group, Text } from '@mantine/core';
-import { Ellipsis, Trash2 } from 'lucide-react';
+import { Edit, Ellipsis, Trash2 } from 'lucide-react';
 import logo from '../../../assets/imagens/Logofnv.png';
 import api from '../../../Services/apiService';
+import type { Projeto } from '../../../Pages/pagProjetos/Projetos';
 
 interface CardProps {
   nome: string;
@@ -14,6 +15,8 @@ interface CardProps {
   status: string;
   data: string | null;
   atualizarProjetos?: () => void;
+  projeto: Projeto;
+  abrirEditarProjeto: (projeto: Projeto) => void;
 }
 
 function CardProjetos({
@@ -24,6 +27,8 @@ function CardProjetos({
   status,
   data,
   atualizarProjetos,
+  projeto,
+  abrirEditarProjeto,
 }: CardProps) {
   const navigate = useNavigate();
 
@@ -40,31 +45,18 @@ function CardProjetos({
   };
 
   const formatarData = (data?: string | null) => {
-    if (!data) return 'Sem prazo definido';
-
-    if (data === '' || data === '0000-00-00' || data === 'Invalid Date' || data === 'null') {
-      return 'Sem prazo definido';
-    }
-
+    if (!data || data === 'null' || data === '0000-00-00') return 'Sem prazo definido';
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(data)) return data;
     if (data.includes('-')) {
-      const partes = data.split('-');
-
+      const partes = data.split('T')[0].split('-');
       if (partes.length === 3) {
         const [ano, mes, dia] = partes;
-
-        if (ano === '0000') return 'Sem prazo definido';
-
         return `${dia}/${mes}/${ano}`;
       }
     }
 
     const dateObj = new Date(data);
-
-    if (isNaN(dateObj.getTime())) {
-      return 'Sem prazo definido';
-    }
-
-    return dateObj.toLocaleDateString('pt-BR');
+    return isNaN(dateObj.getTime()) ? 'Sem prazo definido' : dateObj.toLocaleDateString('pt-BR');
   };
 
   const excluirProjeto = async () => {
@@ -113,7 +105,7 @@ function CardProjetos({
           Para confirmar a exclusão, digite a palavra abaixo:
         </Text>
 
-        <Group mb="sm" justify='center'>
+        <Group mb="sm" justify="center">
           <span className={styles.textoConfirmacao}>'Excluir'</span>
         </Group>
 
@@ -175,7 +167,15 @@ function CardProjetos({
                 <Menu.Dropdown>
                   <Menu.Label>Ações</Menu.Label>
 
-                  <Menu.Item>Editar</Menu.Item>
+                  <Menu.Item
+                    leftSection={<Edit size={14} />}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      abrirEditarProjeto(projeto);
+                    }}
+                  >
+                    Editar
+                  </Menu.Item>
 
                   <Menu.Sub openDelay={120} closeDelay={150}>
                     <Menu.Sub.Target>

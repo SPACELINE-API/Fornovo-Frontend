@@ -17,7 +17,7 @@ import { Check } from 'lucide-react';
 import { z } from 'zod';
 import api from '../../../Services/apiService';
 
-export interface Projeto {
+export interface ProjetoFormsData {
   id: number;
   nome_projeto: string;
   cliente: string;
@@ -25,10 +25,10 @@ export interface Projeto {
   cidade: string;
   estado: string;
   bairro: string;
-  numero?: string;
+  numero?: number;
   responsavel: string[];
-  data_inicio: string | null;
-  data_fim?: string | null;
+  data_inicio: Date | null;
+  data_fim?: Date | null;
   status: 'Pendente' | 'Em andamento' | 'Em Revisão' | 'Concluído';
 }
 
@@ -63,7 +63,7 @@ const projetoSchema = z
   );
 
 interface FormularioProjetoProps {
-  initialData?: Projeto | null;
+  initialData?: ProjetoFormsData | null;
   onSubmitSuccess?: (msg: string) => void;
   onCancel?: () => void;
 }
@@ -80,15 +80,16 @@ const FormularioProjeto: React.FC<FormularioProjetoProps> = ({
     [],
   );
 
-  const form = useForm({
+  const form = useForm<ProjetoFormsData>({
     initialValues: {
+      id: initialData?.id || 0,
       nome_projeto: initialData?.nome_projeto || '',
       cliente: initialData?.cliente || '',
       descricao: initialData?.descricao || '',
       cidade: initialData?.cidade || '',
       estado: initialData?.estado || '',
       bairro: initialData?.bairro || '',
-      numero: initialData?.numero || '',
+      numero: initialData?.numero || 0,
       responsavel: [],
       data_inicio: null as any,
       data_fim: null as any,
@@ -114,6 +115,25 @@ const FormularioProjeto: React.FC<FormularioProjetoProps> = ({
     setOpcoesFuncionarios(funcs.map((f: any) => ({ value: f.nome, label: f.nome })));
   }, []);
 
+  useEffect(() => {
+    if (initialData) {
+      form.setValues({
+        nome_projeto: initialData.nome_projeto || '',
+        cliente: initialData.cliente || '',
+        descricao: initialData.descricao || '',
+        cidade: initialData.cidade || '',
+        estado: initialData.estado || '',
+        bairro: initialData.bairro || '',
+        numero: initialData.numero || 0,
+        responsavel: initialData.responsavel || [],
+        data_inicio: initialData.data_inicio ? new Date(initialData.data_inicio) : null,
+        data_fim: initialData.data_fim ? new Date(initialData.data_fim) : null,
+        status: initialData.status || 'Pendente',
+      });
+    }
+  }, [initialData]);
+
+
   const handleNextStep = () => {
     const camposPasso0 = ['nome_projeto', 'cliente', 'descricao'];
     const camposPasso1 = ['cidade', 'estado', 'bairro'];
@@ -134,15 +154,18 @@ const FormularioProjeto: React.FC<FormularioProjetoProps> = ({
     } else if (active === 2) {
       const temErro = camposPasso2.some((campo) => form.validateField(campo).hasError);
       if (!temErro) {
-        form.onSubmit(handleSubmit)();
+        handleSubmit(form.values);
       }
     }
   };
 
   const handleSubmit = async (values: typeof form.values) => {
     setLoading(true);
+
     try {
-      const enderecoCompleto = `${values.bairro}, ${values.cidade} - ${values.estado}${values.numero ? ', ' + values.numero : ''}`;
+      const enderecoCompleto = `${values.bairro}, ${values.cidade} - ${values.estado}${
+        values.numero ? ', ' + values.numero : ''
+      }`;
 
       const payload = {
         ...values,
@@ -154,21 +177,32 @@ const FormularioProjeto: React.FC<FormularioProjetoProps> = ({
         data_fim:
           values.data_fim instanceof Date ? values.data_fim.toISOString().split('T')[0] : null,
       };
-      const response = await api.post('projetos/cadastrarProjeto', payload);
 
-      if (response.status === 201 || response.status === 200) {
+      let response;
+
+      if (initialData?.id) {
+        response = await api.patch(`projetos/atualizarProjeto/${initialData.id}`, payload);
+      } else {
+        response = await api.post('projetos/cadastrarProjeto', payload);
+      }
+
+      if (response.status === 200 || response.status === 201) {
         setSucesso(true);
+
         notifications.show({
           title: 'Sucesso!',
-          message: 'Projeto salvo no banco de dados.',
+          message: initialData
+            ? 'Projeto atualizado com sucesso.'
+            : 'Projeto salvo no banco de dados.',
           color: 'green',
           position: 'bottom-left',
           autoClose: 3500,
         });
+
         if (onSubmitSuccess) {
           setTimeout(() => {
             onSubmitSuccess('OK');
-          }, 2000);
+          }, 1500);
         }
       }
     } catch (error: any) {
@@ -245,7 +279,7 @@ const FormularioProjeto: React.FC<FormularioProjetoProps> = ({
               required
               {...form.getInputProps('bairro')}
             />
-            <TextInput label="Número" placeholder="Ex: 1000" {...form.getInputProps('numero')} />
+            <TextInput type='Number' label="Número" placeholder="Ex: 1000" {...form.getInputProps('numero')} />
           </SimpleGrid>
         </Stepper.Step>
 
