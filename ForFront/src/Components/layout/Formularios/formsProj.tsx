@@ -22,6 +22,7 @@ export interface ProjetoFormsData {
   nome_projeto: string;
   cliente: string;
   descricao: string;
+  cep: string;
   cidade: string;
   estado: string;
   bairro: string;
@@ -37,6 +38,7 @@ const projetoSchema = z
     nome_projeto: z.string().min(1, 'Nome é obrigatório'),
     cliente: z.string().min(1, 'Cliente é obrigatório'),
     descricao: z.string().min(1, 'Descrição é obrigatória'),
+    cep: z.string().regex(/^\d{5}-\d{3}$/, 'CEP é obrigatório e deve estar no formato 00000-000'),
     cidade: z.string().min(1, 'Cidade é obrigatória'),
     estado: z.string().min(2, 'UF inválida').max(2, 'Use apenas a sigla'),
     bairro: z.string().min(1, 'Bairro é obrigatório'),
@@ -76,6 +78,7 @@ const FormularioProjeto: React.FC<FormularioProjetoProps> = ({
   const [active, setActive] = useState(0);
   const [loading, setLoading] = useState(false);
   const [sucesso, setSucesso] = useState(false);
+  const [loadingCep, setLoadingCep] = useState(false);
   const [opcoesFuncionarios, setOpcoesFuncionarios] = useState<{ value: string; label: string }[]>(
     [],
   );
@@ -86,6 +89,7 @@ const FormularioProjeto: React.FC<FormularioProjetoProps> = ({
       nome_projeto: initialData?.nome_projeto || '',
       cliente: initialData?.cliente || '',
       descricao: initialData?.descricao || '',
+      cep: initialData?.cep || '',
       cidade: initialData?.cidade || '',
       estado: initialData?.estado || '',
       bairro: initialData?.bairro || '',
@@ -121,6 +125,7 @@ const FormularioProjeto: React.FC<FormularioProjetoProps> = ({
         nome_projeto: initialData.nome_projeto || '',
         cliente: initialData.cliente || '',
         descricao: initialData.descricao || '',
+        cep: initialData.cep || '',
         cidade: initialData.cidade || '',
         estado: initialData.estado || '',
         bairro: initialData.bairro || '',
@@ -132,6 +137,51 @@ const FormularioProjeto: React.FC<FormularioProjetoProps> = ({
       });
     }
   }, [initialData]);
+
+  const handleCepBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+    const cep = e.target.value.replace(/\D/g, '');
+    if (cep.length !== 8) return;
+
+    setLoadingCep(true);
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const data = await response.json();
+
+      if (data.erro) {
+        notifications.show({
+          title: 'CEP não encontrado',
+          message: 'Verifique o número digitado.',
+          color: 'yellow',
+        });
+
+        return;
+      }
+
+      form.setFieldValue('cidade', data.localidade || '');
+      form.setFieldValue('estado', data.uf || '');
+      form.setFieldValue('bairro', data.bairro || '');
+
+      form.clearFieldError('cidade');
+      form.clearFieldError('estado');
+      form.clearFieldError('bairro');
+    } catch (error) {
+      notifications.show({
+        title: 'Erro na busca',
+        message: 'Não foi possível buscar o CEP.',
+        color: 'red',
+      });
+    } finally {
+      setLoadingCep(false);
+    }
+  };
+
+
+  const maskCEP = (value: string) => {
+    return value
+      .replace(/\D/g, '')
+      .replace(/^(\d{5})(\d)/, '$1-$2')
+      .slice(0, 9);
+  };
 
 
   const handleNextStep = () => {
@@ -256,7 +306,23 @@ const FormularioProjeto: React.FC<FormularioProjetoProps> = ({
         </Stepper.Step>
 
         <Stepper.Step label="Local" description="Onde é?">
-          <SimpleGrid cols={2} mt="md">
+          <SimpleGrid cols={1} mt="md">
+            <TextInput
+              label="CEP"
+              required
+              placeholder="00000-000"
+              maxLength={9}
+              rightSection={loadingCep ? <Box className="loader" /> : null}
+              {...form.getInputProps('cep')}
+              onBlur={(event) => {
+                form.getInputProps('cep').onBlur(event);
+                handleCepBlur(event);
+              }}
+              onChange={(event) => {
+                const value = maskCEP(event.currentTarget.value);
+                form.setFieldValue('cep', value);
+              }}
+            />
             <TextInput
               label="Cidade"
               placeholder="Ex: São José dos Campos"
@@ -279,7 +345,12 @@ const FormularioProjeto: React.FC<FormularioProjetoProps> = ({
               required
               {...form.getInputProps('bairro')}
             />
-            <TextInput type='Number' label="Número" placeholder="Ex: 1000" {...form.getInputProps('numero')} />
+            <TextInput
+              type="Number"
+              label="Número"
+              placeholder="Ex: 1000"
+              {...form.getInputProps('numero')}
+            />
           </SimpleGrid>
         </Stepper.Step>
 
