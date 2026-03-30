@@ -6,29 +6,32 @@ import BarraPesquisa from '../../Components/layout/dashboard/BarraPesquisa';
 import CardProjetos from '../../Components/layout/dashboard/CardProjetos';
 import Dropdown from '../../Components/layout/dashboard/Dropdown';
 import api from '../../Services/apiService';
-import { capitalizar, capitalizarNome, formatarData, maiusculas } from '../../utils/formatos';
+import { capitalizar, capitalizarNome, maiusculas } from '../../utils/formatos';
+import ModalEditarProjeto from './editarProjeto';
+import type { ProjetoFormsData } from '../../Components/layout/Formularios/formsProj';
 
-interface Projeto {
-  id_projeto : string,
-  nome_projeto: string,
-  descricao: string,
-  status: string,
-  engenheiro_nome: string,
-  data_fim: string | null
+export interface Projeto {
+  id_projeto: string;
+  nome_projeto: string;
+  descricao: string;
+  status: string;
+  engenheiro_nome: string;
+  data_fim: string;
+  localizacao: string;
 }
 
 export default function Projetos() {
   const [opened, setOpened] = useState(false);
   const [busca, setBusca] = useState('');
   const [filtro, setFiltro] = useState('');
-
+  const [projetoSelecionado, setProjetoSelecionado] = useState<ProjetoFormsData | null>(null);
+  const [modalEditarOpened, setModalEditarOpened] = useState(false);
   const [projetos, setProjetos] = useState<Projeto[]>([]);
   const [carregando, setCarregando] = useState(true);
 
   const buscarProjetos = async () => {
     try {
       const response = await api.get('projetos/listarProjetos');
-
       setProjetos(response.data);
 
       localStorage.setItem('projetos', JSON.stringify(response.data));
@@ -39,6 +42,42 @@ export default function Projetos() {
     }
   };
 
+  const abrirEditarProjeto = (projeto: Projeto) => {
+    let bairro = '';
+    let cidade = '';
+    let estado = '';
+    let numero = '';
+
+    if (projeto.localizacao) {
+      const partes = projeto.localizacao.split(', ');
+      bairro = partes[0] || '';
+      if (partes[1]) {
+        const cidadeEstado = partes[1].split(' - ');
+        cidade = cidadeEstado[0] || '';
+        estado = cidadeEstado[1] || '';
+      }
+
+      numero = partes[2] || '';
+    }
+
+    const projetoConvertido: any = {
+      ...projeto,
+      id: projeto.id_projeto,
+      nome_projeto: projeto.nome_projeto,
+      descricao: projeto.descricao,
+      bairro: bairro,
+      cidade: cidade,
+      estado: estado,
+      numero: numero,
+      responsavel: projeto.engenheiro_nome ? [projeto.engenheiro_nome] : [],
+      data_inicio: null, 
+      data_fim: projeto.data_fim ? new Date(projeto.data_fim + 'T00:00:00') : null,
+      status: projeto.status,
+    };
+
+    setProjetoSelecionado(projetoConvertido);
+    setModalEditarOpened(true);
+  };
 
   useEffect(() => {
     const projetosSalvos = localStorage.getItem('projetos');
@@ -51,7 +90,6 @@ export default function Projetos() {
     buscarProjetos();
   }, []);
 
-
   const normalizarStatus = (status: string) => {
     return status
       .toLowerCase()
@@ -59,7 +97,6 @@ export default function Projetos() {
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/\s/g, '');
   };
-
 
   const projetosFiltrados = projetos.filter((projeto) => {
     const nomeMatch = projeto.nome_projeto.toLowerCase().includes(busca.toLowerCase());
@@ -69,7 +106,6 @@ export default function Projetos() {
 
     return nomeMatch && statusMatch;
   });
-
 
   if (carregando && projetos.length === 0) {
     return (
@@ -100,6 +136,13 @@ export default function Projetos() {
             setOpened(false);
           }}
           atualizarProjetos={buscarProjetos}
+        />
+
+        <ModalEditarProjeto
+          opened={modalEditarOpened}
+          onClose={() => setModalEditarOpened(false)}
+          atualizarProjetos={buscarProjetos}
+          projeto={projetoSelecionado}
         />
 
         <div className={styles.containerProjetos}>
@@ -178,6 +221,12 @@ export default function Projetos() {
           }}
           atualizarProjetos={buscarProjetos}
         />
+        <ModalEditarProjeto
+          opened={modalEditarOpened}
+          onClose={() => setModalEditarOpened(false)}
+          atualizarProjetos={buscarProjetos}
+          projeto={projetoSelecionado}
+        />
 
         <div className={styles.containerProjetos}>
           {projetosFiltrados.map((projeto) => (
@@ -188,8 +237,10 @@ export default function Projetos() {
               descricao={capitalizar(projeto.descricao)}
               status={maiusculas(projeto.status)}
               responsavel={capitalizarNome(projeto.engenheiro_nome)}
-              data={formatarData(projeto.data_fim)}
+              data={projeto.data_fim}
               atualizarProjetos={buscarProjetos}
+              projeto={projeto}
+              abrirEditarProjeto={abrirEditarProjeto}
             />
           ))}
         </div>
