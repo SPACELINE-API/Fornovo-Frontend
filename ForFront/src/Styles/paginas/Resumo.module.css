@@ -1,0 +1,72 @@
+.containerDetalhes {
+    padding: 25px;
+}
+
+.containerConteudo {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 3%;
+    align-items: flex-start;
+    position: relative;
+    width: 70vw;
+}
+
+.containerEsquerdo {
+    display: flex;
+    flex-direction: column;
+    width: 65%;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.containerDireito {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 28%;
+    gap: 20px;
+}
+
+.containerLevantamento {
+    border: 1px solid #dfdfdf;
+    border-radius: 3px;
+    padding: 20px;
+    font-size: 0.8rem;
+}
+
+.bloco {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.status {
+    color: #34623F;
+}
+
+.titulo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+}
+
+.containerBtnIA {
+    display: flex;
+    align-self: flex-end;
+    border-radius: 50%;
+    position: fixed;
+    right: 0;
+    padding: 40px;
+}
+
+.btnIA {
+    border-radius: 50%;
+    border: none;
+    padding: 10px;
+    background-color: #34623F;
+    color: #fff;
+    cursor: pointer;
+    width: 50px;
+}
