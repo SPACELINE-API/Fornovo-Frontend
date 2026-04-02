@@ -140,7 +140,7 @@ function CardProjetos({
         </Group>
       </Modal>
 
-      <div className={styles.cardProjetos} onClick={() => navigate(`/detalhe/resumo/${id}`)}>
+      <div className={styles.cardProjetos} onClick={() => navigate(`/detalhe/${id}/resumo`)}>
         <div className={`${styles.cardBarraLateral} ${styles[normalizarStatus(status)]}`}></div>
 
         <img src={logo} alt="Logo" className={styles.cardLogo} />

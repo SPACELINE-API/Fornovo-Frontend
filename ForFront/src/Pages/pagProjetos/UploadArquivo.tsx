@@ -2,12 +2,21 @@ import { Modal } from "@mantine/core";
 import styles from "./projCss/criarProj.module.css";
 import FormularioArquivos from "../../Components/layout/Formularios/formsArquivos";
 
-interface ModalArquivos {
+interface ModalArquivosProps { 
     openedArquivo: boolean;
     onClose: () => void;
+    onIniciarIA?: () => void;
+    onIAconcluida?: () => void;
+    onIAerro?: () => void;
 }
 
-export default function ModalArquivos({ openedArquivo, onClose }: ModalArquivos) {
+export default function ModalArquivos({ 
+    openedArquivo, 
+    onClose, 
+    onIniciarIA, 
+    onIAconcluida, 
+    onIAerro 
+}: ModalArquivosProps) {
     return (
         <Modal
             radius="8px"
@@ -27,8 +36,12 @@ export default function ModalArquivos({ openedArquivo, onClose }: ModalArquivos)
             <FormularioArquivos
                 onSubmitSuccess={() => {
                     onClose();
+                    onIniciarIA?.(); 
                 }}
                 onCancel={onClose}
+                onIniciarIA={onIniciarIA}
+                onIAconcluida={onIAconcluida}
+                onIAerro={onIAerro}
             />
         </Modal>
     );

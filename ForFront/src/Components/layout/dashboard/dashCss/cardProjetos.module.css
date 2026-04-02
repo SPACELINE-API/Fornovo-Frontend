@@ -64,12 +64,13 @@
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   max-height: 30ch;
   overflow: hidden;
+  white-space: nowrap; 
   text-overflow: ellipsis;
   font-weight: 600;
-  margin-right: 10px;
+  margin-right: 15px;
 }
 
 .cardContainer {
@@ -135,8 +136,9 @@
   margin-top: -15px !important;
   left: 10px;
   border-radius: 2px !important;
-  background-color: #fff !important;
+  background-color: transparent !important;
   color: #666 !important;
+  margin-right: 5px;
 }
 
 .acIcone:hover {
