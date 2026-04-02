@@ -7,46 +7,187 @@
 .menu {
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
-    gap: 70px;
-    border-bottom: 1px solid #ababab;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #e8e8e5;
+}
+
+.tabs {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .menuBtn {
     display: flex;
     flex-direction: row;
-    gap: 7px;
     align-items: center;
-    background-color: transparent;
+    gap: 7px;
+    padding: 0 20px;
+    height: 46px;
+    background: transparent;
     border: none;
-    font-size: 0.9rem;
+    border-bottom: 2px solid transparent;
+    font-size: 0.84rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    color: #888884;
     cursor: pointer;
-    font-family: 'Inter-regular';
-} 
-
-.ativo {
-    border-bottom: 1px solid #0C5F20;
-    color: #0C5F20;
+    transition: color 0.15s ease, border-color 0.15s ease;
+    white-space: nowrap;
+    margin-bottom: -1px;
+    letter-spacing: 0.01em;
 }
 
-.btnLevantamento {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    background-color: #34623F;
-    border-radius: 4px;
-    border: none;
-    color: #fff;
-    cursor: pointer;
-    font-size: 0.9rem;
-    margin-bottom: 15px;
+.menuBtn span {
+    line-height: 1;
+}
+
+.menuBtn:hover {
+    color: #2d2d2b;
+}
+
+.ativo {
+    color: #1b5e3b !important;
+    border-bottom: 2px solid #1b5e3b !important;
+    font-weight: 500;
 }
 
 .btnContainer {
     display: flex;
     flex-direction: row;
-    gap: 25px;
-    margin-left: auto;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 10px;
+}
+
+.tooltipWrap {
+    position: relative;
+    display: inline-flex;
+}
+
+.tooltipWrap:hover .tooltip {
+    display: block;
+}
+
+.tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #222;
+    color: #fff;
+    font-size: 11px;
+    white-space: nowrap;
+    padding: 4px 9px;
+    border-radius: 5px;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 14px;
+    height: 34px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    letter-spacing: 0.01em;
+    font-family: 'Inter', sans-serif;
+}
+
+.btnOutline {
+    background: transparent;
+    color: #3d3d3a;
+    border-color: #d0d0cc;
+}
+
+.btnOutline:hover {
+    background: #f4f4f1;
+    border-color: #bbbbb7;
+}
+
+.btnPrimario {
+    background: #1b5e3b;
+    color: #fff;
+    border-color: #1b5e3b;
+}
+
+.btnPrimario:hover {
+    background: #154f32;
+}
+
+.btnFeito {
+    background: transparent;
+    color: #1b5e3b;
+    border-color: #A8D5BC;
+}
+
+.btnFeito:hover {
+    background: #eaf5ef;
+}
+
+.btnLocked {
+    background: #f4f4f1;
+    color: #aaa;
+    border-color: #e0e0dc;
+    cursor: not-allowed;
+}
+
+.btnProcessando {
+    background: #f4f4f1;
+    color: #aaa;
+    border-color: #e0e0dc;
+    cursor: not-allowed;
+}
+
+.btn:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.badgeFeito {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.65rem;
+    font-weight: 500;
+    padding: 1px 7px;
+    border-radius: 20px;
+    background: #eaf5ef;
+    color: #1b5e3b;
+    letter-spacing: 0.02em;
+}
+
+.badgeLock {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.65rem;
+    font-weight: 500;
+    padding: 1px 7px;
+    border-radius: 20px;
+    background: #f0f0ee;
+    color: #888884;
+    border: 1px solid #e0e0dc;
+    letter-spacing: 0.02em;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 1.5px solid #d0d0cc;
+    border-top-color: #888;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+    flex-shrink: 0;
 }
