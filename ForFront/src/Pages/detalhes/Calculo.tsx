@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import styles from '../../Styles/paginas/Calculo.module.css';
-import { FileSpreadsheet, Download, RefreshCw, Plus } from 'lucide-react';
+import { FileSpreadsheet, Download, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
 import api from '../../Services/apiService';
 import { useParams } from 'react-router-dom';
 
@@ -10,26 +10,29 @@ export default function Calculo() {
   const [carregando, setCarregando] = useState(true);
   const [gerando, setGerando] = useState(false);
   const [dataGeracao, setDataGeracao] = useState<string | null>(null);
+  const [notificacao, setNotificacao] = useState<{
+    tipo: 'sucesso' | 'erro';
+    mensagem: string;
+  } | null>(null);
 
   useEffect(() => {
     verificarStatus();
   }, [id]);
 
+  function mostrarNotificacao(tipo: 'sucesso' | 'erro', mensagem: string) {
+    setNotificacao({ tipo, mensagem });
+    setTimeout(() => setNotificacao(null), 3500);
+  }
+
   async function verificarStatus() {
     if (!id) return;
-
     setCarregando(true);
-
     try {
       const response = await api.get('dados-ia/status-memorial/', {
-        params: {
-          projeto_id: id,
-        },
+        params: { projeto_id: id },
       });
-
       if (response.data.status === 'concluido') {
         setTemMemorial(true);
-
         setDataGeracao(new Date().toLocaleDateString());
       } else {
         setTemMemorial(false);
@@ -44,37 +47,30 @@ export default function Calculo() {
   async function gerarMemorial() {
     if (!id) return;
     setGerando(true);
-
     try {
       const resLevantamento = await api.get(`calculos/form-levantamento/${id}`);
       const dadosLevantamento = resLevantamento.data;
       const resIA = await api.get(`dados-ia/dados-processados/${id}`);
       const dadosDXF = resIA.data.dados_dxf;
 
-      const dataGerar = new FormData();
-      dataGerar.append('arquivo', JSON.stringify(dadosLevantamento));
-      dataGerar.append('dxf', JSON.stringify(dadosDXF));
-
       const dataSalvar = new FormData();
       dataSalvar.append('arquivo', JSON.stringify(dadosLevantamento));
       dataSalvar.append('dxf', JSON.stringify(dadosDXF));
       dataSalvar.append('projeto_id', id);
 
-      await api
-        .post('dados-ia/salvar-memorial', dataSalvar)
-        .catch((e) => console.log('Erro ao persistir no banco, mas download feito.', e));
-
+      await api.post('dados-ia/salvar-memorial', dataSalvar);
       await verificarStatus();
+      mostrarNotificacao('sucesso', 'Memorial gerado com sucesso!');
     } catch (error) {
       console.error('Erro na geração do memorial:', error);
+      mostrarNotificacao('erro', 'Erro ao gerar o memorial. Tente novamente.');
     } finally {
       setGerando(false);
     }
   }
 
   function baixar() {
-    const url = `${api.defaults.baseURL}` + `dados-ia/salvar-memorial?projeto_id=${id}`;
-
+    const url = `${api.defaults.baseURL}dados-ia/salvar-memorial?projeto_id=${id}`;
     window.open(url, '_blank');
   }
 
@@ -101,6 +97,15 @@ export default function Calculo() {
 
   return (
     <div className={styles.container}>
+      {notificacao && (
+        <div
+          className={`${styles.toast} ${notificacao.tipo === 'sucesso' ? styles.toastSucesso : styles.toastErro}`}
+        >
+          {notificacao.tipo === 'sucesso' ? <CheckCircle size={16} /> : <XCircle size={16} />}
+          {notificacao.mensagem}
+        </div>
+      )}
+
       <h2 className={styles.tituloPagina}>Memorial de Cálculo</h2>
 
       <div className={styles.card}>
@@ -112,7 +117,6 @@ export default function Calculo() {
 
             <div className={styles.docMeta}>
               <p className={styles.docName}>Memorial de cálculo</p>
-
               <p className={styles.docDate}>
                 {temMemorial ? `Gerado em ${dataGeracao}` : 'Nenhuma versão gerada ainda'}
               </p>
@@ -134,9 +138,7 @@ export default function Calculo() {
           {temMemorial && (
             <>
               <div className={styles.divider} />
-
               <div className={styles.acoes}>
-
                 <button className={`${styles.btn} ${styles.btnPrimario}`} onClick={baixar}>
                   <Download size={15} />
                   Baixar
@@ -150,20 +152,22 @@ export default function Calculo() {
           <div className={styles.generateSection}>
             <p className={styles.generateLabel}>
               Gerar uma nova versão?
-              <strong>O arquivo atual será substituído.</strong>
+              <strong> O arquivo atual será substituído.</strong>
             </p>
-
             <button className={styles.btnGerar} onClick={gerarMemorial} disabled={gerando}>
-              <RefreshCw size={14} />
-
+              <RefreshCw size={14} className={gerando ? styles.girando : ''} />
               {gerando ? 'Gerando...' : 'Gerar novamente'}
             </button>
           </div>
         ) : (
           <div className={`${styles.generateSection} ${styles.generateSectionCentered}`}>
-            <button className={`${styles.btn} ${styles.btnPrimario}`} onClick={gerarMemorial}>
-              <Plus size={15} />
-              Gerar memorial
+            <button
+              className={`${styles.btn} ${styles.btnPrimario}`}
+              onClick={gerarMemorial}
+              disabled={gerando}
+            >
+              <RefreshCw size={15} className={gerando ? styles.girando : ''} />
+              {gerando ? 'Gerando...' : 'Gerar memorial'}
             </button>
           </div>
         )}
