@@ -1,7 +1,7 @@
 import styles from '../../Styles/paginas/Resumo.module.css';
 import PainelProjeto from '../../Components/layout/paineis/painelProjeto';
 import { useState, useEffect } from 'react';
-import { Modal } from '@mantine/core';
+import { Modal, ScrollArea } from '@mantine/core';
 import PainelArquivos from '../../Components/layout/paineis/painelArquivos';
 import PainelResponsaveis from '../../Components/layout/paineis/painelResponsaveis';
 import type { LevantamentoDados } from '../../types/resumo';
@@ -139,6 +139,7 @@ function Resumo() {
         opened={aberto}
         onClose={() => setAberto(false)}
         size="60%"
+        scrollAreaComponent={ScrollArea.Autosize}
         centered
         title="Levantamento de campo"
         styles={{

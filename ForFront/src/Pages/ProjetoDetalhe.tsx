@@ -14,10 +14,9 @@ function ProjetoDetalhe() {
     if (!id) return;
 
     try {
-      const response = await api.get(`projetos/listarProjetos`);
-      const projetoAtual = response.data.find((p: any) => p.id_projeto === id);
+      const response = await api.get(`projetos/statusIa/${id}`);
 
-      if (projetoAtual?.status === 'Concluído') {
+      if (response.data.status === 'Concluído') {
         setIaEstado('concluida');
       }
     } catch (err) {
@@ -26,24 +25,12 @@ function ProjetoDetalhe() {
   }, [id]);
 
   useEffect(() => {
-    let timer: number | undefined;
-    if (iaEstado === 'concluida') {
-      timer = window.setTimeout(() => {
-        setIaEstado('idle');
-      }, 5000); // 5000ms = 5 segundos
-    }
-    return () => {
-      if (timer) window.clearTimeout(timer);
-    };
-  }, [iaEstado]);
-
-  useEffect(() => {
     let interval: number | undefined;
 
     if (iaEstado === 'processando' || iaEstado === 'erro') {
       interval = window.setInterval(() => {
         verificarStatusProjeto();
-      }, 5000);
+      }, 60000);
     }
 
     return () => {
