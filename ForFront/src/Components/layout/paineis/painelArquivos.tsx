@@ -20,16 +20,6 @@ function PainelArquivos({ projeto_id }: ArquivoProps) {
                         }}>Download</button>
                 </div>
             </div>
-            <div className={styles.bloco}>
-                <div className={styles.tituloArquivo}>
-                    <Paperclip size={'17px'} />
-                    <p>Memorial de cálculo </p>
-                </div>
-                <div className={styles.botoesArquivo}>
-                    <button className={styles.btnArquivo}>Visualizar</button>
-                    <button className={styles.btnArquivo}>Download</button>
-                </div>
-            </div>
         </div>
     )
 }
