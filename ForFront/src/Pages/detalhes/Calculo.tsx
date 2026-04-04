@@ -82,8 +82,19 @@ export default function Calculo() {
     return (
       <div className={styles.container}>
         <h2 className={styles.tituloPagina}>Memorial de Cálculo</h2>
-
-        <div className={styles.card}>Carregando...</div>
+        <div className={styles.card}>
+          <div className={styles.cardBody}>
+            <div className={styles.docRow}>
+              <div className={`${styles.docIcon} ${styles.skeleton}`} />
+              <div className={styles.docMeta}>
+                <div className={`${styles.skeletonLine} ${styles.skeletonTitle}`} />
+                <div className={`${styles.skeletonLine} ${styles.skeletonSubtitle}`} />
+              </div>
+              <div className={`${styles.skeletonBadge} ${styles.skeleton}`} />
+            </div>
+          </div>
+          <div className={`${styles.generateSection} ${styles.skeleton}`} style={{ height: 56 }} />
+        </div>
       </div>
     );
   }

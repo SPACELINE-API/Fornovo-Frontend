@@ -193,6 +193,41 @@
   cursor: not-allowed;
 }
 
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 8px;
+}
+
+.skeletonLine {
+  border-radius: 4px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.skeletonTitle {
+  height: 14px;
+  width: 160px;
+  margin-bottom: 6px;
+}
+
+.skeletonSubtitle {
+  height: 12px;
+  width: 110px;
+}
+
+.skeletonBadge {
+  height: 24px;
+  width: 80px;
+  border-radius: 99px;
+}
 
 @keyframes girar {
   from {
