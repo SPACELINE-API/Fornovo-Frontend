@@ -1,0 +1,42 @@
+.dropzoneRoot {
+  border: 2px dashed #0c5f20; 
+  border-radius: 12px;
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 10px !important;
+  display: flex !important;
+  flex-direction: column !important; 
+  align-items: center !important; 
+  justify-content: center !important;
+  min-height: 220px; 
+  gap: 8px; 
+}
+
+.uploadIconCircle {
+  background-color: #0c5f20;
+  border-radius: 50%;
+  width: 52px;
+  height: 52px;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: white;
+  margin: 0 auto !important;
+}
+
+.uploadIconCircle svg, .uploadIconCircle img {
+  display: block;
+  margin: auto;
+}
+
+
+.fileListContainer {
+  background-color: #f1fff6;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

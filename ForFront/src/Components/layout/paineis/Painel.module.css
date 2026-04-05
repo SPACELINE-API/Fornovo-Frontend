@@ -1,0 +1,115 @@
+.painelProjeto {
+    border: 1px solid #e8e8e5;
+    border-radius: 8px;
+    padding: 20px 22px;
+    font-size: 0.875rem;
+}
+
+.containerGeral {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.dadoTitulo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #5f5f5c;
+}
+
+.dadoContainerProjeto {
+    display: flex;
+    flex-direction: column;
+}
+
+.dado {
+    text-align: center;
+}
+
+.painelResponsaveis {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e8e8e5;
+    border-radius: 8px;
+    padding: 20px 22px;
+    font-size: 0.875rem;
+}
+
+.dadoContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+
+.painelArquivos {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #dfdfdf;
+    border-radius: 8px;
+    padding: 22px;
+    gap: 15px;
+    margin: 4px 0 25px;
+}
+
+.tituloArquivo {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    font-size: 0.8rem;
+}
+
+.botoesArquivo {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    margin-top: 15px;
+    font-size: 0.7rem;
+}
+
+.btnArquivo {
+    display: inline-flex;
+    align-items: center;
+    height: 25px;
+    padding: 0 10px;
+    border-radius: 2px;
+    border: 1.5px solid #d0d0cc;
+    background: transparent;
+    color: #1b5e3b;
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    font-family: inherit;
+}
+
+.btnArquivo:hover {
+    background: #f4f4f1;
+    border-color: #bbbbb7;
+}
+
+
+.levHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.levTitulo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #3d3d3a;
+}

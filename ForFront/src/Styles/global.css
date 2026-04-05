@@ -1,0 +1,39 @@
+@font-face {
+    font-family: 'Inter-regular';
+    src: url('../assets/fontes/Inter/Inter-VariableFont_opsz\,wght.ttf');
+}
+
+@font-face {
+    font-family: 'Inter-italic';
+    src: url('../assets/fontes/Inter/Inter-Italic-VariableFont_opsz\,wght.ttf');
+}
+
+@font-face {
+    font-family: 'Kodchasan';
+    src: url('../assets/fontes/Kodchasan/Kodchasan-Regular.ttf');
+}
+
+:root {
+  --bg-main: #ffffff;
+  --bg-sidebar: #ffffff;
+  --border-color: #e0e0e0;
+  --primary-green: #89c094;
+  --text-icon: #333333;
+  --header-height: 60px;
+  --sidebar-width: 70px;
+  --fonte-inter-regular: 'Inter-regular', sans-serif;
+  --fonte-inter-regular: 'Inter-italic', sans-serif;
+  --fonte-inter-regular: 'Kodchasan', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body, #root {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
