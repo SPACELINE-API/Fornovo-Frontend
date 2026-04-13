@@ -10,8 +10,15 @@ import Especificacoes from '../Pages/detalhes/Especificacoes.tsx';
 import Projetos from "../Pages/pagProjetos/Projetos.tsx"
 import Recentes from "../Pages/Recentes.tsx"
 import Funcionarios from "../Pages/admin/Funcionarios.tsx"
+//import ProtectedRoute from '../Components/layout/auth/ProtectedRoute.tsx';
 
 const router = createBrowserRouter([
+     /*{
+        path: "/",
+        element: < />
+    }, 
+     element: <ProtectedRoute />,
+        children: [*/
     {
         path: "/",
         element: <DashboardLayout />,
