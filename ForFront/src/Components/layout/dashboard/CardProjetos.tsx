@@ -20,10 +20,10 @@ interface CardProps {
 }
 
 const STATUS_OPTIONS = [
-  { label: 'Pendente', cor: '#c50205', bg: '#fff8f8', classe: 'pendente' },
-  { label: 'Em Andamento', cor: '#d39607', bg: '#fdf8ee', classe: 'emandamento' },
-  { label: 'Em Revisão', cor: '#03668d', bg: '#f0f8fc', classe: 'emrevisao' },
-  { label: 'Concluído', cor: '#34623f', bg: '#f2f8f4', classe: 'concluido' },
+  { label: 'Pendente', cor: '#c50205', bg: '#fff8f8', classe: 'Pendente' },
+  { label: 'Em andamento', cor: '#d39607', bg: '#fdf8ee', classe: 'Em andamento' },
+  { label: 'Em revisão', cor: '#03668d', bg: '#f0f8fc', classe: 'Em revisão' },
+  { label: 'Concluído', cor: '#34623f', bg: '#f2f8f4', classe: 'Concluído' },
 ];
 
 function CardProjetos({
