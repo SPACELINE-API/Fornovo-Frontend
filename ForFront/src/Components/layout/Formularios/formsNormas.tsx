@@ -128,13 +128,18 @@ const FormularioNorma: React.FC<FormularioNormaProps> = ({
             'Content-Type': 'multipart/form-data',
           },
         });
-
         notifications.show({
           title: 'Norma cadastrada!',
           message: response.data.mensagem,
           color: 'teal',
           position: 'bottom-left',
         });
+
+        response = await api.post('/dados-ia/inserir-norma', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
       }
 
       setSucessoBackend(response.data.mensagem);
