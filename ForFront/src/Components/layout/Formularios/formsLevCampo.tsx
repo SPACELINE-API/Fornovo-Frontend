@@ -171,7 +171,7 @@ const ambienteSchema = z.object({
     tipoPerfil: z.string().min(1, "Obrigatório"),
     secao: z.string().min(1, "Obrigatório"),
     peso: num("Obrigatório"),
-    elastomero: z.number().optional(),
+    elastomero: num("Obrigatório"),
   })),
   madeira: z.array(z.object({
     tipoPeca: z.string().min(1, "Obrigatório"),
@@ -568,7 +568,7 @@ const handleNextStep = () => {
         <TextInput style={{ flex: 1 }}withAsterisk  label="Perfil" placeholder="Ex: I, H, U" {...form.getInputProps(`metalicas.${index}.tipoPerfil`)} />
         <TextInput style={{ flex: 1 }}withAsterisk  label="Seção" placeholder="Ex: W150x24" {...form.getInputProps(`metalicas.${index}.secao`)} />
         <NumberInput style={{ flex: 1 }} withAsterisk label="Peso"  rightSection="KgF" {...form.getInputProps(`metalicas.${index}.peso`)} />
-        <NumberInput style={{ flex: 1 }}  label="Elastômero" {...form.getInputProps(`metalicas.${index}.elastomero`)} />
+        <NumberInput style={{ flex: 1 }}  withAsterisk label="Elastômero" {...form.getInputProps(`metalicas.${index}.elastomero`)} />
     <ActionIcon color="red" variant="subtle" mb={4} onClick={() => form.removeListItem("metalicas", index)}>
         <IconTrash size={16} />
     </ActionIcon>
