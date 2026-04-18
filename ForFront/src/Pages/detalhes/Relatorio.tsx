@@ -154,7 +154,7 @@ function Relatorio() {
                         {statusRelatorio ? (
                             <span className={`${styles.badge} ${styles.badgeOk}`}>
                                 <span className={styles.badgeDotOk}></span>
-                                Disponíveis
+                                Disponível
                             </span>
                         ) :
                             (
