@@ -129,6 +129,14 @@
 
     const alterarStatusNorma = async (id: number, novoStatus: StatusNorma) => {
       try {
+        if(novoStatus === 'inativo'){
+          await api.delete(`dados-ia/inserir-norma/${id}`)
+
+        }else if(novoStatus === 'ativo'){
+          await api.post(`dados-ia/ativar-norma/${id}`)
+        }
+
+
         await api.patch(`/normas/status/${id}`, {
           status: novoStatus,
         });
