@@ -11,6 +11,7 @@ function Relatorio() {
     const [statusRelatorio, setStatusRelatorio] = useState(false);
     const [gerando, setGerando] = useState(false);
     const [notificacao, setNotificacao] = useState<{ tipo: 'sucesso' | 'erro'; mensagem: string } | null>(null);
+    const [dataGeracao, setDataGeracao] = useState<string | null>(null);
 
     useEffect(() => {
         verificarStatusRelatorio();
@@ -29,6 +30,7 @@ function Relatorio() {
                 params: { projeto_id: id },
             });
             if (response.data.status == "concluido") {
+                setDataGeracao(new Date().toLocaleDateString());
                 setStatusRelatorio(true);
             }
         }
@@ -107,7 +109,7 @@ function Relatorio() {
                         <div className={styles.docMeta}>
                             <p className={styles.docName}>Relatório</p>
                             <p className={styles.docDate}>
-                                {statusRelatorio ? `Relatório disponível` : 'Nenhuma versão gerada ainda'}
+                                {statusRelatorio ? `Gerado em ${dataGeracao}` : 'Nenhuma versão gerada ainda'}
                             </p>
                         </div>
 
