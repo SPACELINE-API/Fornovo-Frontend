@@ -1,7 +1,7 @@
 import styles from '../../Styles/paginas/Calculo.module.css';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { FileSpreadsheet, Download, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
+import { FileSpreadsheet, Download } from 'lucide-react';
 import api from '../../Services/apiService';
 
 function Relatorio() {
@@ -9,18 +9,11 @@ function Relatorio() {
     const { id } = useParams();
     const [carregando, setCarregando] = useState(true);
     const [statusRelatorio, setStatusRelatorio] = useState(false);
-    const [gerando, setGerando] = useState(false);
-    const [notificacao, setNotificacao] = useState<{ tipo: 'sucesso' | 'erro'; mensagem: string } | null>(null);
     const [dataGeracao, setDataGeracao] = useState<string | null>(null);
 
     useEffect(() => {
         verificarStatusRelatorio();
     }, [id]);
-
-    function mostrarNotificacao(tipo: 'sucesso' | 'erro', mensagem: string) {
-        setNotificacao({ tipo, mensagem });
-        setTimeout(() => setNotificacao(null), 3500);
-    }
 
     async function verificarStatusRelatorio() {
         setCarregando(true)
@@ -40,20 +33,6 @@ function Relatorio() {
         }
         finally {
             setCarregando(false);
-        }
-    }
-
-    async function gerarRelatorio() {
-        if (!id) return;
-        setGerando(true);
-        try {
-            await api.post('dados-ia/executar-agente', { projeto_id: id });
-            setStatusRelatorio(true);
-            mostrarNotificacao('sucesso', 'Relatório gerado com sucesso!');
-        } catch (error) {
-            mostrarNotificacao('erro', 'Erro ao gerar o relatório.');
-        } finally {
-            setGerando(false);
         }
     }
 
@@ -87,15 +66,6 @@ function Relatorio() {
 
     return (
         <div className={styles.container}>
-
-            {notificacao && (
-                <div
-                    className={`${styles.toast} ${notificacao.tipo === 'sucesso' ? styles.toastSucesso : styles.toastErro}`}
-                >
-                    {notificacao.tipo === 'sucesso' ? <CheckCircle size={16} /> : <XCircle size={16} />}
-                    {notificacao.mensagem}
-                </div>
-            )}
 
             <h2 className={styles.tituloPagina}>Relatório</h2>
 
@@ -144,29 +114,15 @@ function Relatorio() {
                 {statusRelatorio ? (
                     <div className={styles.generateSection}>
                         <p className={styles.generateLabel}>
-                            Gerar uma nova versão?
-                            <strong> O arquivo atual será substituído.</strong>
+                            Sempre que você enviar novos arquivos
+                            <strong> uma nova versão do relatório será gerada automaticamente.</strong>
                         </p>
-
-                        <button
-                            className={styles.btnGerar}
-                            onClick={gerarRelatorio}
-                            disabled={gerando}
-                        >
-                            <RefreshCw size={14} className={gerando ? styles.girando : ''} />
-                            {gerando ? 'Gerando...' : 'Gerar novamente'}
-                        </button>
                     </div>
                 ) : (
                     <div className={`${styles.generateSection} ${styles.generateSectionCentered}`}>
-                        <button
-                            className={`${styles.btn} ${styles.btnPrimario}`}
-                            onClick={gerarRelatorio}
-                            disabled={gerando}
-                        >
-                            <RefreshCw size={15} className={gerando ? styles.girando : ''} />
-                            {gerando ? 'Gerando...' : 'Gerar relatório'}
-                        </button>
+                        <p className={styles.generateLabel}>
+                            Após preencher o levantamento de campo e enviar os arquivos, o relatório será gerado e ficará disponível para download. Esse processo pode levar alguns minutos.  
+                        </p>
                     </div>
                 )}
             </div>
