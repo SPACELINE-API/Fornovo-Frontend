@@ -1,7 +1,7 @@
 import styles from '../../Styles/paginas/Calculo.module.css';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { FileSpreadsheet, Download } from 'lucide-react';
+import { FileSpreadsheet, Download, RefreshCw } from 'lucide-react';
 import api from '../../Services/apiService';
 
 function Relatorio() {
@@ -10,21 +10,31 @@ function Relatorio() {
     const [carregando, setCarregando] = useState(true);
     const [statusRelatorio, setStatusRelatorio] = useState(false);
     const [dataGeracao, setDataGeracao] = useState<string | null>(null);
+    const [atualizando, setAtualizando] = useState(false);
 
     useEffect(() => {
         verificarStatusRelatorio();
     }, [id]);
 
-    async function verificarStatusRelatorio() {
-        setCarregando(true)
+    async function verificarStatusRelatorio(mostrarCarregando = true) {
+        if (!id) return;
+
+        if (mostrarCarregando) {
+            setCarregando(true);
+        }
+        setAtualizando(true);
 
         try {
             const response = await api.get(`dados-ia/status-relatorio`, {
-                params: { projeto_id: id },
+                params: { projeto_id: id }
             });
             if (response.data.status == "concluido") {
+                console.log(response.data)
                 setDataGeracao(new Date().toLocaleDateString());
                 setStatusRelatorio(true);
+            }
+            else {
+                setStatusRelatorio(false);
             }
         }
         catch (error) {
@@ -33,6 +43,7 @@ function Relatorio() {
         }
         finally {
             setCarregando(false);
+            setAtualizando(false)
         }
     }
 
@@ -98,7 +109,7 @@ function Relatorio() {
                         }
                     </div>
 
-                    {statusRelatorio && (
+                    {statusRelatorio ? (
                         <>
                             <div className={styles.divider} />
                             <div className={styles.acoes}>
@@ -108,7 +119,17 @@ function Relatorio() {
                                 </button>
                             </div>
                         </>
-                    )}
+                    ) :
+                        <>
+                            <div className={styles.divider} />
+                            <div className={styles.acoes}>
+                                <button className={`${styles.btn} ${styles.btnGerar}`} onClick={() => verificarStatusRelatorio(false)}>
+                                    <RefreshCw size={15} className={atualizando ? styles.girando : ''} />
+                                    Atualizar status
+                                </button>
+                            </div>
+                        </>
+                    }
                 </div>
 
                 {statusRelatorio ? (
@@ -121,7 +142,7 @@ function Relatorio() {
                 ) : (
                     <div className={`${styles.generateSection} ${styles.generateSectionCentered}`}>
                         <p className={styles.generateLabel}>
-                            Após preencher o levantamento de campo e enviar os arquivos, o relatório será gerado e ficará disponível para download. Esse processo pode levar alguns minutos.  
+                            Após preencher o levantamento de campo e enviar os arquivos, o relatório será gerado e ficará disponível para download. Esse processo pode levar alguns minutos.
                         </p>
                     </div>
                 )}
