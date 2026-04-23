@@ -1,103 +1,55 @@
 import styles from '../../Styles/paginas/Calculo.module.css';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { FileSpreadsheet, Download, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
-
-const STATUS = 'relatorio_status'
-const URL = 'relatorio_url'
-
-const arquivoRelatorio = {
-    name: 'Relatório',
-    type: 'DOCX'
-}
+import { FileSpreadsheet, Download, RefreshCw } from 'lucide-react';
+import api from '../../Services/apiService';
 
 function Relatorio() {
 
     const { id } = useParams();
     const [carregando, setCarregando] = useState(true);
-    const [statusRelatorio, setStatusRelatorio] = useState<string | null>(null);
-    const [gerando, setGerando] = useState(false);
-    const [notificacao, setNotificacao] = useState<{ tipo: 'sucesso' | 'erro'; mensagem: string } | null>(null);
+    const [statusRelatorio, setStatusRelatorio] = useState(false);
+    const [dataGeracao, setDataGeracao] = useState<string | null>(null);
+    const [atualizando, setAtualizando] = useState(false);
 
     useEffect(() => {
-        verificarStatus();
+        verificarStatusRelatorio();
     }, [id]);
 
-    function mostrarNotificacao(tipo: 'sucesso' | 'erro', mensagem: string) {
-        setNotificacao({ tipo, mensagem });
-        setTimeout(() => setNotificacao(null), 3500);
-    }
-
-    async function verificarStatus() {
-        setCarregando(true)
-
-        try {
-            const statusSalvo = localStorage.getItem(STATUS)
-            if (statusSalvo) {
-                const { status, data } = JSON.parse(statusSalvo);
-                if (status == 'gerado') {
-                    setStatusRelatorio(data);
-                    return
-                }
-            }
-            setStatusRelatorio(null);
-        }
-        catch (error) {
-            console.log(error)
-            setStatusRelatorio(null)
-        }
-        finally {
-            setCarregando(false)
-        }
-    }
-
-    async function gerarRelatorio() {
+    async function verificarStatusRelatorio(mostrarCarregando = true) {
         if (!id) return;
-        setGerando(true);
+
+        if (mostrarCarregando) {
+            setCarregando(true);
+        }
+        setAtualizando(true);
+
         try {
-            const conteudo = `Relatório do projeto ${id}`
-            const blob = new Blob([conteudo], {
-                type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            const response = await api.get(`dados-ia/status-relatorio`, {
+                params: { projeto_id: id }
             });
-
-            const base64 = await converterBlob(blob);
-            const data = new Date().toLocaleDateString();
-
-            localStorage.setItem(URL, base64);
-            localStorage.setItem(STATUS, JSON.stringify({ status: 'gerado', data }));
-
-            await verificarStatus();
-            mostrarNotificacao('sucesso', 'Relatório gerado com sucesso!');
+            if (response.data.status == "concluido") {
+                console.log(response.data)
+                setDataGeracao(new Date().toLocaleDateString());
+                setStatusRelatorio(true);
+            }
+            else {
+                setStatusRelatorio(false);
+            }
         }
         catch (error) {
             console.log(error)
-            mostrarNotificacao('erro', 'Erro ao gerar. Tente novamente');
+            setStatusRelatorio(false);
         }
         finally {
-            setGerando(false);
+            setCarregando(false);
+            setAtualizando(false)
         }
     }
 
     function downloadRelatorio() {
-        const base64 = localStorage.getItem(URL);
-        if (!base64) {
-            mostrarNotificacao('erro', 'Arquivo não encontrado.')
-        }
-        else {
-            const link = document.createElement('a');
-            link.href = base64;
-            link.download = `relatorio_projeto_${id}.docx`;
-            link.click();
-        }
-    }
-
-    function converterBlob(blob: Blob): Promise<string> {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result as string);
-            reader.onerror = () => reject(new Error('Erro ao converter blob'));
-            reader.readAsDataURL(blob);
-        });
+        const url = `${api.defaults.baseURL}dados-ia/download-relatorio?projeto_id=${id}`;
+        window.open(url, '_blank');
     }
 
     if (carregando) {
@@ -126,15 +78,6 @@ function Relatorio() {
     return (
         <div className={styles.container}>
 
-            {notificacao && (
-                <div
-                    className={`${styles.toast} ${notificacao.tipo === 'sucesso' ? styles.toastSucesso : styles.toastErro}`}
-                >
-                    {notificacao.tipo === 'sucesso' ? <CheckCircle size={16} /> : <XCircle size={16} />}
-                    {notificacao.mensagem}
-                </div>
-            )}
-
             <h2 className={styles.tituloPagina}>Relatório</h2>
 
             <div className={styles.card}>
@@ -145,9 +88,9 @@ function Relatorio() {
                             <FileSpreadsheet size={20} color={statusRelatorio ? '#3b6d11' : '#aaa'} />
                         </div>
                         <div className={styles.docMeta}>
-                            <p className={styles.docName}>{arquivoRelatorio.name}</p>
+                            <p className={styles.docName}>Relatório</p>
                             <p className={styles.docDate}>
-                                {statusRelatorio ? `Gerado em ${statusRelatorio}` : 'Nenhuma versão gerada ainda'}
+                                {statusRelatorio ? `Gerado em ${dataGeracao}` : 'Nenhuma versão gerada ainda'}
                             </p>
                         </div>
 
@@ -166,7 +109,7 @@ function Relatorio() {
                         }
                     </div>
 
-                    {statusRelatorio && (
+                    {statusRelatorio ? (
                         <>
                             <div className={styles.divider} />
                             <div className={styles.acoes}>
@@ -176,39 +119,36 @@ function Relatorio() {
                                 </button>
                             </div>
                         </>
-                    )}
+                    ) :
+                        <>
+                            <div className={styles.divider} />
+                            <div className={styles.acoes}>
+                                <button className={`${styles.btn} ${styles.btnGerar}`} onClick={() => verificarStatusRelatorio(false)}>
+                                    <RefreshCw size={15} className={atualizando ? styles.girando : ''} />
+                                    Atualizar status
+                                </button>
+                            </div>
+                        </>
+                    }
                 </div>
 
                 {statusRelatorio ? (
                     <div className={styles.generateSection}>
                         <p className={styles.generateLabel}>
-                            Gerar uma nova versão?
-                            <strong> O arquivo atual será substituído.</strong>
+                            Sempre que você enviar novos arquivos
+                            <strong> uma nova versão do relatório será gerada automaticamente.</strong>
                         </p>
-
-                        <button
-                            className={styles.btnGerar}
-                            onClick={gerarRelatorio}
-                            disabled={gerando}
-                        >
-                            <RefreshCw size={14} className={gerando ? styles.girando : ''} />
-                            {gerando ? 'Gerando...' : 'Gerar novamente'}
-                        </button>
                     </div>
                 ) : (
                     <div className={`${styles.generateSection} ${styles.generateSectionCentered}`}>
-                        <button
-                            className={`${styles.btn} ${styles.btnPrimario}`}
-                            onClick={gerarRelatorio}
-                            disabled={gerando}
-                        >
-                            <RefreshCw size={15} className={gerando ? styles.girando : ''} />
-                            {gerando ? 'Gerando...' : 'Gerar relatório'}
-                        </button>
+                        <p className={styles.generateLabel}>
+                            Após preencher o levantamento de campo e enviar os arquivos, o relatório será gerado e ficará disponível para download. Esse processo pode levar alguns minutos.
+                        </p>
                     </div>
                 )}
             </div>
         </div>
+
     )
 }
 
