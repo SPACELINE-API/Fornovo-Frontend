@@ -8,6 +8,7 @@ function SidebarAdmin() {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const role = localStorage.getItem('user_role');
 
   const getActiveItem = () => {
     const path = location.pathname;
@@ -69,15 +70,17 @@ function SidebarAdmin() {
 
         </button>
 
-        <button
-          title="Funcionários"
-          className={`${styles.sidebarItem} ${activeItem === "funcionarios" ? styles.active : ""}`}
-          onClick={() => navigate("/funcionarios")}>
+        {role === 'Administrador' || role === 'Projetista' ? (
+          <button
+            title="Funcionários"
+            className={`${styles.sidebarItem} ${activeItem === "funcionarios" ? styles.active : ""}`}
+            onClick={() => navigate("/funcionarios")}>
 
-          <User size={24} />
-          {!collapsed && <span className={styles.navEscrito}>Funcionários</span>}
+            <User size={24} />
+            {!collapsed && <span className={styles.navEscrito}>Funcionários</span>}
 
-        </button>
+          </button>
+        ) : null}
       </nav>
     </div>
   );

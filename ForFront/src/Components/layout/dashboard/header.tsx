@@ -1,6 +1,7 @@
 import styles from "./dashCss/Header.module.css";
 import { ChevronDown, LogOut, Bell } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import logoImg from "../../../assets/imagens/Logofnv.png";
 
 interface HeaderProps {
@@ -10,6 +11,8 @@ interface HeaderProps {
 function Header({ userName, userAvatar }: HeaderProps) {
     const [open, setOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null); 
+    const navigate = useNavigate();
+
     useEffect(() => {        function handleClickOutside(event: MouseEvent) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
                 setOpen(false);
@@ -21,6 +24,19 @@ function Header({ userName, userAvatar }: HeaderProps) {
         };
     }, [dropdownRef]);
 
+    const handleLogout = () => {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user_role');
+        localStorage.removeItem('usuario');
+        navigate('/login');
+    };
+
+    const getInitials = (name: string) => {
+        if (!name) return '??';
+        const parts = name.trim().split(/\s+/);
+        if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    };
 
     return (
 
@@ -45,7 +61,7 @@ function Header({ userName, userAvatar }: HeaderProps) {
                             <img src={userAvatar} alt={userName} />
                         ) : (
                             <div className={styles.avatarPlaceholder}>
-                                {userName.slice(0, 2).toUpperCase()}
+                                {getInitials(userName)}
                             </div>
                         )}
                     </div>
@@ -54,7 +70,7 @@ function Header({ userName, userAvatar }: HeaderProps) {
                     </span>
                     {open && (
                         <div className={styles.dropdownMenu}>
-                            <button className={styles.dropdownItem}>
+                            <button className={styles.dropdownItem} onClick={handleLogout}>
                                 <LogOut />  Logout
                             </button>
                         </div>
