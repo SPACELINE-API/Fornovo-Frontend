@@ -8,7 +8,7 @@ import Dropdown from '../../Components/layout/dashboard/Dropdown';
 import api from '../../Services/apiService';
 import { capitalizar, capitalizarNome, maiusculas } from '../../utils/formatos';
 import ModalEditarProjeto from './editarProjeto';
-import type { ProjetoFormsData } from '../../types/projeto';
+import type { ProjetoFormsData } from '../../Components/layout/Formularios/formsProj';
 
 export interface Projeto {
   id_projeto: string;

@@ -65,7 +65,7 @@ function SidebarAdmin() {
           onClick={() => navigate("/normas")}>
 
           <FileText size={24} />
-          {!collapsed && <span className={styles.navEscrito}>NBR's</span>}
+          {!collapsed && <span className={styles.navEscrito}>Nbr's</span>}
 
         </button>
 
