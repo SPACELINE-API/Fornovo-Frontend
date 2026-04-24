@@ -1,0 +1,419 @@
+@font-face {
+  font-family: 'Poppins-ExtraLight';
+  src: url(../../../assets/fontes/Poppins/Poppins-ExtraLight.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url(../../../assets/fontes/Poppins/Poppins-Regular.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Poppins-Light';
+  src: url(../../../assets/fontes/Poppins/Poppins-Light.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Kodchasan-Bold';
+  src: url(../../../assets/fontes/Kodchasan/Kodchasan-Bold.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Kodchasan';
+  src: url(../../../assets/fontes/Kodchasan/Kodchasan-Regular.ttf) format('truetype');
+}
+
+
+.loginLayout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: #fff;
+  position: relative;
+}
+
+.loginLeft {
+  position: relative;
+  width: 60%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+/* circ 1 */
+.loginLeft::before {
+  content: '';
+  position: absolute;
+  width: 1160px;
+  height: 1130px;
+  right: 2.4rem;
+  bottom: 11rem;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #34623F 0.83%, #34623F 52.83%, #0E2F16 99.97%);
+  z-index: -1;
+}
+
+/* circ 2 */
+.loginLeftCircleSmall {
+  position: absolute;
+  width: 218px;
+  height: 218px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #34623F 4.7%, #08230F 103.1%);
+  bottom: 9rem;
+  left: 36rem;
+  z-index: 4;
+}
+
+/* circ 3 */
+.loginLeftCircleBottomRight {
+  position: absolute;
+  width: 395px;
+  height: 395px;
+  left: -6.3rem;
+  bottom: -2.4rem;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #34623F 0%, #08230F 100%);
+  transform: rotate(36deg);
+  z-index: 2;
+}
+
+/* circ 4 */
+.loginCircleRight {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  right: -50px;
+  bottom: -80px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #34623F 0%, #08230F 100%);
+  transform: rotate(-4.56deg);
+  z-index: 5;
+}
+
+.loginLeftContent {
+  position: relative;
+  z-index: 10;
+  color: #fff;
+  text-align: center;
+  bottom: 11rem;
+  right: 3.6rem;
+  line-height: 2.7rem;
+  letter-spacing: 0.2rem;
+}
+
+.loginLeftTitle {
+  font-family: 'Poppins-ExtraLight', sans-serif;
+  font-size: 3rem;
+}
+
+.loginLeftSubtitle {
+  font-family: 'Poppins-Light', sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+}
+
+.loginRight {
+  width: 40%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: transparent;
+  z-index: 10;
+  bottom: 6rem;
+  right: 4.3rem;
+}
+
+.loginFieldset {
+  border: none !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loginFieldset legend {
+  font-family: 'Kodchasan-Bold', sans-serif;
+  font-size: 2.5rem !important;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 2rem;
+  text-align: center;
+  width: 100%;
+}
+
+.loginInputLabel {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #000;
+  margin-bottom: 8px;
+  margin-top: 1.7rem;
+}
+
+.loginInputField {
+  border-radius: 6px !important;
+  border: 1px solid #000 !important;
+  height: 3.2rem !important;
+  width: 23rem !important;
+  font-size: 1rem !important;
+  padding: 0 20px !important;
+}
+
+.loginInputWrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 1.2rem; 
+}
+
+.loginInputError {
+  position: absolute;
+  font-size: 0.75rem !important;
+  white-space: nowrap; 
+}
+
+.loginButton {
+  background-color: #34623F !important;
+  border-radius: 10px !important;
+  height: 3.7rem !important;
+  font-family: 'Kodchasan', sans-serif;
+  font-size: 1.5rem !important;
+  font-weight: 400 !important;
+  color: #fff !important;
+  margin-top: 2rem;
+}
+
+.imgSvg {
+  position: absolute;
+  width: 980px;
+  height: 1160px;
+  left: -7.3rem;
+  top: -22.5rem;
+  z-index: 0;
+}
+
+
+
+@media (max-width: 1024px) {
+  .loginLeft::before {
+    width: 820px;
+    height: 800px;
+    right: 2.95rem;
+    bottom: 17rem;
+  }
+
+  .loginLeftCircleSmall {
+    width: 120px;
+    height: 120px;
+    left: 16rem;
+    bottom: 20rem;
+  }
+
+  .loginLeftCircleBottomRight {
+    width: 280px;
+    height: 280px;
+    left: -4.5rem;
+    bottom: 3.8rem;
+  }
+
+  .loginCircleRight {
+    width: 210px;
+    height: 210px;
+    right: -35px;
+    bottom: -60px;
+  }
+
+  .loginLeftContent {
+    bottom: 8rem;
+    right: 2rem;
+    line-height: 1.2rem;
+  }
+
+  .loginLeftTitle {
+    font-size: 1.2rem;
+  }
+
+  .loginLeftSubtitle {
+    font-size: 0.3rem;
+  }
+
+  .loginRight {
+    bottom: 4rem;
+    right: 2rem;
+  }
+
+  .loginFieldset legend {
+    font-size: 2rem !important;
+    margin-bottom: 1.4rem;
+  }
+
+  .loginInputField {
+    width: 18rem !important;
+    height: 2.9rem !important;
+  }
+
+  .loginButton {
+    height: 3.2rem !important;
+    font-size: 1.3rem !important;
+  }
+
+  .imgSvg {
+    width: 700px;
+    height: 830px;
+    left: -18rem;
+    top: -11rem;
+  }
+}
+
+
+
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .loginLeft::before {
+    width: 980px;
+    height: 960px;
+    right: 2rem;
+    bottom: 25.5rem;
+  }
+
+  .loginLeftCircleSmall {
+    width: 185px;
+    height: 185px;
+    left: 20rem;
+    bottom: 26rem;
+  }
+
+  .loginLeftCircleBottomRight {
+    width: 330px;
+    height: 330px;
+    left: -5.5rem;
+    bottom: 8rem;
+  }
+
+  .loginCircleRight {
+    width: 255px;
+    height: 255px;
+    right: -42px;
+    bottom: -68px;
+  }
+
+  .loginLeftContent {
+    bottom: 16.5rem;
+    right: 3rem;
+    line-height: 2.5rem;
+  }
+
+  .loginLeftTitle {
+    font-size: 2.6rem;
+  }
+
+  .loginLeftSubtitle{
+    font-size: 0.5rem;
+  }
+
+  .loginRight {
+    bottom: 5rem;
+    right: 3.5rem;
+  }
+
+  .loginFieldset legend {
+    font-size: 2.2rem !important;
+    margin-bottom: 1.7rem;
+  }
+
+  .loginInputField {
+    width: 20rem !important;
+    height: 3rem !important;
+  }
+
+  .loginButton {
+    height: 3.5rem !important;
+    font-size: 1.4rem !important;
+  }
+
+  .imgSvg {
+    width: 830px;
+    height: 880px;
+    left: -15.3rem;
+    top: -7.5rem;
+  }
+}
+
+@media (min-width: 1921px) {
+  .loginLeft::before {
+    width: 1800px;
+    height: 1760px;
+    right: 4rem;
+    bottom: 17rem;
+  }
+
+  .loginLeftCircleSmall {
+    width: 340px;
+    height: 340px;
+    left: 56rem;
+    bottom: 14rem;
+  }
+
+  .loginLeftCircleBottomRight {
+    width: 620px;
+    height: 620px;
+    left: -10rem;
+    bottom: -3.8rem;
+  }
+
+  .loginCircleRight {
+    width: 470px;
+    height: 470px;
+    right: -78px;
+    bottom: -125px;
+  }
+
+  .loginLeftContent {
+    bottom: 17rem;
+    right: 5.5rem;
+    line-height: 4.2rem;
+    letter-spacing: 0.3rem;
+  }
+
+  .loginLeftTitle {
+    font-size: 4.7rem;
+  }
+
+  .loginLeftSubtitle {
+    font-size: 1.4rem;
+    letter-spacing: 1.5px;
+  }
+
+  .loginRight {
+    bottom: 9rem;
+    right: 6.5rem;
+  }
+
+  .loginFieldset legend {
+    font-size: 3.9rem !important;
+    margin-bottom: 3rem;
+  }
+
+  .loginInputLabel {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+  }
+
+  .loginInputField {
+    width: 36rem !important;
+    height: 5rem !important;
+    font-size: 1.5rem !important;
+    border-radius: 9px !important;
+  }
+
+  .loginButton {
+    height: 5.8rem !important;
+    font-size: 2.3rem !important;
+    border-radius: 15px !important;
+    margin-top: 3rem;
+  }
+
+  .imgSvg {
+    width: 1530px;
+    height: 1810px;
+    left: -9.5rem;
+    top: -25rem;
+  }
+}
