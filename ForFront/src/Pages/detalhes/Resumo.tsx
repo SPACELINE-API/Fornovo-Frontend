@@ -16,7 +16,6 @@ interface Projeto {
   nome_projeto: string;
   status: string;
   engenheiro_nome: string;
-  engenheiro_nivel: string;
   data_inicio: string;
   data_fim: string;
   cliente: string;
@@ -29,6 +28,8 @@ function Resumo() {
   const [projeto, setProjeto] = useState<Projeto | null>(null);
   const [levantamento, setLevantamento] = useState<LevantamentoDados | null>(null);
   const [vazio, setVazio] = useState(true);
+
+  console.log(levantamento);
 
   const { id } = useParams();
 
@@ -106,7 +107,7 @@ function Resumo() {
             />
           )}
           <PainelResponsaveis
-            dados={[{ nome: capitalizarNome(projeto.engenheiro_nome), funcao: capitalizar(projeto.engenheiro_nivel) }]}
+            dados={[{ nome: capitalizarNome(projeto.engenheiro_nome), funcao: 'Engenheiro' }]}
           />
         </div>
 

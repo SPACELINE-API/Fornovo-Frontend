@@ -10,15 +10,8 @@ import Especificacoes from '../Pages/detalhes/Especificacoes.tsx';
 import Projetos from "../Pages/pagProjetos/Projetos.tsx"
 import Recentes from "../Pages/Recentes.tsx"
 import Funcionarios from "../Pages/admin/Funcionarios.tsx"
-import LoginLayout from '../Components/layout/login/loginLayout.tsx';
 
 const router = createBrowserRouter([
-
-    {
-        path: "/login",
-        element: <LoginLayout />
-    },
-
     {
         path: "/",
         element: <DashboardLayout />,

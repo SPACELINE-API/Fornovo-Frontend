@@ -2,11 +2,184 @@ import React, { useState} from "react";
 import { Box, Button, TextInput, Group, Stepper, Text, ActionIcon, NumberInput, Table} from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { IconTrash, IconPlus } from "@tabler/icons-react";
-import { ambienteSchema } from "../../../schemas/levCampoSchema";
+import { z } from "zod";
 import { notifications } from "@mantine/notifications";
 import api from "../../../Services/apiService";
 import { useParams } from "react-router-dom";
-import type { Ambiente } from "../../../types/levCampo.ts";
+
+
+
+export interface Ambiente {
+  id: number;
+  nome: string;
+  comprimento: number;
+  largura: number;
+  altura: number;
+  area: number;
+  tomadas:number;
+  iluminacao:number;
+  interruptores:number;
+  cabos: { circuito: string; secao: number }[];
+  disjuntores: { amperagem: number; quantidade: number }[];
+  tipoTomada: string;
+  tipoInterruptor: string;
+  tipoLuminaria: string;
+  alturaInstalacao: number;
+  ramais: { nome: string; diametro: string; comprimento: number }[];
+  registros: number;
+  valvulas: number;
+  conexoes: number;
+  reservatorio: { tipo: string; capacidade: number };
+  hastesAterramento: number;
+  caixasInspecao: number;
+  terminaisAereos: number;
+  quadrosRede: number;
+  patchCords: number;
+  cameras: number;
+  cabeamentos: { circuito: string; comprimento: number; tomadas: number }[];
+  extintores: {tipo:string; peso:number; capacidade: number}[];
+  hidrantes: {localizacao:string; diametro: string; conexoes:number}[];
+  dutos: {diametro:number; comprimento:number}[];
+  tipoEstrutura: string;
+  tipoTelhamento: string;
+  espessura: number;
+  inclinacao: number;
+  pecas:{ descricao: string; secao: string}[];
+  conteineres: number;
+  banheirosQuimicos: number;
+  andaimes: number;
+  residuoComum: number;
+  residuoContaminado: number;
+  destinacaoResiduo: string;
+  profundidadeEscavacao: number;
+  inclinacaoTerreno: number;
+  volumes: {terraplanagem: number; escavacao: number; aterro: number; enrocamento: number; contencao: number; taludamento: number;nivelamento: number; compactacao: number;}
+  fundacoes: { tipo: string; profundidade: number; volumeLastro: number; volumeConcreto: number; pesoFerragem: number; pesoEstribo: number; areaForma: number }[];
+  superestrutura: { tipo: string; largura: number; altura: number; volumeConcreto: number; pesoFerragem: number; pesoEstribo: number; areaForma: number; janelaLancamento?: string }[];
+  metalicas: { tipo: string; tipoPerfil: string; secao: string; peso: number; elastomero?: string }[];
+  madeira: { tipoPeca: string; secao: string; pesoTotal: number; tipoTelhamento: string }[];
+  
+}
+
+const num = (msg = "Obrigatório") => z.number({ invalid_type_error: msg });
+const int = (msg = "Obrigatório") => z.number({ invalid_type_error: msg }).int("Deve ser inteiro");
+
+const ambienteSchema = z.object({
+  nome: z.string().min(1, "Nome é obrigatório"),
+  comprimento: num("Comprimento é obrigatório"),
+  largura: num("Largura é obrigatória"),
+  altura: num("Altura é obrigatória"),
+  tomadas: int("Tomadas é obrigatório"),
+  iluminacao: int("Iluminação é obrigatória"),
+  interruptores: int("Interruptores é obrigatório"),
+  cabos: z.array(z.object({
+    circuito: z.string().min(1, "Circuito é obrigatório"),
+    secao: num("Seção é obrigatória"),
+  })),
+  disjuntores: z.array(z.object({
+    amperagem: num("Amperagem é obrigatória"),
+    quantidade: int("Quantidade é obrigatória"),
+  })),
+  tipoTomada: z.string().optional(),
+  tipoInterruptor: z.string().optional(),
+  tipoLuminaria: z.string().optional(),
+  alturaInstalacao: num("Altura é obrigatória"),
+  hastesAterramento: int("Hastes é obrigatório"),
+  caixasInspecao: int("Caixa é obrigatório"),
+  terminaisAereos: int("Terminais é obrigatório"),
+  quadrosRede: int("Quadros de rede é obrigatório"),
+  patchCords: int("Patch é obrigatório"),
+  cameras: int("Cameras é obrigatório"),
+  cabeamentos: z.array(z.object({
+    circuito: z.string().min(1, "Circuito é obrigatório"),
+    comprimento: num("Comprimento é obrigatório"),
+    tomadas: int("Quantidade é obrigatória"),
+  })),
+  ramais: z.array(z.object({
+    nome: z.string().min(1, "Nome é obrigatório"),
+    diametro: z.string().min(1, "Diâmetro é obrigatório"),
+    comprimento: num("Comprimento é obrigatório"),
+  })),
+  registros: int("Registros é obrigatório"),
+  valvulas: int("Válvulas é obrigatório"),
+  conexoes: int("Conexões é obrigatório"),
+  reservatorio: z.object({
+    tipo: z.string().min(1, "Tipo é obrigatório"),
+    capacidade: num("Capacidade é obrigatória"),
+  }),
+  extintores: z.array(z.object({
+    tipo: z.string().optional(),
+    peso: num("Peso é obrigatório"),
+    capacidade: int("Capacidade é obrigatória"),
+  })),
+  hidrantes: z.array(z.object({
+    localizacao: z.string().optional(),
+    diametro: z.string().min(1, "Diâmetro é obrigatório"),
+    conexoes: num("Conexões é obrigatório"),
+  })),
+  dutos: z.array(z.object({
+    diametro: z.string().min(1, "Diâmetro é obrigatório"),
+    comprimento: num("Comprimento é obrigatório"),
+  })),
+  tipoTelhamento: z.string().min(1, "Obrigatório"),
+  tipoEstrutura: z.string().min(1, "Obrigatório"),
+  espessura: num("Espessura é obrigatória"),
+  inclinacao: num("Inclinação é obrigatória"),
+  pecas: z.array(z.object({
+    descricao: z.string().min(1, "Descrição é obrigatória"),
+    secao: z.string().min(1, "Seção é obrigatória"),
+  })),
+  conteineres: num("Conteineres é obrigatório"),
+  banheirosQuimicos: num("Banheiros é obrigatório"),
+  andaimes: num("Andaimes é obrigatório"),
+  residuoComum: num("Residuo Comum é obrigatório"),
+  residuoContaminado: num("Residuo Contaminado é obrigatório"),
+  destinacaoResiduo: z.string().optional(),
+  profundidadeEscavacao: num("Obrigatória"),
+  inclinacaoTerreno: num("Obrigatória"),
+  volumes: z.object({
+    terraplanagem: num("Obrigatória"),
+    escavacao: num("Obrigatória"),
+    aterro: num("Obrigatória"),
+    enrocamento: num("Obrigatória"),
+    contencao: num("Obrigatória"),
+    taludamento: num("Obrigatória"),
+    nivelamento: num("Obrigatória"),
+    compactacao: num("Obrigatória"),
+  }),
+  fundacoes: z.array(z.object({
+    tipo: z.string().min(1, "Obrigatório"),
+    profundidade: num("Obrigatória"),
+    volumeLastro: num("Obrigatório"),
+    volumeConcreto: num("Obrigatório"),
+    pesoFerragem: num("Obrigatório"),
+    pesoEstribo: num("Obrigatório"),
+    areaForma: num("Obrigatória"),
+  })),
+  superestrutura: z.array(z.object({
+    tipo: z.string().min(1, "Obrigatório"),
+    largura: num("Obrigatória"),
+    altura: num("Obrigatória"),
+    volumeConcreto: num("Obrigatório"),
+    pesoFerragem: num("Obrigatório"),
+    pesoEstribo: num("Obrigatório"),
+    areaForma: num("Obrigatória"),
+    janelaLancamento: z.string().optional(),
+  })),
+  metalicas: z.array(z.object({
+    tipo: z.string().min(1, "Obrigatório"),
+    tipoPerfil: z.string().min(1, "Obrigatório"),
+    secao: z.string().min(1, "Obrigatório"),
+    peso: num("Obrigatório"),
+    elastomero: z.number().optional(),
+  })),
+  madeira: z.array(z.object({
+    tipoPeca: z.string().min(1, "Obrigatório"),
+    secao: z.string().min(1, "Obrigatório"),
+    pesoTotal: num("Obrigatório"),
+    tipoTelhamento: z.string().min(1, "Obrigatório"),
+  })),
+});
 
 interface FormularioAmbienteProps {
   initialData?: Ambiente | null;
@@ -395,7 +568,7 @@ const handleNextStep = () => {
         <TextInput style={{ flex: 1 }}withAsterisk  label="Perfil" placeholder="Ex: I, H, U" {...form.getInputProps(`metalicas.${index}.tipoPerfil`)} />
         <TextInput style={{ flex: 1 }}withAsterisk  label="Seção" placeholder="Ex: W150x24" {...form.getInputProps(`metalicas.${index}.secao`)} />
         <NumberInput style={{ flex: 1 }} withAsterisk label="Peso"  rightSection="KgF" {...form.getInputProps(`metalicas.${index}.peso`)} />
-        <NumberInput style={{ flex: 1 }}  withAsterisk label="Elastômero" {...form.getInputProps(`metalicas.${index}.elastomero`)} />
+        <NumberInput style={{ flex: 1 }}  label="Elastômero" {...form.getInputProps(`metalicas.${index}.elastomero`)} />
     <ActionIcon color="red" variant="subtle" mb={4} onClick={() => form.removeListItem("metalicas", index)}>
         <IconTrash size={16} />
     </ActionIcon>
