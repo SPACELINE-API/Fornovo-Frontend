@@ -139,6 +139,8 @@ export default function Funcionarios() {
         return 'gray';
     }
     };
+  const role = localStorage.getItem('user_role');
+
   if (carregando) {
     return (
       <Box p="md">
@@ -150,12 +152,14 @@ export default function Funcionarios() {
   return (
   <Box p="md">
   <Group justify="flex-end" mb="md">
-    <Button
-      leftSection={<Plus size={18} />}
-      className={Styles.uploadButton}
-      onClick={() => setOpened(true)}
-    > Cadastrar Novo Funcionário
-    </Button>
+    {role === 'Administrador' && (
+      <Button
+        leftSection={<Plus size={18} />}
+        className={Styles.uploadButton}
+        onClick={() => setOpened(true)}
+      > Cadastrar Novo Funcionário
+      </Button>
+    )}
     <ModalNovoFunc
         opened={opened}
         onClose={() => setOpened(false)}
@@ -219,19 +223,21 @@ export default function Funcionarios() {
                     <Badge styles={{root: {fontSize: '12px',padding: '4px 8px',},}} color={getCorNivel(f.nivelUsuario)} variant="light">{f.nivelUsuario}</Badge>
                   </Table.Td>
                   <Table.Td>
-                    <Group gap="xs">
-                    <Tooltip label="Desativar">
-                        <ActionIcon variant="light" color="red" onClick={() => confirmarTrocaStatus(f.id, 'desativar')}>
-                        <UserRoundMinus size={20} />
-                    </ActionIcon>
-                    </Tooltip>
-                    <Tooltip label="Editar">
-                        <ActionIcon variant="light" color="blue" 
-                          onClick={() => {setFuncSelecionado(f); setModalEditarAberto(true);}}>
-                          <Edit size={14} />
+                    {role === 'Administrador' && (
+                      <Group gap="xs">
+                        <Tooltip label="Desativar">
+                            <ActionIcon variant="light" color="red" onClick={() => confirmarTrocaStatus(f.id, 'desativar')}>
+                            <UserRoundMinus size={20} />
                         </ActionIcon>
-                    </Tooltip>
-                    </Group>
+                        </Tooltip>
+                        <Tooltip label="Editar">
+                            <ActionIcon variant="light" color="blue" 
+                              onClick={() => {setFuncSelecionado(f); setModalEditarAberto(true);}}>
+                              <Edit size={14} />
+                            </ActionIcon>
+                        </Tooltip>
+                      </Group>
+                    )}
                   </Table.Td>
                 </Table.Tr>
               ))
@@ -276,19 +282,21 @@ export default function Funcionarios() {
                     <Badge styles={{root: {fontSize: '12px',padding: '4px 8px',},}} color={getCorNivel(f.nivelUsuario)} variant="light">{f.nivelUsuario}</Badge>
                   </Table.Td>
                   <Table.Td>
-                    <Group gap="xs">
-                    <Tooltip label="Ativar">
-                        <ActionIcon variant="light" color="green" onClick={() => confirmarTrocaStatus(f.id, 'ativar')}>
-                        <UserRoundCheck size={20}/>
-                    </ActionIcon>
-                    </Tooltip>
-                    <Tooltip label="Editar">
-                        <ActionIcon variant="light" color="blue" 
-                          onClick={() => {setFuncSelecionado(f); setModalEditarAberto(true);}}>
-                          <Edit size={14} />
+                    {role === 'Administrador' && (
+                      <Group gap="xs">
+                        <Tooltip label="Ativar">
+                            <ActionIcon variant="light" color="green" onClick={() => confirmarTrocaStatus(f.id, 'ativar')}>
+                            <UserRoundCheck size={20}/>
                         </ActionIcon>
-                    </Tooltip>
-                    </Group>
+                        </Tooltip>
+                        <Tooltip label="Editar">
+                            <ActionIcon variant="light" color="blue" 
+                              onClick={() => {setFuncSelecionado(f); setModalEditarAberto(true);}}>
+                              <Edit size={14} />
+                            </ActionIcon>
+                        </Tooltip>
+                      </Group>
+                    )}
                   </Table.Td>
                 </Table.Tr>
               ))

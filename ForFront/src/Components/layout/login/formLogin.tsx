@@ -11,8 +11,9 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { loginSchema } from '../../../schemas/loginSchema';
 import styles from './loginLyt.module.css';
-// import { jwtDecode } from 'jwt-decode';
-// import type { DecodedToken } from '../../../types/auth';
+import { jwtDecode } from 'jwt-decode';
+import type { DecodedToken } from '../../../types/auth';
+import { authService } from '../../../Services/authService';
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
@@ -28,35 +29,29 @@ export default function FormLogin() {
     validate: zodResolver(loginSchema),
   });
 
-    //   const handleLogin = async (values: LoginFormData) => {
-    //     try {
-    //       const result = await authService.login(values.email, values.password);
-    //       const decodedToken: DecodedToken = jwtDecode(result.access);
+  const handleLogin = async (values: LoginFormData) => {
+    try {
+      const result = await authService.login(values.email, values.password);
+      const decodedToken: DecodedToken = jwtDecode(result.token);
 
-    //       localStorage.setItem('user_role', decodedToken.role_usuario);
-    //       localStorage.setItem('access_token', result.access);
-    //       localStorage.setItem('refresh_token', result.refresh);
+      localStorage.setItem('user_role', decodedToken.nivel_usuario);
+      localStorage.setItem('access_token', result.token);
 
-    //       const usuario = {
-    //         nome: decodedToken.nome,
-    //         email: decodedToken.email,
-    //         role: decodedToken.role_usuario,
-    //       };
-    //       localStorage.setItem('usuario', JSON.stringify(usuario));
-        
-    //       navigate('/');
-    //     } catch (error: any) {
-    //       console.error('Erro ao logar', error.response?.data || error.message);
-
-    //       form.setFieldError('email', 'E-mail ou senha incorretos!');
-    //       form.setFieldError('password', ' ');
-    //     }
-    //   };
-
-    const handleLogin = (values: LoginFormData) => {
-      console.log('Login data:', values);
+      const usuario = {
+        id: decodedToken.id_usuario,
+        role: decodedToken.nivel_usuario,
+        nome: decodedToken.nome_usuario,
+      };
+      localStorage.setItem('usuario', JSON.stringify(usuario));
+    
       navigate('/');
-    };
+    } catch (error: any) {
+      console.error('Erro ao logar', error.response?.data || error.message);
+
+      form.setFieldError('email', 'E-mail ou senha incorretos!');
+      form.setFieldError('password', ' ');
+    }
+  };
 
   return (
     <Box
