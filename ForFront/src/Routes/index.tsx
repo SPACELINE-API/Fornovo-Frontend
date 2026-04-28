@@ -22,7 +22,7 @@ const router = createBrowserRouter([
 
     {
         path: "/",
-        element: <ProtectedRoute />, // Rotas que exigem login
+        element: <ProtectedRoute />, 
         children: [
             {
                 path: "/",
