@@ -70,7 +70,7 @@ function SidebarAdmin() {
 
         </button>
 
-        {role === 'Administrador' || role === 'Projetista' ? (
+        {role === 'Administrador' || role === 'Projetista' || role === "Revisor"? (
           <button
             title="Funcionários"
             className={`${styles.sidebarItem} ${activeItem === "funcionarios" ? styles.active : ""}`}
