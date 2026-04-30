@@ -1,0 +1,51 @@
+export interface Ambiente {
+  id: number;
+  nome: string;
+  comprimento: number;
+  largura: number;
+  altura: number;
+  area: number;
+  tomadas:number;
+  iluminacao:number;
+  interruptores:number;
+  cabos: { circuito: string; secao: number }[];
+  disjuntores: { amperagem: number; quantidade: number }[];
+  tipoTomada: string;
+  tipoInterruptor: string;
+  tipoLuminaria: string;
+  alturaInstalacao: number;
+  ramais: { nome: string; diametro: string; comprimento: number }[];
+  registros: number;
+  valvulas: number;
+  conexoes: number;
+  reservatorio: { tipo: string; capacidade: number };
+  hastesAterramento: number;
+  caixasInspecao: number;
+  terminaisAereos: number;
+  quadrosRede: number;
+  patchCords: number;
+  cameras: number;
+  cabeamentos: { circuito: string; comprimento: number; tomadas: number }[];
+  extintores: {tipo:string; peso:number; capacidade: number}[];
+  hidrantes: {localizacao:string; diametro: string; conexoes:number}[];
+  dutos: {diametro:number; comprimento:number}[];
+  tipoEstrutura: string;
+  tipoTelhamento: string;
+  espessura: number;
+  inclinacao: number;
+  pecas:{ descricao: string; secao: string}[];
+  conteineres: number;
+  banheirosQuimicos: number;
+  andaimes: number;
+  residuoComum: number;
+  residuoContaminado: number;
+  destinacaoResiduo: string;
+  profundidadeEscavacao: number;
+  inclinacaoTerreno: number;
+  volumes: {terraplanagem: number; escavacao: number; aterro: number; enrocamento: number; contencao: number; taludamento: number;nivelamento: number; compactacao: number;}
+  fundacoes: { tipo: string; profundidade: number; volumeLastro: number; volumeConcreto: number; pesoFerragem: number; pesoEstribo: number; areaForma: number }[];
+  superestrutura: { tipo: string; largura: number; altura: number; volumeConcreto: number; pesoFerragem: number; pesoEstribo: number; areaForma: number; janelaLancamento?: string }[];
+  metalicas: { tipo: string; tipoPerfil: string; secao: string; peso: number; elastomero?: string }[];
+  madeira: { tipoPeca: string; secao: string; pesoTotal: number; tipoTelhamento: string }[];
+  
+}
