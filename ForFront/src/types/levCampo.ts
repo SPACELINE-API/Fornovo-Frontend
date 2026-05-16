@@ -28,7 +28,7 @@ export interface Ambiente {
   cabeamentos: { circuito: string; comprimento: number; tomadas: number }[];
   extintores: {tipo:string; peso:number; capacidade: number}[];
   hidrantes: {localizacao:string; diametro: string; conexoes:number}[];
-  dutos: {diametro:number; comprimento:number}[];
+  dutos: {diametro:string; comprimento:number}[];
   tipoEstrutura: string;
   tipoTelhamento: string;
   espessura: number;
@@ -45,7 +45,7 @@ export interface Ambiente {
   volumes: {terraplanagem: number; escavacao: number; aterro: number; enrocamento: number; contencao: number; taludamento: number;nivelamento: number; compactacao: number;}
   fundacoes: { tipo: string; profundidade: number; volumeLastro: number; volumeConcreto: number; pesoFerragem: number; pesoEstribo: number; areaForma: number }[];
   superestrutura: { tipo: string; largura: number; altura: number; volumeConcreto: number; pesoFerragem: number; pesoEstribo: number; areaForma: number; janelaLancamento?: string }[];
-  metalicas: { tipo: string; tipoPerfil: string; secao: string; peso: number; elastomero?: string }[];
+  metalicas: { tipo: string; tipoPerfil: string; secao: string; peso: number; elastomero: number  }[];
   madeira: { tipoPeca: string; secao: string; pesoTotal: number; tipoTelhamento: string }[];
   
 }

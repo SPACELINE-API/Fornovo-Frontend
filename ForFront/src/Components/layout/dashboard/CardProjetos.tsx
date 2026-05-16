@@ -335,7 +335,7 @@ function CardProjetos({
               className={styles.cardBotao}
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`/detalhe/calculo/${id}`);
+                navigate(`/detalhe/${id}/calculo`); 
               }}
             >
               Cálculo
@@ -344,7 +344,7 @@ function CardProjetos({
               className={styles.cardBotao}
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`/detalhe/relatorio/${id}`);
+                navigate(`/detalhe/${id}/relatorio`);
               }}
             >
               Relatório
@@ -353,7 +353,7 @@ function CardProjetos({
               className={styles.cardBotao}
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`/detalhe/resumo/${id}`);
+                navigate(`/detalhe/${id}/resumo`);
               }}
             >
               Resumo

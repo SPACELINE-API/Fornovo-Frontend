@@ -52,6 +52,7 @@ export default function Calculo() {
       const dadosLevantamento = resLevantamento.data;
       const resIA = await api.get(`dados-ia/dados-processados/${id}`);
       const dadosDXF = resIA.data.dados_dxf;
+      
 
       const dataSalvar = new FormData();
       dataSalvar.append('arquivo', JSON.stringify(dadosLevantamento));
