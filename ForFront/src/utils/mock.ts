@@ -157,10 +157,6 @@ export const MOCK_CONFORMIDADE: ConformidadeIA = {
     {
       label: 'Conformidade normativa',
       valor: 91,
-    },
-    {
-      label: 'Baixa alucinação',
-      valor: 97,
-    },
+    }
   ],
 };
