@@ -1,13 +1,9 @@
 import { Modal } from '@mantine/core';
 import FormularioProjeto from '../../Components/layout/Formularios/formsProj';
 import styles from './projCss/criarProj.module.css';
+import type { ModalEditarProjetoProps } from '../../types/projeto';
 
-interface ModalEditarProjetoProps {
-  opened: boolean;
-  onClose: () => void;
-  atualizarProjetos: () => void;
-  projeto: any;
-}
+
 
 export default function ModalEditarProjeto({
   opened,

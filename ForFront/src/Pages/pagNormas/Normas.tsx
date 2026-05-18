@@ -33,19 +33,8 @@ import { useEffect, useState } from 'react';
   import ModalNovaNorma from './criarNorms';
   import api from '../../Services/apiService';
   import ModalEditarNorma from './editarNorma';
-  import type { NormaFormData } from '../../Components/layout/Formularios/formsNormas';
+  import type { Norma, StatusNorma, NormaFormData } from '../../types/normas';
 
-  type StatusNorma = 'ativo' | 'inativo';
-
-  interface Norma {
-    id: number;
-    codigo: string;
-    nome: string;
-    ano: number;
-    descricao: string;
-    status: StatusNorma;
-    url_arquivo?: string | null;
-  }
 
   export default function Normas() {
     const [opened, setOpened] = useState(false);
