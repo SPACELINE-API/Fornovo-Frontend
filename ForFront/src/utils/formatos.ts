@@ -13,15 +13,17 @@ export const capitalizarNome = (texto: string) => {
 export const maiusculas = (texto: string) => {
   return texto.toUpperCase();
 };
-
 export const formatarData = (data: string | null | undefined) => {
   if (!data) return '';
-
-  const partes = data.split('-');
-
-  if (partes.length !== 3) return data;
-
-  const [ano, mes, dia] = partes;
-
-  return `${dia}/${mes}/${ano}`;
+  try {
+    const dataFormatada = data.includes('T') ? data : `${data}T00:00`;
+    const date = new Date(dataFormatada);
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  } catch {
+    return data;
+  }
 };
