@@ -144,11 +144,8 @@ export const MOCK_NOTIFICACOES: Notificacao[] = [
 
 export const MOCK_CONFORMIDADE: ConformidadeIA = {
   valor: 91,
-
   status: 'Excelente',
-
   cor: '#16a34a',
-
   metricas: [
     {
       label: 'Precisão técnica',

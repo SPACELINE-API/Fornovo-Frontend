@@ -32,6 +32,12 @@ export default function Home() {
 
       <KpiGrid kpi={kpi} carregando={carregando} />
 
+      <Grid mb="sm" gutter="md">
+        <Grid.Col>
+          <ConformidadeProjetos dados={conformidade} />
+        </Grid.Col>
+      </Grid>
+
       <Grid mb="xl" gutter="md">
         <Grid.Col span={{ base: 12, lg: 5 }}>
           <FeedNotificacoes notificacoes={notificacoes} />
@@ -43,13 +49,6 @@ export default function Home() {
             mesesData={mesesData}
             memoriaisData={memoriaisData}
           />
-        </Grid.Col>
-      </Grid>
-
-      <Grid mb="xl" gutter="md">
-
-        <Grid.Col>
-          <ConformidadeProjetos dados={conformidade} />
         </Grid.Col>
       </Grid>
 
