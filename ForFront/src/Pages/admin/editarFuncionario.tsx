@@ -1,16 +1,8 @@
 import { Modal, ScrollArea } from '@mantine/core';
 import FormsFuncionario from '../../Components/layout/Formularios/formsFuncionario';
-import type { FuncFormData } from '../../Components/layout/Formularios/formsFuncionario';
+import type { ModalEditarFuncProps } from '../../types/funcionarios';
 import styles from '../pagProjetos/projCss/criarProj.module.css';
 
-
-interface ModalEditarFuncProps {
-  opened: boolean;
-  onClose: () => void;
-  onSubmitSuccess?: () => void;
-  func: FuncFormData | null;
- 
-}
 
 export default function ModalEditarFunc({ opened, onClose, onSubmitSuccess, func}: ModalEditarFuncProps) {
   return (

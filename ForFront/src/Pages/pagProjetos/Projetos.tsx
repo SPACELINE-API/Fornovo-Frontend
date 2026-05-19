@@ -9,16 +9,9 @@ import api from '../../Services/apiService';
 import { capitalizar, capitalizarNome, maiusculas } from '../../utils/formatos';
 import ModalEditarProjeto from './editarProjeto';
 import type { ProjetoFormsData } from '../../types/projeto';
+import type { ProjetoListagem } from '../../types/projeto';
 
-export interface Projeto {
-  id_projeto: string;
-  nome_projeto: string;
-  descricao: string;
-  status: string;
-  engenheiro_nome: string;
-  data_fim: string;
-  localizacao: string;
-}
+
 
 export default function Projetos() {
   const [opened, setOpened] = useState(false);
@@ -26,7 +19,7 @@ export default function Projetos() {
   const [filtro, setFiltro] = useState('');
   const [projetoSelecionado, setProjetoSelecionado] = useState<ProjetoFormsData | null>(null);
   const [modalEditarOpened, setModalEditarOpened] = useState(false);
-  const [projetos, setProjetos] = useState<Projeto[]>([]);
+  const [projetos, setProjetos] = useState<ProjetoListagem[]>([]);
   const [carregando, setCarregando] = useState(true);
 
   const buscarProjetos = async () => {
@@ -42,7 +35,7 @@ export default function Projetos() {
     }
   };
 
-  const abrirEditarProjeto = (projeto: Projeto) => {
+  const abrirEditarProjeto = (projeto: ProjetoListagem) => {
     let bairro = '';
     let cidade = '';
     let estado = '';
@@ -70,7 +63,7 @@ export default function Projetos() {
       estado: estado,
       numero: numero,
       responsavel: projeto.engenheiro_nome ? [projeto.engenheiro_nome] : [],
-      data_inicio: null, 
+      data_inicio: null,
       data_fim: projeto.data_fim ? new Date(projeto.data_fim + 'T00:00:00') : null,
       status: projeto.status,
     };
@@ -107,44 +100,42 @@ export default function Projetos() {
     return nomeMatch && statusMatch;
   });
 
+  const cabecalho = (
+    <Group justify="space-between" mb="xl">
+      <Title order={2} className={styles.titulo}>
+        Projetos
+      </Title>
+      <Group className={styles.containerBarraPesquisa}>
+        <BarraPesquisa busca={busca} setBusca={setBusca} />
+        <Dropdown filtro={filtro} setFiltro={setFiltro} />
+      </Group>
+      <Button color="#34623F" onClick={() => setOpened(true)}>
+        + Novo Projeto
+      </Button>
+    </Group>
+  );
+
+  const modais = (
+    <>
+      <ModalCriarProjeto
+        opened={opened}
+        onClose={() => setOpened(false)}
+        atualizarProjetos={buscarProjetos}
+      />
+      <ModalEditarProjeto
+        opened={modalEditarOpened}
+        onClose={() => setModalEditarOpened(false)}
+        atualizarProjetos={buscarProjetos}
+        projeto={projetoSelecionado}
+      />
+    </>
+  );
+
   if (carregando && projetos.length === 0) {
     return (
       <div style={{ padding: '24px' }}>
-        <Group justify="space-between" mb="xl">
-          <Title order={2} className={styles.titulo}>
-            Projetos
-          </Title>
-
-          <Group>
-            <BarraPesquisa busca={busca} setBusca={setBusca} />
-            <Dropdown filtro={filtro} setFiltro={setFiltro} />
-          </Group>
-
-          <Button
-            color="#34623F"
-            onClick={() => {
-              setOpened(true);
-            }}
-          >
-            + Novo Projeto
-          </Button>
-        </Group>
-
-        <ModalCriarProjeto
-          opened={opened}
-          onClose={() => {
-            setOpened(false);
-          }}
-          atualizarProjetos={buscarProjetos}
-        />
-
-        <ModalEditarProjeto
-          opened={modalEditarOpened}
-          onClose={() => setModalEditarOpened(false)}
-          atualizarProjetos={buscarProjetos}
-          projeto={projetoSelecionado}
-        />
-
+        {cabecalho}
+        {modais}
         <div className={styles.containerProjetos}>
           {Array.from({ length: 6 }).map((_, index) => (
             <Skeleton key={index} height={220} radius="md" />
@@ -153,98 +144,36 @@ export default function Projetos() {
       </div>
     );
   }
-  if (projetos.length == 0) {
-    return (
-      <div style={{ padding: '24px' }}>
-        <Group justify="space-between" mb="xl">
-          <Title order={2} className={styles.titulo}>
-            Projetos
-          </Title>
 
-          <Group>
-            <BarraPesquisa busca={busca} setBusca={setBusca} />
-            <Dropdown filtro={filtro} setFiltro={setFiltro} />
-          </Group>
-
-          <Button
-            color="#34623F"
-            onClick={() => {
-              setOpened(true);
-            }}
-          >
-            + Novo Projeto
-          </Button>
-        </Group>
-
-        <ModalCriarProjeto
-          opened={opened}
-          onClose={() => {
-            setOpened(false);
-          }}
-          atualizarProjetos={buscarProjetos}
-        />
-
+  return (
+    <div style={{ padding: '24px' }}>
+      {cabecalho}
+      {modais}
+      {projetos.length === 0 ? (
         <div className={styles.containerProjetos}>
           <p>Nenhum projeto cadastrado.</p>
         </div>
-      </div>
-    );
-  } else {
-    return (
-      <div style={{ padding: '24px' }}>
-        <Group justify="space-between" mb="xl">
-          <Title order={2} className={styles.titulo}>
-            Projetos
-          </Title>
-
-          <Group className={styles.containerBarraPesquisa}>
-            <BarraPesquisa busca={busca} setBusca={setBusca} />
-            <Dropdown filtro={filtro} setFiltro={setFiltro} />
-          </Group>
-
-          <Button
-            color="#34623F"
-            onClick={() => {
-              setOpened(true);
-            }}
-          >
-            + Novo Projeto
-          </Button>
-        </Group>
-
-        <Divider />
-
-        <ModalCriarProjeto
-          opened={opened}
-          onClose={() => {
-            setOpened(false);
-          }}
-          atualizarProjetos={buscarProjetos}
-        />
-        <ModalEditarProjeto
-          opened={modalEditarOpened}
-          onClose={() => setModalEditarOpened(false)}
-          atualizarProjetos={buscarProjetos}
-          projeto={projetoSelecionado}
-        />
-
-        <div className={styles.containerProjetos}>
-          {projetosFiltrados.map((projeto) => (
-            <CardProjetos
-              key={projeto.id_projeto}
-              id={projeto.id_projeto}
-              nome={capitalizar(projeto.nome_projeto)}
-              descricao={capitalizar(projeto.descricao)}
-              status={maiusculas(projeto.status)}
-              responsavel={capitalizarNome(projeto.engenheiro_nome)}
-              data={projeto.data_fim}
-              atualizarProjetos={buscarProjetos}
-              projeto={projeto}
-              abrirEditarProjeto={abrirEditarProjeto}
-            />
-          ))}
-        </div>
-      </div>
-    );
-  }
+      ) : (
+        <>
+          <Divider />
+          <div className={styles.containerProjetos}>
+            {projetosFiltrados.map((projeto) => (
+              <CardProjetos
+                key={projeto.id_projeto}
+                id={projeto.id_projeto}
+                nome={capitalizar(projeto.nome_projeto)}
+                descricao={capitalizar(projeto.descricao)}
+                status={maiusculas(projeto.status)}
+                responsavel={capitalizarNome(projeto.engenheiro_nome)}
+                data={projeto.data_fim}
+                atualizarProjetos={buscarProjetos}
+                projeto={projeto}
+                abrirEditarProjeto={abrirEditarProjeto}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
 }

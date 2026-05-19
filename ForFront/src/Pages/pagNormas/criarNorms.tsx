@@ -1,16 +1,9 @@
 import { Modal, ScrollArea } from '@mantine/core';
 import FormsNormas from '../../Components/layout/Formularios/formsNormas';
 import styles from '../pagProjetos/projCss/criarProj.module.css';
-import type { NormaFormData } from '../../Components/layout/Formularios/formsNormas';
+import type { ModalCriarNormaProps } from '../../types/normas';
 
-interface ModalNormasProps {
-  opened: boolean;
-  onClose: () => void;
-  onSubmitSuccess?: () => void;
-  initialData?: NormaFormData | null;
-}
-
-export default function ModalNovaNorma({ opened, onClose, onSubmitSuccess, initialData }: ModalNormasProps) {
+export default function ModalNovaNorma({ opened, onClose, onSubmitSuccess, initialData }: ModalCriarNormaProps) {
   const handleSuccess = () => {
     onClose();
     onSubmitSuccess?.();

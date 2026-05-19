@@ -4,14 +4,9 @@ import { useForm, zodResolver } from '@mantine/form';
 import { z } from 'zod';
 import { notifications } from '@mantine/notifications';
 import api from '../../../Services/apiService';
+import type { FormFuncionarioProps } from '../../../types/funcionarios';
 
-export interface FuncFormData{
-    id:string,
-    nome:string,
-    email:string,
-    senha:string,
-    nivelUsuario: string,
-}
+
 
 const funcionarioSchema = (isEdit:boolean) => z.object({
   nome: z.string().min(1, 'O nome do funcionário é obrigatório'),
@@ -30,12 +25,6 @@ const funcionarioSchema = (isEdit:boolean) => z.object({
     message: 'As senhas não coincidem',
     path: ['confirmarSenha'], 
 });
-
-interface FormFuncionarioProps{
-    onSubmitSuccess: () => void;
-    onCancel: () => void;
-    initialData?: FuncFormData;
-}
 
 const FormularioFunc: React.FC<FormFuncionarioProps> = ({
   onSubmitSuccess,
