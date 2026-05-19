@@ -42,7 +42,7 @@ export default function FeedNotificacoes({ notificacoes }: FeedNotificacoesProps
   </Group>
 
   <ScrollArea
-    h={340}
+    h={420}
     offsetScrollbars
     scrollbarSize={8}
   >

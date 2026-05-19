@@ -140,6 +140,27 @@ export const MOCK_NOTIFICACOES: Notificacao[] = [
     data: 'Ontem, 14:00',
     usuario: 'Sistema',
   },
+  {
+    id: 9,
+    mensagem: 'Projeto "Centro Comercial" em análise',
+    tipo: 'info',
+    data: 'Ontem, 12:15',
+    usuario: 'Sistema',
+  },
+  {
+    id: 10,
+    mensagem: 'Novo projeto criado: "Parque de Exposições"',
+    tipo: 'info',
+    data: 'Ontem, 11:30',
+    usuario: 'Admin',
+  },
+  {
+    id: 11,
+    mensagem: 'Atualização do sistema realizada',
+    tipo: 'info',
+    data: 'Ontem, 10:00',
+    usuario: 'Sistema',
+  }
 ];
 
 export const MOCK_CONFORMIDADE: ConformidadeIA = {

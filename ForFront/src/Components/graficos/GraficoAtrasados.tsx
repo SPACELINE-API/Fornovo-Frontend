@@ -14,6 +14,7 @@ export default function GraficoAtrasados({ dados }: GraficoAtrasadosProps) {
   const options: ApexCharts.ApexOptions = {
     chart: {
       type: 'donut',
+      parentHeightOffset: 0,
       toolbar: { show: false },
       animations: { enabled: true, speed: 600 },
     },
@@ -64,7 +65,7 @@ export default function GraficoAtrasados({ dados }: GraficoAtrasadosProps) {
           type="donut"
           series={dados.map((d) => d.valor)}
           options={options}
-          height={240}
+          height="100%"
         />
 
         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3 }}>

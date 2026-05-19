@@ -12,6 +12,7 @@ export default function GraficoStatus({ dados }: GraficoStatusProps) {
   const options: ApexCharts.ApexOptions = {
     chart: {
       type: 'donut',
+      parentHeightOffset: 0,
       toolbar: { show: false },
       animations: { enabled: true, speed: 600 },
     },
@@ -60,7 +61,7 @@ export default function GraficoStatus({ dados }: GraficoStatusProps) {
           type="donut"
           series={dados.map((d) => d.value)}
           options={options}
-          height={220}
+          height="70%"
         />
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75, mt: 1 }}>

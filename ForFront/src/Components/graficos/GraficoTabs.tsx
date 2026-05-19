@@ -36,7 +36,7 @@ export default function GraficosTabs({ statusData, mesesData, memoriaisData }: G
           <Tab label="Atividade por mês" />
         </Tabs>
 
-        <Box>
+        <Box sx={{ minHeight: { xs: 280, md: 320 } }}>
           {tab === 0 && <GraficoStatus dados={statusData} />}
           {tab === 1 && <GraficoMeses mesesData={mesesData} memoriaisData={memoriaisData} />}
         </Box>

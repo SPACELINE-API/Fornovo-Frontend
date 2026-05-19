@@ -11,6 +11,7 @@ export default function GraficoMeses({ mesesData, memoriaisData }: GraficoMesesP
   const options: ApexCharts.ApexOptions = {
     chart: {
       type: 'area',
+      parentHeightOffset: 0,
       toolbar: { show: false },
       zoom: { enabled: false },
       animations: { enabled: true, speed: 600 },

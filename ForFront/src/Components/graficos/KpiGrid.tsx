@@ -22,7 +22,7 @@ export default function KpiGrid({ kpi, carregando }: KpiGridProps) {
         />
       </Grid.Col>
 
-      <Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
+      <Grid.Col span={{ base: 12, sm: 6, md: 4, lg: 4 }}>
         <KpiCard
           label="Projetos"
           value={kpi.projetos}
