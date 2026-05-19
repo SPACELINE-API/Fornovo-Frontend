@@ -134,6 +134,7 @@ function Menu({ iaEstado, onIniciarIA, onIAconcluida, onIAerro }: MenuProps) {
           setOpenedAmbiente(false);
           verificarLevantamento();
         }}
+        onSuccess={() => window.dispatchEvent(new Event('levantamentoCampo'))}
       />
 
       <ModalArquivos

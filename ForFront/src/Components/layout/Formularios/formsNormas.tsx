@@ -20,17 +20,7 @@ import { notifications } from '@mantine/notifications';
 import { CloudUpload, FileText, Trash2 } from 'lucide-react';
 import Styles from './formsCss/norms.module.css';
 import api from '../../../Services/apiService';
-
-export interface NormaFormData {
-  id: number;
-  codigo: string;
-  nome: string;
-  ano: number;
-  serie?: string;
-  descricao: string;
-  arquivo: File | null;
-  url_arquivo?: string | null;
-}
+import type { NormaFormData } from '../../../types/normas';
 
 const normaSchema = (isEdit: boolean) => z.object({
   codigo: z.string().min(1, 'O código da norma é obrigatório'),

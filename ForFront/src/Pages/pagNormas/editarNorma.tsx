@@ -1,13 +1,7 @@
 import { Modal, ScrollArea } from '@mantine/core';
 import FormsNormas from '../../Components/layout/Formularios/formsNormas';
-import type { NormaFormData } from '../../Components/layout/Formularios/formsNormas';
+import type { ModalEditarNormaProps } from '../../types/normas';
 
-interface ModalEditarNormaProps {
-  opened: boolean;
-  onClose: () => void;
-  norma: NormaFormData | null;
-  onSubmitSuccess: () => void;
-}
 
 export default function ModalEditarNorma({
   opened,
