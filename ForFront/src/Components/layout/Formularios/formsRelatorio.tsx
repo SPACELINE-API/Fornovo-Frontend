@@ -1,5 +1,5 @@
 import { Box, Stack, Text, Title, Group, Paper, Button } from "@mantine/core";
-import { Dropzone, PDF_MIME_TYPE } from "@mantine/dropzone";
+import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
 import { CloudUpload, FileText, Trash } from "lucide-react";
 import styles from './formsCss/formsArq.module.css';
 import { useState } from "react";
@@ -18,11 +18,13 @@ function FormsRelatorio({ onClose, onSuccess }: FormsRelatorioProps) {
     const [carregando, setCarregando] = useState(false);
     const [erroArquivo, setErroArquivo] = useState<string | false>(false);
 
+    const extensoes : string[] = [MIME_TYPES.pdf, MIME_TYPES.docx];
+
     const handleDrop = (arquivos: File[]) => {
         const arquivo = arquivos[0];
         if (!arquivo) return;
 
-        if (arquivo.type !== 'application/pdf') {
+        if (!extensoes.includes(arquivo.type)) {
             setErroArquivo('Apenas arquivos PDF são permitidos.');
             return;
         }
@@ -70,7 +72,7 @@ function FormsRelatorio({ onClose, onSuccess }: FormsRelatorioProps) {
                 <Dropzone
                     onDrop={handleDrop}
                     className={styles.dropContainer}
-                    accept={PDF_MIME_TYPE}
+                    accept={extensoes}
                     multiple={false}
                     loading={carregando}
                 >
