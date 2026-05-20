@@ -4,12 +4,13 @@ import { useState, useEffect } from 'react';
 import { Modal, ScrollArea } from '@mantine/core';
 import PainelArquivos from '../../Components/layout/paineis/painelArquivos';
 import PainelResponsaveis from '../../Components/layout/paineis/painelResponsaveis';
-import type { LevantamentoDados } from '../../types/resumo';
+import type { LevantamentoDados, Ambiente } from '../../types/resumo';
 import TabelaLevantamento from '../../Components/layout/paineis/tabelaLevantamento';
-import { FileText } from 'lucide-react';
 import api from '../../Services/apiService';
 import { useParams } from 'react-router-dom';
 import { capitalizar, formatarData, capitalizarNome } from '../../utils/formatos';
+import { IconPencilCheck } from '@tabler/icons-react';
+import ModalLevCampo from '../pagProjetos/CriarLevCampo';
 
 interface Projeto {
   id_projeto: string;
@@ -29,6 +30,9 @@ function Resumo() {
   const [projeto, setProjeto] = useState<Projeto | null>(null);
   const [levantamento, setLevantamento] = useState<LevantamentoDados | null>(null);
   const [vazio, setVazio] = useState(true);
+  const [ambienteSelecionado, setAmbienteSelecionado] = useState<Ambiente | null>(null);
+  const [recarregar, setRecarregar] = useState(0);
+  const [editar, setEditar] = useState(false);
 
   const { id } = useParams();
 
@@ -46,21 +50,34 @@ function Resumo() {
     if (id) buscarProjeto();
   }, [id]);
 
-  useEffect(() => {
-    async function dadosLevantamento() {
-      try {
-        const response = await api.get(`calculos/form-levantamento/${id}`);
-        setLevantamento(response.data);
-        setVazio(false);
-      } catch (error) {
-        console.log(error);
+ useEffect(() => {
+  async function dadosLevantamento() {
+    try {
+      const response = await api.get(`calculos/form-levantamento/${id}`);
+      const data = response.data;
+      const ambientes = Array.isArray(data) ? data : [data];
+
+      if (ambientes.length === 0) {
         setVazio(true);
-      } finally {
-        setCarregando(false);
+      } else {
+        setLevantamento({ ambientes });
+        setVazio(false);
       }
+    } catch (error) {
+      console.log(error);
+      setVazio(true);
+    } finally {
+      setCarregando(false);
     }
-    if (id) dadosLevantamento();
-  }, [id]);
+  }
+  if (id) dadosLevantamento();
+}, [id, recarregar]);
+
+useEffect(() => {
+  const handler = () => setRecarregar(r => r + 1);
+  window.addEventListener('levantamentoCampo', handler);
+  return () => window.removeEventListener('levantamentoCampo', handler);
+}, []);
 
   if (carregando || !projeto) {
     return (
@@ -71,7 +88,7 @@ function Resumo() {
       </div>
     );
   }
-
+  
   const statusMap: Record<string, string> = {
     pendente: styles.statusPendente,
     'em andamento': styles.statusEmAndamento,
@@ -113,50 +130,56 @@ function Resumo() {
         <div className={styles.containerDireito}>
           <p className={styles.sectionLabel}>Arquivos associados</p>
           <PainelArquivos projeto_id={id} />
-
-          <div className={styles.containerLevantamento}>
-            <div className={styles.levHeader}>
-              <div className={styles.levTitulo}>
-                <FileText size={18} strokeWidth={1.75} style={{ marginRight: 3 }} />
-                <span className={styles.sectionLabel}>Levantamento de campo</span>
-              </div>
-              {!vazio && <span className={styles.levBadge}>Preenchido</span>}
-            </div>
-
-            {vazio ? (
-              <p className={styles.levVazio}>Ainda não cadastrado.</p>
-            ) : (
-              <button className={styles.btnVisualizar} onClick={() => setAberto(true)}>
-                Visualizar
-              </button>
-            )}
-          </div>
+      </div>
+    </div>
+    <p className={styles.sectionLabel} style={{ marginTop: '2rem' }}>Levantamento de campo</p>
+    {vazio ? (
+      <div className={styles.levVazioCard}>
+        <p className={styles.levVazio}>Nenhum levantamento de campo registrado.</p>
+      </div>
+    ) : (
+      <div className={styles.cardList}>
+    {!vazio && levantamento?.ambientes?.map((ambiente, index) => (
+      <div key={index} className={styles.card}>
+        <div className={styles.cardLev}>
+          <span className={styles.tituloLev}>{capitalizar(ambiente.nome)}</span>
+          <span className={styles.levBadge}><IconPencilCheck size={18} /></span>
+        </div>
+        <hr className={styles.divisaoLev} />
+        <div className={styles.preenchidoLev}>
+          <span>Preenchido em:</span>
+          <span className={styles.dataLev}>{formatarData(ambiente.created_at ?? '')}</span>
+        </div>
+        <div className={styles.actionsLev}>
+          <button className={styles.btnVisualizarEditar} onClick={() => { setAmbienteSelecionado(ambiente); setAberto(true)}} >
+            Visualizar
+          </button>
+          <button className={styles.btnVisualizarEditar} onClick={() => { setAmbienteSelecionado(ambiente); setEditar(true)}} >
+            Editar
+          </button>
+          
         </div>
       </div>
-
-      <Modal
-        opened={aberto}
-        onClose={() => setAberto(false)}
-        size="60%"
-        scrollAreaComponent={ScrollArea.Autosize}
-        centered
-        title="Levantamento de campo"
-        styles={{
-          title: { fontWeight: 500, fontSize: '0.95rem' },
-          header: { borderBottom: '1px solid #eee', paddingBottom: '12px' },
-        }}
-      >
-        {vazio ? (
-          <p style={{ color: '#888', fontSize: '0.875rem' }}>
-            Levantamento de campo ainda não cadastrado.
-          </p>
-        ) : levantamento ? (
-          <TabelaLevantamento dados={levantamento} />
-        ) : (
-          <p style={{ color: '#888', fontSize: '0.875rem' }}>Carregando...</p>
-        )}
-      </Modal>
-    </div>
+    ))}
+    
+  </div>  
+)}
+  <Modal
+    opened={aberto}
+    onClose={() => { setAberto(false); setAmbienteSelecionado(null); }}
+    title={ambienteSelecionado ? capitalizar(ambienteSelecionado.nome) : ""}
+    size="xl"
+    scrollAreaComponent={ScrollArea.Autosize}
+    >
+    {ambienteSelecionado && <TabelaLevantamento ambiente={ambienteSelecionado} />}
+  </Modal> 
+  <ModalLevCampo
+    openedAmbiente={editar}
+    onClose={() => { setEditar(false); setAmbienteSelecionado(null); }}
+    onSuccess={() => setRecarregar(r => r + 1)}
+    initialData={ambienteSelecionado}
+/>
+</div> 
   );
 }
 

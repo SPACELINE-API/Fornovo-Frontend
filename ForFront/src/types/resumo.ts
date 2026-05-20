@@ -11,12 +11,12 @@ export type Disjuntor = {
 export type Cabeamento = {
   circuito: string;
   comprimento: number;
-  tomadas : number
+  tomadas: number;
 };
 
 export type Ramal = {
   nome: string;
-  diametro: number;
+  diametro: string;
   comprimento: number;
 };
 
@@ -31,29 +31,29 @@ export type Fundacao = {
 };
 
 export type SuperEstrutura = {
-  tipo: string,
-  largura: number,
-  altura: number,
-  volumeConcreto: number,
-  pesoFerragem: number,
-  pesoEstribo: number,
-  areaForma: number
-}
+  tipo: string;
+  largura: number;
+  altura: number;
+  volumeConcreto: number;
+  pesoFerragem: number;
+  pesoEstribo: number;
+  areaForma: number;
+};
 
 export type Metalicas = {
-  tipo: string,
-  tipoPerfil: string,
-  secao: string,
-  peso: number,
-  elastomero: number
-}
+  tipo: string;
+  tipoPerfil: string;
+  secao: string;
+  peso: number;
+  elastomero: number;
+};
 
 export type Madeira = {
-  tipoPeca: string,
-  secao: string,
-  pesoTotal: number,
-  tipoTelhamento: number
-}
+  tipoPeca: string;
+  secao: string;
+  pesoTotal: number;
+  tipoTelhamento: string;
+};
 
 export type Reservatorio = {
   tipo: string;
@@ -61,56 +61,58 @@ export type Reservatorio = {
 };
 
 export type Extintores = {
-  tipo: string,
-  peso: number,
-  capacidade: number
-}
+  tipo: string;
+  peso: number;
+  capacidade: number;
+};
 
 export type Hidrante = {
-  localizacao: string,
-  diametro: number,
-  conexoes: number
-}
+  localizacao: string;
+  diametro: string;
+  conexoes: number;
+};
 
 export type Dutos = {
-  diametro: string,
-  comprimento: number
-}
+  diametro: string;
+  comprimento: number;
+};
 
 export type Pecas = {
-  descricao: string,
-  secao: string
-}
+  descricao: string;
+  secao: string;
+};
 
 export type Volumes = {
-  terraplanagem : number,
-  escavacao : number,
-  aterro : number,
-  enrocamento : number,
-  contencao : number,
-  taludamento : number,
-  nivelamento : number,
-  compactacao : number
-}
+  terraplanagem: number;
+  escavacao: number;
+  aterro: number;
+  enrocamento: number;
+  contencao: number;
+  taludamento: number;
+  nivelamento: number;
+  compactacao: number;
+};
 
-export type LevantamentoDados = {
-
-  /*AMBIENTE*/
-
+export type Ambiente = {
+  /* AMBIENTE */
+  id:number;
   nome: string;
   comprimento: number;
   largura: number;
   altura: number;
-  area: number,
+  area: number;
+  
 
-  /*ELÉTRICA*/
+  /* ELÉTRICA */
 
   tomadas: number;
   iluminacao: number;
   interruptores: number;
+
   tipoTomada: string;
   tipoInterruptor: string;
   tipoLuminaria: string;
+
   alturaInstalacao: number;
 
   cabos: Cabo[];
@@ -132,7 +134,9 @@ export type LevantamentoDados = {
   registros: number;
   valvulas: number;
   conexoes: number;
+
   reservatorio: Reservatorio;
+
   extintores: Extintores[];
   hidrantes: Hidrante[];
   dutos: Dutos[];
@@ -144,20 +148,22 @@ export type LevantamentoDados = {
   banheirosQuimicos: number;
   andaimes: number;
 
-  residuoComum: number,
-  residuoContaminado: number,
-  destinacaoResiduo: string
+  residuoComum: number;
+  residuoContaminado: number;
 
-  profundidadeEscavacao: number,
-  inclinacaoTerreno: number
-  escavacao: number
+  destinacaoResiduo: string;
 
-  volumes : Volumes;
+  profundidadeEscavacao: number;
+  inclinacaoTerreno: number;
 
-  tipoEstrutura: string,
-  tipoTelhamento: string,
-  espessura: number,
-  inclinacao: number,
+  escavacao: number;
+
+  volumes: Volumes;
+
+  tipoEstrutura: string;
+  tipoTelhamento: string;
+  espessura: number;
+  inclinacao: number;
 
   /* ESTRUTURA */
 
@@ -165,5 +171,9 @@ export type LevantamentoDados = {
   superestrutura: SuperEstrutura[];
   metalicas: Metalicas[];
   madeira: Madeira[];
+  created_at?: string;
+};
 
+export type LevantamentoDados = {
+  ambientes: Ambiente[];
 };

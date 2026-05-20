@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./dashCss/Sidebar.module.css";
-import { Clock, FileText, House, PanelRightClose, PanelRightOpen, PencilRuler, User } from "lucide-react";
+import { FileText, House, PanelRightClose, PanelRightOpen, PencilRuler, User } from "lucide-react";
 
 
 function SidebarAdmin() {
@@ -13,7 +13,6 @@ function SidebarAdmin() {
   const getActiveItem = () => {
     const path = location.pathname;
   
-    if (path.includes("/recentes")) return "recentes";
     if (path.includes("/projetos")) return "projetos";
     if (path.includes("/normas")) return "normas";
     if (path.includes("/funcionarios")) return "funcionarios";
@@ -43,15 +42,6 @@ function SidebarAdmin() {
         </button>
 
         <button
-          title="Recentes"
-          className={`${styles.sidebarItem} ${activeItem === "recentes" ? styles.active : ""}`}
-          onClick={() => navigate("/recentes")}
-        >
-          <Clock size={24} />
-          {!collapsed && <span className={styles.navEscrito}>Recentes</span>}
-        </button>
-
-        <button
           title="Projetos"
           className={`${styles.sidebarItem} ${activeItem === "projetos" ? styles.active : ""}`}
           onClick={() => navigate("/projetos")}
@@ -66,11 +56,11 @@ function SidebarAdmin() {
           onClick={() => navigate("/normas")}>
 
           <FileText size={24} />
-          {!collapsed && <span className={styles.navEscrito}>NBR's</span>}
+          {!collapsed && <span className={styles.navEscrito}>Nbr's</span>}
 
         </button>
 
-        {role === 'Administrador' || role === 'Projetista' ? (
+        {role === 'Administrador' || role === 'Projetista' || role === "Revisor"? (
           <button
             title="Funcionários"
             className={`${styles.sidebarItem} ${activeItem === "funcionarios" ? styles.active : ""}`}

@@ -8,7 +8,6 @@ import Calculo from '../Pages/detalhes/Calculo.tsx';
 import Relatorio from '../Pages/detalhes/Relatorio.tsx';
 import Especificacoes from '../Pages/detalhes/Especificacoes.tsx';
 import Projetos from "../Pages/pagProjetos/Projetos.tsx"
-import Recentes from "../Pages/Recentes.tsx"
 import Funcionarios from "../Pages/admin/Funcionarios.tsx"
 import LoginLayout from '../Components/layout/login/loginLayout.tsx';
 import { ProtectedRoute } from './ProtectedRoute.tsx';
@@ -63,12 +62,8 @@ const router = createBrowserRouter([
                         ]
                     },
                     {
-                        path: "recentes",
-                        element: <Recentes />
-                    },
-                    {
                         path: "funcionarios",
-                        element: <ProtectedRoute allowedRoles={['Administrador', 'Projetista']} />,
+                        element: <ProtectedRoute allowedRoles={['Administrador', 'Projetista', 'Revisor']} />,
                         children: [
                             {
                                 index: true,
