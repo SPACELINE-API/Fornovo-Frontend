@@ -44,6 +44,7 @@ export interface Notificacao {
   tipo: TipoNotificacao;
   data: string;
   usuario?: string;
+  lida?: boolean;
 }
 
 export interface MetricaIA {

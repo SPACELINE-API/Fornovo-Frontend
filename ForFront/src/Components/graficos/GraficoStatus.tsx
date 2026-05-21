@@ -1,12 +1,47 @@
-import { Card, CardContent, Typography, Box } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Card, CardContent, Typography, Box, Skeleton } from '@mui/material';
 import ReactApexChart from 'react-apexcharts';
 import type { StatusData } from '../../types/dashboard';
+import api from '../../Services/apiService';
 
-interface GraficoStatusProps {
-  dados: StatusData[];
+const STATUS_CONFIG: { name: string; color: `#${string}` }[] = [
+  { name: 'Concluído', color: '#34623F' },
+  { name: 'Em andamento', color: '#89c094' },
+  { name: 'Em revisão', color: '#f59e0b' },
+  { name: 'Pendente', color: '#e5e7eb' },
+];
+
+type QuantidadePorStatusResponse = Record<string, number>;
+
+function mapearResposta(data: QuantidadePorStatusResponse): StatusData[] {
+  return STATUS_CONFIG.map(({ name, color }) => ({
+    name,
+    value: data[name] ?? 0,
+    color,
+  }));
 }
 
-export default function GraficoStatus({ dados }: GraficoStatusProps) {
+export default function GraficoStatus() {
+  const [dados, setDados] = useState<StatusData[]>([]);
+  const [carregando, setCarregando] = useState(true);
+
+  useEffect(() => {
+    const fetchDados = async () => {
+      try {
+        const { data } = await api.get<QuantidadePorStatusResponse>(
+          'projetos/quantidadeProjetoPorStatus'
+        );
+        setDados(mapearResposta(data));
+      } catch {
+        setDados(mapearResposta({}));
+      } finally {
+        setCarregando(false);
+      }
+    };
+
+    fetchDados();
+  }, []);
+
   const total = dados.reduce((s, d) => s + d.value, 0);
 
   const options: ApexCharts.ApexOptions = {
@@ -45,7 +80,10 @@ export default function GraficoStatus({ dados }: GraficoStatusProps) {
     stroke: { width: 2, colors: ['#fff'] },
     tooltip: {
       y: {
-        formatter: (val) => `${val} projetos (${Math.round((val / total) * 100)}%)`,
+        formatter: (val) =>
+          total > 0
+            ? `${val} projetos (${Math.round((val / total) * 100)}%)`
+            : `${val} projetos`,
       },
     },
   };
@@ -57,36 +95,44 @@ export default function GraficoStatus({ dados }: GraficoStatusProps) {
           Projetos por status
         </Typography>
 
-        <ReactApexChart
-          type="donut"
-          series={dados.map((d) => d.value)}
-          options={options}
-          height="70%"
-        />
+        {carregando ? (
+          <Skeleton variant="rounded" height={220} sx={{ borderRadius: 2 }} />
+        ) : (
+          <>
+            <ReactApexChart
+              type="donut"
+              series={dados.map((d) => d.value)}
+              options={options}
+              height="70%"
+            />
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75, mt: 1 }}>
-          {dados.map((item) => (
-            <Box
-              key={item.name}
-              sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-            >
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Box sx={{ width: 10, height: 10, borderRadius: 1, backgroundColor: item.color }} />
-                <Typography variant="body2" color="text.secondary">
-                  {item.name}
-                </Typography>
-              </Box>
-              <Box sx={{ display: 'flex', gap: 0.75 }}>
-                <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                  {item.value}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  ({Math.round((item.value / total) * 100)}%)
-                </Typography>
-              </Box>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75, mt: 1 }}>
+              {dados.map((item) => (
+                <Box
+                  key={item.name}
+                  sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box
+                      sx={{ width: 10, height: 10, borderRadius: 1, backgroundColor: item.color }}
+                    />
+                    <Typography variant="body2" color="text.secondary">
+                      {item.name}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', gap: 0.75 }}>
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      {item.value}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      ({total > 0 ? Math.round((item.value / total) * 100) : 0}%)
+                    </Typography>
+                  </Box>
+                </Box>
+              ))}
             </Box>
-          ))}
-        </Box>
+          </>
+        )}
       </CardContent>
     </Card>
   );

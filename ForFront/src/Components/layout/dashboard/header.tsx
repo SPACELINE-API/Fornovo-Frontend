@@ -3,6 +3,7 @@ import { ChevronDown, LogOut, Bell } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import logoImg from "../../../assets/imagens/Logofnv.png";
+import { useContagemNotificacoes } from "../../../hooks/useContagemNotificacoes";
 
 interface HeaderProps {
     userName: string;
@@ -12,6 +13,9 @@ function Header({ userName, userAvatar }: HeaderProps) {
     const [open, setOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null); 
     const navigate = useNavigate();
+    const { naoLidas } = useContagemNotificacoes();
+    const exibirBadge = naoLidas > 0;
+    const textoBadge = naoLidas > 99 ? '99+' : String(naoLidas);
 
     useEffect(() => {        function handleClickOutside(event: MouseEvent) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -49,7 +53,20 @@ function Header({ userName, userAvatar }: HeaderProps) {
 
                 <div className={styles.acoes}>
 
-                    <span className={styles.notis}><Bell /></span>
+                    <span
+                        className={styles.notis}
+                        role="img"
+                        aria-label={
+                            exibirBadge
+                                ? `${naoLidas} notificações não lidas`
+                                : 'Notificações'
+                        }
+                    >
+                        <Bell />
+                        {exibirBadge && (
+                            <span className={styles.notisCount}>{textoBadge}</span>
+                        )}
+                    </span>
 
                     <div 
                     ref={dropdownRef}

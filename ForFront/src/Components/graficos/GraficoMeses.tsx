@@ -1,13 +1,36 @@
-import { Card, CardContent, Typography, Box } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Card, CardContent, Typography, Box, Skeleton } from '@mui/material';
 import ReactApexChart from 'react-apexcharts';
 import type { ProjetosPorMes } from '../../types/dashboard';
+import api from '../../Services/apiService';
 
-interface GraficoMesesProps {
-  mesesData: ProjetosPorMes[];
-  memoriaisData: ProjetosPorMes[];
+interface AtividadeResponse {
+  projetos: ProjetosPorMes[];
+  memoriais: ProjetosPorMes[];
 }
 
-export default function GraficoMeses({ mesesData, memoriaisData }: GraficoMesesProps) {
+export default function GraficoMeses() {
+  const [mesesData, setMesesData] = useState<ProjetosPorMes[]>([]);
+  const [memoriaisData, setMemoriaisData] = useState<ProjetosPorMes[]>([]);
+  const [carregando, setCarregando] = useState(true);
+
+  useEffect(() => {
+    const fetchDados = async () => {
+      try {
+        const { data } = await api.get<AtividadeResponse>('projetos/atividadeUltimosMeses');
+        setMesesData(data.projetos ?? []);
+        setMemoriaisData(data.memoriais ?? []);
+      } catch {
+        setMesesData([]);
+        setMemoriaisData([]);
+      } finally {
+        setCarregando(false);
+      }
+    };
+
+    fetchDados();
+  }, []);
+
   const options: ApexCharts.ApexOptions = {
     chart: {
       type: 'area',
@@ -79,7 +102,11 @@ export default function GraficoMeses({ mesesData, memoriaisData }: GraficoMesesP
           </Box>
         </Box>
 
-        <ReactApexChart type="area" series={series} options={options} height={260} />
+        {carregando ? (
+          <Skeleton variant="rounded" height={260} sx={{ borderRadius: 2 }} />
+        ) : (
+          <ReactApexChart type="area" series={series} options={options} height={260} />
+        )}
       </CardContent>
     </Card>
   );
