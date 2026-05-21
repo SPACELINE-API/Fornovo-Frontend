@@ -42,24 +42,36 @@ export function useHomeData(): UseHomeDataReturn {
     issuesAbertas: 0,
   });
 
+  const [conformidade, setConformidade] = useState<ConformidadeIA>(MOCK_CONFORMIDADE);
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
     const fetchKpis = async () => {
       try {
-        const [funcs, projs, normas] = await Promise.allSettled([
-          api.get('usuarios/listarUsuarios'),
-          api.get('projetos/listarProjetos'),
-          api.get('normas/listarNormas'),
+        const [funcs, projs, normas, conf] = await Promise.allSettled([
+          api.get('usuarios/quantidadeUsuario'),
+          api.get('projetos/quantidadeProjeto'),
+          api.get('normas/quantidadeNorma'),
+          api.get('dados-ia/conformidade/'),
         ]);
 
         setKpi({
-          funcionarios: funcs.status === 'fulfilled' ? funcs.value.data.length : 0,
-          projetos: projs.status === 'fulfilled' ? projs.value.data.length : 0,
-          normas: normas.status === 'fulfilled' ? normas.value.data.length : 0,
+          funcionarios: funcs.status === 'fulfilled' ? funcs.value.data.total : 0,
+          projetos: projs.status === 'fulfilled' ? projs.value.data.total : 0,
+          normas: normas.status === 'fulfilled' ? normas.value.data.total : 0,
 
           issuesAbertas: 7,
         });
+
+        if (conf.status === 'fulfilled') {
+          const { valor, status, cor, metricas } = conf.value.data;
+          setConformidade({
+            valor: valor ?? MOCK_CONFORMIDADE.valor,
+            status: status ?? MOCK_CONFORMIDADE.status,
+            cor: cor ?? MOCK_CONFORMIDADE.cor,
+            metricas: metricas ?? MOCK_CONFORMIDADE.metricas,
+          });
+        }
       } catch {
       } finally {
         setCarregando(false);
@@ -78,6 +90,6 @@ export function useHomeData(): UseHomeDataReturn {
     atrasadosData: MOCK_ATRASADOS,
     topNormasData: MOCK_TOP_NORMAS,
     notificacoes: MOCK_NOTIFICACOES,
-    conformidade: MOCK_CONFORMIDADE,
+    conformidade,
   };
 }

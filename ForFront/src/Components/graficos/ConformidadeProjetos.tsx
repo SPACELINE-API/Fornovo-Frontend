@@ -34,7 +34,7 @@ export default function ConformidadeProjetos({ dados }: ConformidadeProjetosProp
                 mb: 0.5,
               }}
             >
-              Conformidade da IA
+              Conformidade da IA para o projeto
             </Typography>
           </Box>
 
