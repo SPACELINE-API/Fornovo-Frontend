@@ -2,15 +2,8 @@ import { useState } from 'react';
 import { Card, CardContent, Tabs, Tab, Box } from '@mui/material';
 import GraficoStatus from './GraficoStatus';
 import GraficoMeses from './GraficoMeses';
-import type { StatusData, ProjetosPorMes } from '../../types/dashboard';
 
-interface GraficosTabsProps {
-  statusData: StatusData[];
-  mesesData: ProjetosPorMes[];
-  memoriaisData: ProjetosPorMes[];
-}
-
-export default function GraficosTabs({ statusData, mesesData, memoriaisData }: GraficosTabsProps) {
+export default function GraficosTabs() {
   const [tab, setTab] = useState(0);
 
   return (
@@ -37,8 +30,8 @@ export default function GraficosTabs({ statusData, mesesData, memoriaisData }: G
         </Tabs>
 
         <Box sx={{ minHeight: { xs: 280, md: 320 } }}>
-          {tab === 0 && <GraficoStatus dados={statusData} />}
-          {tab === 1 && <GraficoMeses mesesData={mesesData} memoriaisData={memoriaisData} />}
+          {tab === 0 && <GraficoStatus />}
+          {tab === 1 && <GraficoMeses />}
         </Box>
       </CardContent>
     </Card>
