@@ -1,11 +1,11 @@
-.header{
+.header {
     width: 100%;
     height: 60px;
     border-bottom: 1px solid #ababab;
     background-color: #ffffff;
 }
 
-.headerConteudo{
+.headerConteudo {
     height: 100%;
     margin: 0 auto;
     display: flex;
@@ -14,7 +14,7 @@
     padding: 0 20px;
 }
 
-.brand{
+.brand {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -24,17 +24,17 @@
     width: 40px;
     height: 40px;
     object-fit: contain;
-    border-radius: 50%; 
+    border-radius: 50%;
 }
 
-.headerTitulo{
+.headerTitulo {
     font-size: 20px;
     color: #333333;
     font-weight: 600;
-    font-family: Kodchasan, sans-serif; 
+    font-family: Kodchasan, sans-serif;
 }
 
-.userMenu{
+.userMenu {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -54,7 +54,7 @@
     height: 35px;
     border-radius: 50%;
     overflow: hidden;
-    background-color: #1051cb; 
+    background-color: #1051cb;
 }
 
 .userAvatar img {
@@ -70,13 +70,13 @@
     color: white;
     font-weight: bold;
     font-size: 16px;
-    font-family: 'Kodchasan', sans-serif;   
-    display: flex;         
-    align-items: center;   
-    justify-content: center; 
+    font-family: 'Kodchasan', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
     text-align: center;
-    line-height: 1;        
+    line-height: 1;
 }
 
 .arrow {
@@ -96,7 +96,7 @@
     background-color: white;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     padding: 8px;
     z-index: 100;
 }
@@ -110,7 +110,7 @@
     background: none;
     cursor: pointer;
     color: #333333;
-    font-family: 'Kodchasan', sans-serif; 
+    font-family: 'Kodchasan', sans-serif;
     font-size: 14px;
 }
 
@@ -125,13 +125,19 @@
 
 .circuloNotificacoes {
     background-color: #e00101;
-    border-radius: 50%;
+    border-radius: 50px;
     position: absolute;
-    padding: 5px;
     color: #fff;
-    font-size: 0.5rem;
-    width: 11px;
-    height: 11px;
+    font-size: 0.6rem;
+    font-weight: bold;
+    padding: 0 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: -3px;
+    left: -1px;
+    min-width: 16px;
+    min-height: 16px;
 }
 
 .btnNotis {
@@ -142,7 +148,7 @@
     background: none;
     border: none;
     cursor: pointer;
-    color: #666; 
+    color: #666;
     transition: color 0.2s;
 }
 

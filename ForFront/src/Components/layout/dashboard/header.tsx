@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import logoImg from "../../../assets/imagens/Logofnv.png";
 import api from "../../../Services/apiService";
 import type { TipoNotificacao } from "../../../types/dashboard";
-import { useContagemNotificacoes } from "../../../hooks/useContagemNotificacoes";
+import { useContagemNotificacoes, invalidarContagemNotificacoes } from "../../../hooks/useContagemNotificacoes";
 
 interface HeaderProps {
     userName: string;
@@ -24,11 +24,14 @@ interface Notificacao {
 
 function Header({ userName, userAvatar }: HeaderProps) {
     const [open, setOpen] = useState(false);
-    const [naoLidas, setNaoLidas] = useState<number>(0);
+    const { naoLidas } = useContagemNotificacoes();
     const [notificacoes, setNotificacoes] = useState<Notificacao[]>([]);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
     const combobox = useCombobox();
+    const exibirBadge = naoLidas > 0;
+    const textoBadge = naoLidas > 99 ? '99+' : String(naoLidas);
+
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -43,7 +46,6 @@ function Header({ userName, userAvatar }: HeaderProps) {
 
     useEffect(() => {
         listarNotificacoes();
-        notificacoesNaoLidas();
     }, []);
 
     const handleLogout = () => {
@@ -77,21 +79,11 @@ function Header({ userName, userAvatar }: HeaderProps) {
         }
     }
 
-    async function notificacoesNaoLidas() {
-        try {
-            const resposta = await api.get(`projetos/notificacoes/contagem`);
-            setNaoLidas(resposta.data.nao_lidas);
-        }
-        catch (error) {
-            console.log(`Erro ao buscar novas notificações ${error}`);
-        }
-    }
-
     async function marcarComolida() {
         try {
             await new Promise(resolve => setTimeout(resolve, 3000));
             await api.patch(`projetos/notificacoes/alterarStatus`);
-            setNaoLidas(0);
+            invalidarContagemNotificacoes();
         }
         catch (error) {
             console.log(`Erro ao mudar o status da notificação ${error}`);
@@ -110,32 +102,22 @@ function Header({ userName, userAvatar }: HeaderProps) {
                 <div className={styles.acoes}>
                     <Combobox store={combobox} width={300} position="bottom-end">
                         <Combobox.Target>
-                            {naoLidas === 0 ?
-                                <div className={styles.notis}>
-                                    <button
-                                        className={styles.btnNotis}
-                                        onClick={() => {
-                                            combobox.toggleDropdown();
-                                            marcarComolida();
-                                            listarNotificacoes();
-                                        }}>
-                                        <Bell />
-                                    </button>
-                                </div>
-                                :
-                                <div className={styles.notis}>
-                                    <button
-                                        className={styles.btnNotis}
-                                        onClick={() => {
-                                            combobox.toggleDropdown();
-                                            marcarComolida();
-                                            listarNotificacoes();
-                                        }}>
-                                        <div className={styles.circuloNotificacoes}></div>
-                                        <Bell />
-                                    </button>
-                                </div>
-                            }
+                            <div className={styles.notis}>
+                                <button
+                                    className={styles.btnNotis}
+                                    onClick={() => {
+                                        combobox.toggleDropdown();
+                                        marcarComolida();
+                                        listarNotificacoes();
+                                    }}>
+                                    {exibirBadge && (
+                                        <div className={styles.circuloNotificacoes}>
+                                            {textoBadge}
+                                        </div>
+                                    )}
+                                    <Bell />
+                                </button>
+                            </div>
                         </Combobox.Target>
                         <Combobox.Dropdown
                             h={250}
