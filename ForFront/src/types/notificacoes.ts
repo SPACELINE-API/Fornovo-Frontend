@@ -1,0 +1,1 @@
+export type TipoNotificacao = 'INFO' | 'ALERTA' | 'SUCESSO' | 'ERRO';

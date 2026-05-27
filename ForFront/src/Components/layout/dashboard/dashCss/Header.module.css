@@ -119,15 +119,80 @@
     border-radius: 5px;
 }
 
-.notis {
+.btnNotis:hover {
+    color: #89c094;
+}
+
+.circuloNotificacoes {
+    background-color: #e00101;
+    border-radius: 50%;
+    position: absolute;
+    padding: 5px;
+    color: #fff;
+    font-size: 0.5rem;
+    width: 11px;
+    height: 11px;
+}
+
+.btnNotis {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: row;
+    position: relative;
+    background: none;
+    border: none;
     cursor: pointer;
     color: #666; 
     transition: color 0.2s;
 }
 
-.notis:hover {
-    color: #89c094;
+.containerNotificacao {
+    border-bottom: 1px solid #cdcdcd;
+}
+
+.notificacaoItemVisualizado {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.notificacaoItem {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 10px;
+    background-color: #FAFAFA;
+    border-radius: 10px;
+}
+
+.notificacaoMensagem {
+    font-size: 0.9rem;
+}
+
+.badgeContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
+
+.containerNotificacoes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    height: 100%;
+}
+
+.notificacaoTopo {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.novaNotificacao {
+    color: #e00101;
+    font-size: 0.8rem;
 }
