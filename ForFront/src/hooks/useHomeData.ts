@@ -3,11 +3,9 @@ import api from '../Services/apiService';
 
 import type { KpiData, ConformidadeIA } from '../types/dashboard';
 
-import { MOCK_CONFORMIDADE } from '../utils/mock';
-
 interface UseHomeDataReturn {
   kpi: KpiData;
-  conformidade: ConformidadeIA;
+  conformidade: ConformidadeIA | null;
   carregando: boolean;
 }
 
@@ -19,7 +17,7 @@ export function useHomeData(): UseHomeDataReturn {
     issuesAbertas: 0,
   });
 
-  const [conformidade, setConformidade] = useState<ConformidadeIA>(MOCK_CONFORMIDADE);
+  const [conformidade, setConformidade] = useState<ConformidadeIA | null>(null);
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
@@ -41,12 +39,7 @@ export function useHomeData(): UseHomeDataReturn {
 
         if (conf.status === 'fulfilled') {
           const { valor, status, cor, metricas } = conf.value.data;
-          setConformidade({
-            valor: valor ?? MOCK_CONFORMIDADE.valor,
-            status: status ?? MOCK_CONFORMIDADE.status,
-            cor: cor ?? MOCK_CONFORMIDADE.cor,
-            metricas: metricas ?? MOCK_CONFORMIDADE.metricas,
-          });
+          setConformidade({ valor, status, cor, metricas });
         }
       } catch {
       } finally {
@@ -57,9 +50,5 @@ export function useHomeData(): UseHomeDataReturn {
     fetchKpis();
   }, []);
 
-  return {
-    kpi,
-    carregando,
-    conformidade,
-  };
+  return { kpi, carregando, conformidade };
 }
