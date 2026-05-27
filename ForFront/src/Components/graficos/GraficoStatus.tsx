@@ -6,9 +6,9 @@ import api from '../../Services/apiService';
 
 const STATUS_CONFIG: { name: string; color: `#${string}` }[] = [
   { name: 'Concluído', color: '#34623F' },
-  { name: 'Em andamento', color: '#89c094' },
-  { name: 'Em revisão', color: '#f59e0b' },
-  { name: 'Pendente', color: '#e5e7eb' },
+  { name: 'Em andamento', color: '#f59e0b' },
+  { name: 'Em revisão', color: '#03668d' },
+  { name: 'Pendente', color: '#c50205' },
 ];
 
 type QuantidadePorStatusResponse = Record<string, number>;

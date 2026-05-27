@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import api from '../Services/apiService';
 
-/** Dispare após marcar notificações como lidas (task do dropdown do sino). */
 export const EVENTO_ATUALIZAR_CONTAGEM_NOTIFICACOES = 'fornovo:notificacoes-contagem-atualizar';
 
 export function invalidarContagemNotificacoes() {
