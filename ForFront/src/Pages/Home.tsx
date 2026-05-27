@@ -8,17 +8,7 @@ import ConformidadeProjetos from '../Components/graficos/ConformidadeProjetos';
 import FeedNotificacoes from '../Components/graficos/FeedNots';
 
 export default function Home() {
-  const {
-    kpi,
-    carregando,
-    statusData,
-    mesesData,
-    notificacoes,
-    memoriaisData,
-    atrasadosData,
-    topNormasData,
-    conformidade,
-  } = useHomeData();
+  const { kpi, carregando, conformidade } = useHomeData();
 
   return (
     <div style={{ padding: '28px 32px', maxWidth: 1400 }}>
@@ -40,25 +30,21 @@ export default function Home() {
 
       <Grid mb="xl" gutter="md">
         <Grid.Col span={{ base: 12, lg: 5 }}>
-          <FeedNotificacoes notificacoes={notificacoes} />
+          <FeedNotificacoes />
         </Grid.Col>
 
         <Grid.Col span={{ base: 12, lg: 7 }}>
-          <GraficosTabs
-            statusData={statusData}
-            mesesData={mesesData}
-            memoriaisData={memoriaisData}
-          />
+          <GraficosTabs />
         </Grid.Col>
       </Grid>
 
       <Grid gutter="md">
         <Grid.Col span={{ base: 12, lg: 6 }}>
-          <TopNormas dados={topNormasData} />
+          <TopNormas />
         </Grid.Col>
 
         <Grid.Col span={{ base: 12, lg: 6 }}>
-          <GraficoAtrasados dados={atrasadosData} />
+          <GraficoAtrasados />
         </Grid.Col>
       </Grid>
     </div>

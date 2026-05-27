@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import logoImg from "../../../assets/imagens/Logofnv.png";
 import api from "../../../Services/apiService";
 import type { TipoNotificacao } from "../../../types/dashboard";
+import { useContagemNotificacoes } from "../../../hooks/useContagemNotificacoes";
 
 interface HeaderProps {
     userName: string;
@@ -28,7 +29,6 @@ function Header({ userName, userAvatar }: HeaderProps) {
     const dropdownRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
     const combobox = useCombobox();
-
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -169,7 +169,6 @@ function Header({ userName, userAvatar }: HeaderProps) {
                                                                     {tipo.label}
                                                                 </div>
                                                             </Badge>
-
                                                             <p className={styles.notificacaoMensagem}>
                                                                 {notificacao.mensagem}
                                                             </p>

@@ -253,6 +253,14 @@
   border-radius: 99px;
 }
 
+.containerHistorico {
+  margin-top: 3%;
+}
+
+.containerTabela {
+  margin-top: 3%;
+}
+
 @keyframes girar {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
