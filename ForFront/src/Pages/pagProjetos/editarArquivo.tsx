@@ -10,6 +10,7 @@ interface ModalEditarArquivoProps {
   onIniciarIA?: () => void;
   onIAconcluida?: () => void;
   onIAerro?: () => void;
+  onDeleteSuccess?: () => Promise<void> | void;
 }
 
 export default function ModalEditarArquivo({
@@ -20,6 +21,7 @@ export default function ModalEditarArquivo({
   onIniciarIA,
   onIAconcluida,
   onIAerro,
+  onDeleteSuccess,
 }: ModalEditarArquivoProps) {
   return (
     <Modal
@@ -39,10 +41,12 @@ export default function ModalEditarArquivo({
             onClose();
             onSubmitSuccess(novoArquivo);
             onIniciarIA?.();
+            
           }}
           onIniciarIA={onIniciarIA}
           onIAconcluida={onIAconcluida}
           onIAerro={onIAerro}
+          onDeleteSuccess={onDeleteSuccess}
         />
       )}
     </Modal>

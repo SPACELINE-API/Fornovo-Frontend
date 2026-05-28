@@ -1,11 +1,22 @@
-import { Card, CardContent, Typography, Box, Chip, LinearProgress } from '@mui/material';
+import { Card, CardContent, Typography, Box, Chip, LinearProgress, Skeleton } from '@mui/material';
 import type { ConformidadeIA } from '../../types/dashboard';
 
 interface ConformidadeProjetosProps {
-  dados: ConformidadeIA;
+  dados: ConformidadeIA | null;
 }
 
 export default function ConformidadeProjetos({ dados }: ConformidadeProjetosProps) {
+  if (!dados) {
+    return (
+      <Card elevation={0} sx={{ border: '1px solid #e5e7eb', borderRadius: 4, height: '100%' }}>
+        <CardContent>
+          <Skeleton variant="text" width="60%" height={32} sx={{ mb: 2 }} />
+          <Skeleton variant="text" width="30%" height={48} sx={{ mb: 2 }} />
+          <Skeleton variant="rectangular" height={9} sx={{ borderRadius: 99 }} />
+        </CardContent>
+      </Card>
+    );
+  }
   const { valor, cor, status } = dados;
 
   return (

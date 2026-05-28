@@ -8,6 +8,7 @@ import api from '../../../Services/apiService';
 import { useParams } from 'react-router-dom';
 
 export interface ArquivoNormData {
+  id_arquivo:number;
   nome: string;
   caminho: string;
   tipo: string;
@@ -22,6 +23,7 @@ interface FormularioArquivosProps {
   onIniciarIA?: () => void;
   onIAconcluida?: () => void;
   onIAerro?: () => void;
+  onDeleteSuccess?: () => Promise<void> | void;
 }
 
 const MIME_DXF_DWG = {
@@ -46,6 +48,7 @@ const FormularioArquivos: React.FC<FormularioArquivosProps> = ({
   onIniciarIA,
   onIAconcluida,
   onIAerro,
+  onDeleteSuccess,
 }) => {
   const [arquivo, setArquivo] = useState<File | null>(null);
   const [arquivoExistente, setArquivoExistente] = useState<ArquivoNormData | null>(
@@ -54,6 +57,7 @@ const FormularioArquivos: React.FC<FormularioArquivosProps> = ({
   const [removerArquivo, setRemoverArquivo] = useState(false);
   const [erroArquivo, setErroArquivo] = useState<string | null>(null);
   const [carregando, setCarregando] = useState(false);
+  
 
   useEffect(() => {
     if (initialArquivo) {
@@ -77,15 +81,38 @@ const FormularioArquivos: React.FC<FormularioArquivosProps> = ({
     setErroArquivo('Arquivo inválido. Apenas arquivos no formato DXF e DWG são aceitos.');
   };
 
-  const handleRemove = () => {
+const handleRemove = async () => {
+  try {
     if (arquivo) {
       setArquivo(null);
-    } else if (arquivoExistente) {
-      setRemoverArquivo(true);
-      setArquivoExistente(null);
-      setErroArquivo('O arquivo atual será removido ao salvar.');
+      return;
     }
-  };
+    if (arquivoExistente) {
+      setCarregando(true);
+      await api.delete(
+        `projetos/deletarArquivo/${arquivoExistente.id_arquivo}`,
+      );
+      notifications.show({
+        title: 'Sucesso',
+        message: 'Arquivo removido com sucesso',
+        color: 'green',
+      });
+
+      setArquivoExistente(null);
+      setRemoverArquivo(false);
+      await onDeleteSuccess?.();
+    }
+  } catch (error) {
+    console.error(error);
+    notifications.show({
+      title: 'Erro',
+      message: 'Falha ao remover arquivo',
+      color: 'red',
+    });
+  } finally {
+    setCarregando(false);
+  }
+};
 
   const handleSubmit = async () => {
     if (!arquivo && !arquivoExistente && !removerArquivo) {
@@ -107,7 +134,7 @@ const FormularioArquivos: React.FC<FormularioArquivosProps> = ({
       const response = await api.post('projetos/upload-arquivo', data, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-
+      console.log("RESPOSTA API:", response.data);
       onSubmitSuccess(response.data);
 
       if (arquivo && !removerArquivo) {
@@ -141,6 +168,7 @@ const FormularioArquivos: React.FC<FormularioArquivosProps> = ({
 
       <Stack>
         <Dropzone
+          activateOnClick={!arquivoExistente}
           onDrop={handleDrop}
           onReject={() =>
             setErroArquivo('Arquivo inválido. Apenas arquivos no formato DXF e DWG são aceitos.')
@@ -205,7 +233,7 @@ const FormularioArquivos: React.FC<FormularioArquivosProps> = ({
           <Button
             style={{ backgroundColor: '#34623f' }}
             onClick={handleSubmit}
-            disabled={!arquivo && !arquivoExistente}
+            disabled={!arquivo && !arquivoExistente && !removerArquivo}
             loading={carregando}
           >
             Salvar
