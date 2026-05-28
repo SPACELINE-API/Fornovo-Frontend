@@ -8,6 +8,7 @@ interface ModalArquivosProps {
     onIniciarIA?: () => void;
     onIAconcluida?: () => void;
     onIAerro?: () => void;
+    onDeleteSuccess?: () => Promise<void> | void;
 }
 
 export default function ModalArquivos({ 
@@ -15,7 +16,8 @@ export default function ModalArquivos({
     onClose, 
     onIniciarIA, 
     onIAconcluida, 
-    onIAerro 
+    onIAerro,
+    onDeleteSuccess
 }: ModalArquivosProps) {
     return (
         <Modal
@@ -42,6 +44,7 @@ export default function ModalArquivos({
                 onIniciarIA={onIniciarIA}
                 onIAconcluida={onIAconcluida}
                 onIAerro={onIAerro}
+                onDeleteSuccess={onDeleteSuccess}
             />
         </Modal>
     );
