@@ -100,7 +100,7 @@ function Header({ userName, userAvatar }: HeaderProps) {
                 </div>
 
                 <div className={styles.acoes}>
-                    <Combobox store={combobox} width={300} zIndex={9999} position="bottom-end">
+                    <Combobox store={combobox} width={300}  position="bottom-end">
                         <Combobox.Target>
                             <div className={styles.notis}>
                                 <button
