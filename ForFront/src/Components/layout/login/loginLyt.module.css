@@ -188,8 +188,19 @@
   left: -7.3rem;
   top: -22.5rem;
   z-index: 0;
+  display: block;
 }
 
+.circleMask {
+  position: absolute;
+  width: 1160px;
+  height: 1130px;
+  left:  -0.5rem;
+  top: -0.5rem;
+  overflow: hidden;      
+  z-index: -1;
+  pointer-events: none;
+}
 
 
 @media (max-width: 1024px) {
@@ -255,7 +266,7 @@
     font-size: 1.3rem !important;
   }
 
-  .imgSvg {
+  .circleMask {
     width: 700px;
     height: 830px;
     left: -18rem;
@@ -267,22 +278,22 @@
 
 @media (min-width: 1024px) and (max-width: 1280px) {
   .loginLeft::before {
-    width: 980px;
-    height: 960px;
-    right: 2rem;
-    bottom: 25.5rem;
+    width: 700px;
+    height: 680px;
+    left: -13rem;
+    top: -13.5rem;
   }
 
   .loginLeftCircleSmall {
-    width: 185px;
-    height: 185px;
+    width: 85px;
+    height: 85px;
     left: 20rem;
-    bottom: 26rem;
+    bottom: 15rem;
   }
 
   .loginLeftCircleBottomRight {
-    width: 330px;
-    height: 330px;
+    width: 230px;
+    height: 230px;
     left: -5.5rem;
     bottom: 8rem;
   }
@@ -295,13 +306,12 @@
   }
 
   .loginLeftContent {
-    bottom: 16.5rem;
     right: 3rem;
     line-height: 2.5rem;
   }
 
   .loginLeftTitle {
-    font-size: 2.6rem;
+    font-size: 1.6rem;
   }
 
   .loginLeftSubtitle{
@@ -309,30 +319,37 @@
   }
 
   .loginRight {
-    bottom: 5rem;
+    bottom: 6rem;
     right: 3.5rem;
   }
 
   .loginFieldset legend {
-    font-size: 2.2rem !important;
+    font-size: 1.6rem !important;
     margin-bottom: 1.7rem;
   }
 
   .loginInputField {
-    width: 20rem !important;
-    height: 3rem !important;
+    width: 15rem !important;
+    height: 2rem !important;
   }
 
   .loginButton {
-    height: 3.5rem !important;
+    height: 3rem !important;
     font-size: 1.4rem !important;
   }
 
+  .circleMask {
+    width: 630px;
+    height: 680px;
+    left: .3rem;
+    top: -.5rem;
+  }
   .imgSvg {
-    width: 830px;
-    height: 880px;
-    left: -15.3rem;
-    top: -7.5rem;
+    width: 710px;
+    border-radius: 35%;
+    height: 710px;
+    left: -13.7rem;
+    top: -7.2rem;
   }
 }
 
@@ -411,9 +428,16 @@
   }
 
   .imgSvg {
-    width: 1530px;
-    height: 1810px;
+    width: 2090px;
+    height: 2090px;
     left: -9.5rem;
     top: -25rem;
+  }
+  
+  .circleMask {
+    width: 1900px;
+    height: 2060px;
+    left: -26.5rem;
+    top: 7.5rem;
   }
 }
