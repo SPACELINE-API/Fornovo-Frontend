@@ -18,26 +18,31 @@ function PainelArquivos({ projeto_id }: ArquivoProps) {
                 },
             }
         );
+         console.log('Content-Disposition:', response.headers.get('Content-Disposition'));
        
         if (!response.ok) {
             const erro = await response.text(); 
             console.error('Erro do backend:', erro);
             return;
         }
-            const disposition = response.headers.get('Content-Disposition');
-            const nomeArquivo = disposition
-                ? disposition.split('filename=')[1]?.replace(/"/g, '')
-                : `arquivo_${projeto_id}`;
+        const disposition = response.headers.get('Content-Disposition') ?? '';
+        const matchUtf8 = disposition.match(/filename\*=utf-8''(.+)/i);
+        const matchSimple = disposition.match(/filename="?([^";\n]+)"?/i);
 
-            const blob = await response.blob();
-            const url = URL.createObjectURL(blob);
+        const nomeArquivo = matchUtf8
+            ? decodeURIComponent(matchUtf8[1].trim())
+            : matchSimple
+            ? matchSimple[1].trim()
+            : `arquivo_${projeto_id}`;
+        
 
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = nomeArquivo ?? `arquivo_${projeto_id}`;
-            a.click();
-
-            URL.revokeObjectURL(url);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = nomeArquivo;
+        a.click();
+        URL.revokeObjectURL(url);
 
         } catch (error) {
             console.error('Erro no download:', error);

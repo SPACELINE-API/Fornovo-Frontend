@@ -7,17 +7,8 @@ import { notifications } from '@mantine/notifications';
 import api from '../../Services/apiService';
 import ModalNovoFunc from './criarFuncionario';
 import ModalEditarFunc from './editarFuncionario';
+import type { Funcionario, StatusFunc } from '../../types/funcionarios';
 
-type StatusFunc = 'Ativo' | 'Inativo';
-
-interface Funcionario {
-  id: string;
-  nome: string;
-  email: string;
-  senha: string;
-  nivelUsuario: string;
-  status: StatusFunc;
-}
 
 export default function Funcionarios() {
   const [opened, setOpened] = useState(false);
@@ -130,9 +121,9 @@ export default function Funcionarios() {
     const nivelLower = nivel.toLowerCase();
     switch (nivelLower) {
         case 'administrador':
-        return 'red';
-        case 'revisor':
         return 'blue';
+        case 'revisor':
+        return 'orange';
         case 'projetista':
         return 'green';
         default:

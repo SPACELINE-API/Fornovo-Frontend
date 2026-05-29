@@ -1,18 +1,12 @@
 import { Modal, ScrollArea } from '@mantine/core';
 import FormsFuncionario from '../../Components/layout/Formularios/formsFuncionario';
 import styles from '../pagProjetos/projCss/criarProj.module.css';
-import type { FuncFormData } from '../../Components/layout/Formularios/formsFuncionario';
+import type { ModalCriarFuncProps } from '../../types/funcionarios';
 
 
-interface ModalFuncProps {
-  opened: boolean;
-  onClose: () => void;
-  onSubmitSuccess?: () => void;
-  initialData?: FuncFormData | null;
- 
-}
 
-export default function ModalNovoFunc({ opened, onClose, onSubmitSuccess, initialData}: ModalFuncProps) {
+
+export default function ModalNovoFunc({ opened, onClose, onSubmitSuccess, initialData}: ModalCriarFuncProps) {
   const handleSuccess = () => {
     onClose();
     onSubmitSuccess?.();

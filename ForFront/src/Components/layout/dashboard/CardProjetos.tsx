@@ -5,7 +5,7 @@ import { Menu, ActionIcon, Modal, TextInput, Button, Group, Text, Popover } from
 import { Edit, Ellipsis, Trash2 } from 'lucide-react';
 import logo from '../../../assets/imagens/Logofnv.png';
 import api from '../../../Services/apiService';
-import type { Projeto } from '../../../Pages/pagProjetos/Projetos';
+import type { ProjetoListagem } from '../../../types/projeto';
 
 interface CardProps {
   nome: string;
@@ -15,8 +15,8 @@ interface CardProps {
   status: string;
   data: string | null;
   atualizarProjetos?: () => void;
-  projeto: Projeto;
-  abrirEditarProjeto: (projeto: Projeto) => void;
+  projeto: ProjetoListagem;
+  abrirEditarProjeto: (projeto: ProjetoListagem) => void;
 }
 
 const STATUS_OPTIONS = [
@@ -335,7 +335,7 @@ function CardProjetos({
               className={styles.cardBotao}
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`/detalhe/calculo/${id}`);
+                navigate(`/detalhe/${id}/calculo`); 
               }}
             >
               Cálculo
@@ -344,7 +344,7 @@ function CardProjetos({
               className={styles.cardBotao}
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`/detalhe/relatorio/${id}`);
+                navigate(`/detalhe/${id}/relatorio`);
               }}
             >
               Relatório
@@ -353,7 +353,7 @@ function CardProjetos({
               className={styles.cardBotao}
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`/detalhe/resumo/${id}`);
+                navigate(`/detalhe/${id}/resumo`);
               }}
             >
               Resumo

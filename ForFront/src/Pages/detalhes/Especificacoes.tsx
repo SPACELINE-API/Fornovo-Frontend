@@ -1,22 +1,16 @@
 import { useState, useEffect } from 'react';
 import styles from '../../Styles/paginas/Calculo.module.css';
-import { FileSpreadsheet, Download, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
+import { FileText, Download, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
+import api from '../../Services/apiService';
 import { useParams } from 'react-router-dom';
-
-const STATUS = 'especificacao_status'
-const URL = 'especificacao_url'
-
-const arquivoEspecificacao = {
-    name: 'Especificações',
-    type: 'DOCX'
-}
 
 function Especificacoes() {
 
     const { id } = useParams();
+    const [temEspecificacao, setTemEspecificacao] = useState(false);
     const [carregando, setCarregando] = useState(true);
-    const [statusEspecificacao, setStatusEspecificacao] = useState<string | null>(null);
     const [gerando, setGerando] = useState(false);
+    const [dataGeracao, setDataGeracao] = useState<string | null>(null);
     const [notificacao, setNotificacao] = useState<{ tipo: 'sucesso' | 'erro'; mensagem: string } | null>(null);
 
     useEffect(() => {
@@ -29,25 +23,22 @@ function Especificacoes() {
     }
 
     async function verificarStatus() {
-        setCarregando(true)
-
+        if (!id) return;
+        setCarregando(true);
         try {
-            const statusSalvo = localStorage.getItem(STATUS)
-            if (statusSalvo) {
-                const { status, data } = JSON.parse(statusSalvo);
-                if (status == 'gerado') {
-                    setStatusEspecificacao(data);
-                    return
-                }
+            const response = await api.get('dados-ia/status-especificacao/', {
+                params: { projeto_id: id },
+            });
+            if (response.data.status === 'concluido') {
+                setTemEspecificacao(true);
+                setDataGeracao(new Date().toLocaleDateString());
+            } else {
+                setTemEspecificacao(false);
             }
-            setStatusEspecificacao(null);
-        }
-        catch (error) {
-            console.log(error)
-            setStatusEspecificacao(null)
-        }
-        finally {
-            setCarregando(false)
+        } catch (error) {
+            setTemEspecificacao(false);
+        } finally {
+            setCarregando(false);
         }
     }
 
@@ -55,72 +46,58 @@ function Especificacoes() {
         if (!id) return;
         setGerando(true);
         try {
-            const conteudo = `Especificações do projeto ${id}`
-            const blob = new Blob([conteudo], {
-                type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-            });
+            const resLevantamento = await api.get(`calculos/form-levantamento/${id}`);
+            const dadosLevantamento = resLevantamento.data;
 
-            const base64 = await converterBlob(blob);
-            const data = new Date().toLocaleDateString();
+            let dadosDXF = {};
+            try {
+                const resIA = await api.get(`dados-ia/dados-processados/${id}`);
+                dadosDXF = resIA.data.dados_dxf || {};
+            } catch {
+                // DXF pode não existir — prossegue com dados vazios
+            }
 
-            localStorage.setItem(URL, base64);
-            localStorage.setItem(STATUS, JSON.stringify({ status: 'gerado', data }));
+            const dataSalvar = new FormData();
+            dataSalvar.append('arquivo', JSON.stringify(dadosLevantamento));
+            dataSalvar.append('dxf', JSON.stringify(dadosDXF));
+            dataSalvar.append('projeto_id', id);
 
+            await api.post('dados-ia/salvar-especificacao', dataSalvar);
             await verificarStatus();
-            mostrarNotificacao('sucesso', 'Especificações geradas com sucesso!');
-        }
-        catch (error) {
-            console.log(error)
-            mostrarNotificacao('erro', 'Erro ao gerar. Tente novamente');
-        }
-        finally {
+            mostrarNotificacao('sucesso', 'Especificação técnica gerada com sucesso!');
+        } catch (error: any) {
+            console.error('Erro na geração da especificação:', error);
+            const msg = error.response?.data?.erro || 'Erro ao gerar. Tente novamente.';
+            mostrarNotificacao('erro', msg);
+        } finally {
             setGerando(false);
         }
     }
 
-    function downloadEspecificacoes() {
-        const base64 = localStorage.getItem(URL);
-        if (!base64) {
-            mostrarNotificacao('erro', 'Arquivo não encontrado.')
-        }
-        else {
-            const link = document.createElement('a');
-            link.href = base64;
-            link.download = `especificacoes_projeto_${id}.docx`;
-            link.click();
-        }
-    }
-
-    function converterBlob(blob: Blob): Promise<string> {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result as string);
-            reader.onerror = () => reject(new Error('Erro ao converter blob'));
-            reader.readAsDataURL(blob);
-        });
+    function baixar() {
+        const url = `${api.defaults.baseURL}dados-ia/salvar-especificacao?projeto_id=${id}`;
+        window.open(url, '_blank');
     }
 
     if (carregando) {
         return (
-            <>
-                <div className={styles.container}>
-                    <h2 className={styles.tituloPagina}>Especificações técnicas</h2>
-                    <div className={styles.card}>
-                        <div className={styles.cardBody}>
-                            <div className={styles.docRow}>
-                                <div className={`${styles.docIcon} ${styles.skeleton}`} />
-                                <div className={styles.docMeta}>
-                                    <div className={`${styles.skeletonLine} ${styles.skeletonTitle}`} />
-                                    <div className={`${styles.skeletonLine} ${styles.skeletonSubtitle}`} />
-                                </div>
-                                <div className={`${styles.skeletonBadge} ${styles.skeleton}`} />
+            <div className={styles.container}>
+                <h2 className={styles.tituloPagina}>Especificações técnicas</h2>
+                <div className={styles.card}>
+                    <div className={styles.cardBody}>
+                        <div className={styles.docRow}>
+                            <div className={`${styles.docIcon} ${styles.skeleton}`} />
+                            <div className={styles.docMeta}>
+                                <div className={`${styles.skeletonLine} ${styles.skeletonTitle}`} />
+                                <div className={`${styles.skeletonLine} ${styles.skeletonSubtitle}`} />
                             </div>
+                            <div className={`${styles.skeletonBadge} ${styles.skeleton}`} />
                         </div>
-                        <div className={`${styles.generateSection} ${styles.skeleton}`} style={{ height: 56 }} />
                     </div>
+                    <div className={`${styles.generateSection} ${styles.skeleton}`} style={{ height: 56 }} />
                 </div>
-            </>
-        )
+            </div>
+        );
     }
 
     return (
@@ -141,36 +118,36 @@ function Especificacoes() {
                 <div className={styles.cardBody}>
 
                     <div className={styles.docRow}>
-                        <div className={`${styles.docIcon} ${!statusEspecificacao ? styles.docIconEmpty : ''}`}>
-                            <FileSpreadsheet size={20} color={statusEspecificacao ? '#3b6d11' : '#aaa'} />
+                        <div className={`${styles.docIcon} ${!temEspecificacao ? styles.docIconEmpty : ''}`}>
+                            <FileText size={20} color={temEspecificacao ? '#3b6d11' : '#aaa'} />
                         </div>
                         <div className={styles.docMeta}>
-                            <p className={styles.docName}>{arquivoEspecificacao.name}</p>
+                            <p className={styles.docName}>Especificação técnica</p>
                             <p className={styles.docDate}>
-                                {statusEspecificacao ? `Gerado em ${statusEspecificacao}` : 'Nenhuma versão gerada ainda'}
+                                {temEspecificacao ? `Gerado em ${dataGeracao}` : 'Nenhuma versão gerada ainda'}
                             </p>
                         </div>
 
-                        {statusEspecificacao ? (
+                        {temEspecificacao ? (
                             <span className={`${styles.badge} ${styles.badgeOk}`}>
                                 <span className={styles.badgeDotOk}></span>
-                                Disponíveis
+                                Disponível
                             </span>
                         ) :
                             (
                                 <span className={`${styles.badge} ${styles.badgeEmpty}`}>
                                     <span className={styles.badgeDotEmpty}></span>
-                                    Não geradas
+                                    Não gerada
                                 </span>
                             )
                         }
                     </div>
 
-                    {statusEspecificacao && (
+                    {temEspecificacao && (
                         <>
                             <div className={styles.divider} />
                             <div className={styles.acoes}>
-                                <button className={`${styles.btn} ${styles.btnPrimario}`} onClick={downloadEspecificacoes}>
+                                <button className={`${styles.btn} ${styles.btnPrimario}`} onClick={baixar}>
                                     <Download size={15} />
                                     Baixar
                                 </button>
@@ -179,7 +156,7 @@ function Especificacoes() {
                     )}
                 </div>
 
-                {statusEspecificacao ? (
+                {temEspecificacao ? (
                     <div className={styles.generateSection}>
                         <p className={styles.generateLabel}>
                             Gerar uma nova versão?
@@ -212,4 +189,4 @@ function Especificacoes() {
     )
 }
 
-export default Especificacoes;
+export default Especificacoes; 

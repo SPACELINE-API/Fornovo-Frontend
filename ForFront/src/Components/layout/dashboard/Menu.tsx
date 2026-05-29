@@ -81,6 +81,7 @@ function Menu({ iaEstado, onIniciarIA, onIAconcluida, onIAerro }: MenuProps) {
         setTemArquivo(true);
 
         setArquivoSelecionado({
+          id_arquivo: response.data.id_arquivo,
           nome: response.data.nome_arquivo,
           caminho: response.data.caminho_arquivo || response.data.caminho,
           tipo: response.data.tipo_arquivo,
@@ -134,6 +135,7 @@ function Menu({ iaEstado, onIniciarIA, onIAconcluida, onIAerro }: MenuProps) {
           setOpenedAmbiente(false);
           verificarLevantamento();
         }}
+        onSuccess={() => window.dispatchEvent(new Event('levantamentoCampo'))}
       />
 
       <ModalArquivos
@@ -145,6 +147,10 @@ function Menu({ iaEstado, onIniciarIA, onIAconcluida, onIAerro }: MenuProps) {
         onIniciarIA={onIniciarIA}
         onIAconcluida={onIAconcluida}
         onIAerro={onIAerro}
+        onDeleteSuccess={() => {
+          setArquivoSelecionado(null);
+          setTemArquivo(false);
+        }}
       />
 
       <ModalEditarArquivo
@@ -158,6 +164,11 @@ function Menu({ iaEstado, onIniciarIA, onIAconcluida, onIAerro }: MenuProps) {
         onIniciarIA={onIniciarIA}
         onIAconcluida={onIAconcluida}
         onIAerro={onIAerro}
+        onDeleteSuccess={() => {
+          setArquivoSelecionado(null);
+          setTemArquivo(false);
+          setOpenedEditarArquivo(false);
+        }}
       />
 
       <div className={styles.menu}>
